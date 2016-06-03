@@ -2,8 +2,9 @@
 
 function autoload($class)
 {
-  if (file_exists(__DIR__ . '/Classes/' . $class . '.php')) {
-    require_once __DIR__ . '/Classes/' . $class . '.php';
+  $file = __DIR__ . '/classes/' . str_replace('\\', '/', strtolower($class)) . '.php';
+  if (file_exists($file)) {
+    require_once $file;
   }
   else {
     $classParts = explode('\\', $class);
