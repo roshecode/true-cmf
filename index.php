@@ -2,10 +2,12 @@
 require_once __DIR__ . '/core/config.php';
 require_once __DIR__ . '/core/bootstrap.inc';
 
+require_once CONTROLLER . '/frontController.php';
+
 use db\DB;
 
 $db = DB::getInstance();
 
-echo 'good';
+echo 'INDEX' . PHP_EOL;
 
 
