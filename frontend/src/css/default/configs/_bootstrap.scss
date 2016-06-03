@@ -1,0 +1,10 @@
+$grid-columns:        12;
+$grid-columns-margin: 15px;
+$grid-column-name:    'col';
+$grid-row-name:       'row';
+$grid-offset-name:    'offset';
+///////////////////////////    tiny screen      small screen      medium screen     large screen      huge screen
+/////////////////////////// vertical phone  horizontal phone             tablet          desktop     wide desktop
+$grid-breakpoints-names:  (           'sx',             'sm',              'md',            'lg',            'lx' );
+$grid-breakpoints-values: ( /*       <34em */           34em,              48em,            62em,            75em );
+$container-widths:        ( /*        100% */           36em,              45em,         58.75em,         71.25em );

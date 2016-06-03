@@ -1,6 +1,6 @@
 <?php
 
-namespace db;
+namespace data;
 
 class DB {
   private $_dbh;
@@ -40,5 +40,28 @@ class DB {
       '(' . implode(',', array_keys($data)) . ')' .
       ' VALUES (?' . str_repeat(',?', count($data) - 1) . ')');
     return $this->_stmt->execute(array_values($data));
+  }
+
+  public function import($file, $settings) {
+    if (file_exists($file) && is_readable($file)) {
+      if ($fh = fopen($file, "rb")) {
+        $delimiter = $settings['delimiter'];
+        $i = 0;
+        while (!feof($fh)) {
+          $row = explode($delimiter, fgets($fh));
+
+          try {
+            $this->insert('categories', [
+              'id' => ++$i,
+              'name' => preg_split('/(\s[a-zA-Z])|([,;:])/', $row[3])[0]
+            ]);
+          } catch (\PDOException $e) {
+            --$i;
+          }
+        }
+      }
+      else echo "Ошибка при открытии файла!";
+      fclose($fh);
+    }
   }
 }

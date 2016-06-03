@@ -4,7 +4,7 @@ require_once __DIR__ . '/core/bootstrap.inc';
 
 require_once CONTROLLER . '/frontController.php';
 
-use db\DB;
+use data\DB;
 
 $db = DB::getInstance();
 

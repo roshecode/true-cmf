@@ -1,0 +1,34 @@
+{
+  "name": "trueFrontend",
+  "version": "1.2.0",
+  "description": "trueFontend is an automatic system for build html, svg, css, and javascript based projects",
+  "author": "ma1oy",
+  "license": "MIT",
+  "devDependencies": {
+
+    "babel-core": ">=6.7.7",
+    "babel-preset-es2015": ">=6.6.0",
+    "gulp-babel": ">=6.1.2",
+    "gulp-twig": "^0.5.0",
+    "node-sass": "^3.7.0",
+    "gulp-sass": "^2.3.1",
+
+    "through2": "^2.0.1",
+    "yamljs": ">=0.2.7",
+    "del": "^2.2.0",
+    "imagemin-pngquant": "^4.2.2",
+    "browser-sync": "~2.12.3",
+    "stream-combiner2": "^1.1.1",
+    "gulp": "github:gulpjs/gulp#4.0",
+    "gulp-htmlmin": "^1.3.0",
+    "gulp-clean-css": ">=2.0.7",
+    "gulp-uglify": ">=1.1.0",
+    "gulp-svgmin": ">=1.2.2",
+    "gulp-imagemin": "^2.2.1",
+    "gulp-autoprefixer": "^3.1.0",
+    "gulp-svgstore": "^6.0.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sourcemaps": ">=2.0.0-alpha",
+    "gulp-notify": "2"
+  }
+}
