@@ -1,6 +1,6 @@
 <?php
 
-use data\DB;
+use Data\DB;
 
 class Data {
   static function import($file, $settings) {

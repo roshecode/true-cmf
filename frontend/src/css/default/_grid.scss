@@ -1,5 +1,10 @@
 $column-width: 100% / $grid-columns;
 
+[class*=#{$grid-column-name}-] {
+  float: left;
+  width: 100%;
+}
+
 @for $i from $grid-columns to 0 {
   .#{$grid-column-name}-#{nth($grid-breakpoints-names, 1)}-#{$i} {
     width: $column-width * $i;
@@ -31,16 +36,17 @@ $column-width: 100% / $grid-columns;
   }
 }
 
-.#{$grid-row-name} {
-  margin: 0 (-$grid-columns-margin);
-  //background: repeating-linear-gradient(to right, silver 0, silver $column-width, lightgray $column-width, lightgray $column-width * 2);
-}
+.#{$grid-row-name} { @extend %clearfix;
+  //margin: 0 (-$grid-columns-margin);
 
-[class*=#{$grid-column-name}-] {
-  float: left;
+  //background: repeating-linear-gradient(to right, silver 0, silver $column-width, lightgray $column-width, lightgray $column-width * 2);
 }
 
 .container {
   margin: auto;
+  padding: 0 $grid-columns-margin;
+}
+
+.container-fluid {
   padding: 0 $grid-columns-margin;
 }

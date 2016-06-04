@@ -1,3 +1,14 @@
-AddDefaultCharset utf-8
 php_flag magic_quotes_gpc Off
-ErrorDocument 404 /page404.html
+#ErrorDocument 404 /page404.html
+
+# CHarset configuration
+AddDefaultCharset utf-8
+
+RewriteEngine On
+
+#Rewrite rules
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-l
+
+RewriteRule ^(.+)$ index.php

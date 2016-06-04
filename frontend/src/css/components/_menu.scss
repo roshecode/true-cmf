@@ -1,0 +1,23 @@
+.block__menu {
+  text-align: center;
+  background: indianred;
+
+  > li {
+    float: left;
+
+    > a {
+      text-transform: uppercase;
+      padding: 1rem .5rem;
+      color: white;
+
+      > i {
+        margin-right: .5rem;
+      }
+    }
+
+    &:hover, &.active {
+      background: #d18380;
+      //background: green;
+    }
+  }
+}

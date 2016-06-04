@@ -1,0 +1,62 @@
+header {
+  text-align: center;
+  //padding: 2rem 0;
+  background: silver;
+  color: #404040;
+}
+
+.block__brand {
+  //margin: -2rem 0;
+}
+
+.block__callback {
+  //font-size: 1.2rem;
+  padding: 2.299rem 0;
+
+  > .field {
+    display: block;
+    margin: 0 auto;
+
+    > .field__icon {
+      //float: left;
+    }
+
+    > .field__button {
+      text-transform: uppercase;
+    }
+  }
+}
+
+.block__phones {
+  padding: 1.5rem 0;
+
+  > .field__phone {
+    text-align: left;
+    padding: .1rem 0;
+
+    > .field__operator {
+      text-align: left;
+
+      &:after {
+        content: ': ';
+      }
+    }
+  }
+}
+
+.block__cart {
+  padding: 2.5rem 0;
+
+  background: gray;
+}
+
+.block__user {
+  padding: 2rem 0;
+
+  &:before {
+    content: '';
+    //display: inline-block;
+    //height: 100%;
+    //vertical-align: middle;
+  }
+}
