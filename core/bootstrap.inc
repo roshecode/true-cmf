@@ -4,7 +4,6 @@ function autoload($class)
 {
 //  $file = __DIR__ . '/classes/' . str_replace('\\', '/', strtolower($class)) . '.php';
   $file = __DIR__ . '/classes/' . str_replace('\\', '/', lcfirst($class)) . '.php';
-  echo $file;
   if (file_exists($file)) {
     require_once $file;
   }

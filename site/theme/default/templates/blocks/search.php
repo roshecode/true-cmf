@@ -1,0 +1,1 @@
+<?php echo 'SEARCH_BLOCK';

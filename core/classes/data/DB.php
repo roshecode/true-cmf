@@ -68,7 +68,8 @@ class DB {
   public function queryMap($query)
   {
 //    return $this->_dbh->query($query)->fetchAll(PDO::FETCH_CLASS, get_called_class());
-    return $this->_dbh->query($query, PDO::FETCH_CLASS, get_called_class());
+    return $this->_dbh->query($query)->fetchAll(PDO::FETCH_CLASS, get_called_class());
+//    return $this->_dbh->query($query, PDO::FETCH_CLASS, get_called_class());
   }
   public function queryMapData($query, $data)
   {

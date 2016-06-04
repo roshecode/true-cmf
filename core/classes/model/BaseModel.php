@@ -13,10 +13,14 @@ abstract class BaseModel {
   protected static $_table = 'unknown';
   protected $_data = [];
   
-  public static function init()
-  {
+//  public static function init()
+//  {
+//    self::$_db = DB::getInstance();
+//  }
+  public function __construct() {
     self::$_db = DB::getInstance();
   }
+
   public function __set($key, $val)
   {
     $this->_data[$key] = $val;
