@@ -1,6 +1,6 @@
 <?php
 
-namespace Model;
+namespace Models;
 use Data\DB;
 
 /**
@@ -13,13 +13,13 @@ abstract class BaseModel {
   protected static $_table = 'unknown';
   protected $_data = [];
   
-//  public static function init()
-//  {
-//    self::$_db = DB::getInstance();
-//  }
-  public function __construct() {
+  public static function init()
+  {
     self::$_db = DB::getInstance();
   }
+//  public function __construct() {
+//    self::$_db = DB::getInstance();
+//  }
 
   public function __set($key, $val)
   {

@@ -1,9 +1,11 @@
 .block__menu {
+  clear: both;
   text-align: center;
   background: indianred;
 
   > li {
-    float: left;
+    //float: left;
+    font-size: .9rem;
 
     > a {
       text-transform: uppercase;

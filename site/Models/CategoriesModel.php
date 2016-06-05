@@ -1,6 +1,6 @@
 <?php
 
-namespace model;
+namespace Models;
 
 class CategoriesModel extends BaseModel {
   protected static $_table = 'categories';

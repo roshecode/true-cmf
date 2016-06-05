@@ -3,17 +3,14 @@
 function autoload($class)
 {
 //  $file = __DIR__ . '/classes/' . str_replace('\\', '/', strtolower($class)) . '.php';
-  $file = __DIR__ . '/classes/' . str_replace('\\', '/', lcfirst($class)) . '.php';
+  $file = __DIR__ . '/classes/' . lcfirst(str_replace('\\', '/', $class)) . '.php';
   if (file_exists($file)) {
     require_once $file;
   }
   else {
-    $classParts = explode('\\', $class);
-//        $classParts[] = ucfirst(array_pop($classParts));
-    $classParts[0] = __DIR__;
-    $path = implode(DIRECTORY_SEPARATOR, $classParts) . '.php';
-    if (file_exists($path)) {
-      require_once $path;
+    $file = __DIR__ . '/../site/' . /*lcfirst*/(str_replace('\\', '/', $class)) . '.php';
+    if (file_exists($file)) {
+      require_once $file;
     }
   }
 }

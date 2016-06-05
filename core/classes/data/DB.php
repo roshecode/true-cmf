@@ -85,6 +85,7 @@ class DB {
     $this->prepare('INSERT INTO ' . $table .
       '(' . implode(',', array_keys($data)) . ')' .
       ' VALUES (?' . str_repeat(',?', count($data) - 1) . ')');
+//    print_r(array_values($data));
 //    return $this->execute(array_values($data));
 //    return self::$_instance->execute(array_values($data));
     return self::$_instance->execute(array_values($data));
@@ -94,18 +95,41 @@ class DB {
     if (file_exists($file) && is_readable($file)) {
       if ($fh = fopen($file, "rb")) {
         $delimiter = $settings['delimiter'];
-        $i = 0;
+        $categoryIndex = 0;
+        $vendorIndex = 0;
+        if (!feof($fh)) {
+          fgets($fh);
+        }
         while (!feof($fh)) {
           $row = explode($delimiter, fgets($fh));
+          ?><pre><?php
+          echo $row[3] . PHP_EOL;
+          ?></pre><?php
 
           try {
             $this->insert('categories', [
-              'id' => ++$i,
+              'id' => ++$categoryIndex,
               'name' => preg_split('/(\s[a-zA-Z])|([,;:])/', $row[3])[0]
             ]);
           } catch (PDOException $e) {
-            --$i;
+            --$categoryIndex;
           }
+          try {
+            $this->insert('vendor', [
+              'id' => ++$vendorIndex,
+              'name' => $row[1]
+            ]);
+          } catch (PDOException $e) {
+            --$vendorIndex;
+          }
+          $this->insert('products', [
+            'code' => $row[0],
+            'vendor_id' => $vendorIndex,
+            'category_id' => $categoryIndex,
+            'name' => $row[2],
+            'description' => $row[3],
+            'price' => intval($row[4])
+          ]);
         }
       }
       else echo "Ошибка при открытии файла!";

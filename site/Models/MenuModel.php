@@ -1,6 +1,6 @@
 <?php
 
-namespace model;
+namespace Models;
 
 class MenuModel extends BaseModel {
   protected static $_table = 'menu';
