@@ -20,7 +20,7 @@ class BaseView implements \Iterator {
 //    foreach ($this->data as $key => $val) {
 //      $$key = $val;
 //    }
-    include TEMPLATE . static::$_template;
+    include TEMPLATE . '/' . static::$_template;
   }
 
   public function current()

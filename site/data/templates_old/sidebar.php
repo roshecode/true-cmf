@@ -1,4 +1,4 @@
-<aside class="c-m-3" style="background-color: #d1c8c3;">
+<aside class="c-m-3">
   <div class="block__search">
     <input type="search" placeholder="Поиск по коду..." />
   </div>
@@ -6,6 +6,7 @@
     <ul>
       <?php foreach (\Views\SidebarView::$items as $item): ?>
         <li>
+<!--          <i class="fa fa-gear" style="float: left;"></i>-->
           <a href="<?= HOME ?>/category/<?= $item->id ?>"><?= $item->name ?></a>
         </li>
       <?php endforeach; ?>

@@ -1,0 +1,14 @@
+{#{% extends 'header.php.twig' %}#}
+
+{#{% block menu %}#}
+    <menu class="r block__menu">
+        {% for item in menu_items %}
+            <li class="c-m-2 {#{{ active }}#}">
+                <a href="{{ home + item.id }}">
+                    <i class="fa fa-{{ item.icon }} fa-lg"></i>
+                    <span>{{ item.text }}</span>
+                </a>
+            </li>
+        {% endfor %}
+    </menu>
+{#{% endblock %}#}

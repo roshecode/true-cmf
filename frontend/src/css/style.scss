@@ -5,7 +5,16 @@
 
 @import "components/header";
 @import "components/menu";
+@import "components/footer";
+@import "components/sidebar";
+@import "components/content";
 
 //i {
 //  float: left;
 //}
+
+body {
+  font-family: 'Roboto Condensed', sans-serif;
+  //padding: 0 1.5rem;
+  background: #F1F1F1;
+}

@@ -1,0 +1,46 @@
+.block__content {
+  padding: 1rem;
+  background: white;
+  color: #444;
+
+  //> h1, div {
+  > h1 {
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  > div {
+    text-align: center;
+  }
+
+  > table {
+    width: 100%;
+    color: #444;
+
+    td {
+      padding: .5rem;
+    }
+
+    > thead {
+      text-transform: uppercase;
+      //background: #66625d;
+      background: #E6AE68;
+      //color: #333;
+      color: white;
+    }
+
+    > tbody {
+      tr {
+        &:nth-child(2n) {
+          //background: #d8d8d8;
+          background: #F1F1F1;
+        }
+      }
+
+      .price {
+        min-width: 6rem;
+      }
+
+    }
+  }
+}

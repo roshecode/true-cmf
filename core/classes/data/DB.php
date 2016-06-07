@@ -73,22 +73,37 @@ class DB {
   }
   public function queryMapData($query, $data)
   {
-    return $this->queryData($query, $data)->fetchAll(PDO::FETCH_CLASS, get_called_class());
+//    return $this->queryData($query, $data)->fetchAll(PDO::FETCH_CLASS, get_called_class());
+    return $this->queryData($query, $data)->fetchAll(PDO::FETCH_ASSOC);
   }
 
   public function insert($table, $data) {
-//    $this->_stmt = $this->_dbh->prepare('INSERT INTO ' . $table .
-//      '(' . implode(',', array_keys($data)) . ')' .
-//      ' VALUES (?' . str_repeat(',?', count($data) - 1) . ')');
-//    return $this->_stmt->execute(array_values($data));
-
     $this->prepare('INSERT INTO ' . $table .
       '(' . implode(',', array_keys($data)) . ')' .
       ' VALUES (?' . str_repeat(',?', count($data) - 1) . ')');
-//    print_r(array_values($data));
-//    return $this->execute(array_values($data));
-//    return self::$_instance->execute(array_values($data));
     return self::$_instance->execute(array_values($data));
+  }
+
+  public function select($table, $what, $data) {
+    $this->_stmt = $this->_dbh->prepare('SELECT ' . implode(',', $what) . ' FROM ' . $table .
+      ' WHERE ' . array_keys($data)[0] . '=?');
+    $this->_stmt->execute(array_values($data));
+    return $this->_stmt->fetchAll(PDO::FETCH_ASSOC);
+//    return $this->_stmt->fetchAll(PDO::FETCH_BOUND);
+  }
+
+  public function update($table, $data) {
+    $data = array_reverse($data);
+    $dataKeys = array_keys($data);
+    $matchValue = array_pop($data);
+    $matchName = $dataKeys[count($dataKeys) - 1];
+    array_pop($dataKeys);
+    $this->_stmt = $this->_dbh->prepare('UPDATE ' . $table .
+      ' SET ' . implode('=?,', $dataKeys) . '=? WHERE ' . $matchName . '=?');
+    $data[$matchName] = $matchValue;
+//    print_r($dataKeys);
+//    print_r($data);
+    return $this->_stmt->execute(array_values($data));
   }
 
   public function import($file, $settings) {

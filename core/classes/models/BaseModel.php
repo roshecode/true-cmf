@@ -9,7 +9,7 @@ use Data\DB;
  */
 abstract class BaseModel {
   /** @var DB */
-  private static $_db;
+  protected static $_db;
   protected static $_table = 'unknown';
   protected $_data = [];
   

@@ -1,0 +1,48 @@
+footer {
+  float: left;
+  width: 100%;
+  text-align: center;
+  border-top: solid #cd5c5c;
+  background: #444;
+  color: #bbb;
+
+  > div {
+
+    &:nth-child(2) {
+      border-left: dotted 2px gray;
+      border-right: dotted 2px gray;
+    }
+
+    > h3 {
+      text-transform: uppercase;
+      padding: 1rem;
+      color: #EAEAEA;
+      //border-bottom: solid .1rem silver;
+      //text-decoration: underline;
+    }
+
+    > nav > a {
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    a, span, p {
+      font-size: .9rem;
+      padding: .25rem;
+    }
+  }
+
+  > .rights {
+    clear: both;
+    background: #2D2D2D;
+  }
+}
+
+.block__phones {
+  > .field__phone {
+    > .field__operator {
+      text-align: right;
+    }
+  }
+}

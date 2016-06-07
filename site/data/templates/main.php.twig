@@ -1,0 +1,11 @@
+{% extends 'html.php.twig' %}
+
+{% block main %}
+    {% include 'header.php.twig' %}
+    <div class="content">
+        {% include 'sidebar.php.twig' %}
+        {% block page %}
+        {% endblock %}
+    </div>
+    {% include 'footer.php.twig' %}
+{% endblock %}

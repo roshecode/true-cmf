@@ -4,8 +4,13 @@
   background: indianred;
 
   > li {
+    box-sizing: border-box;
     //float: left;
-    font-size: .9rem;
+    //font-size: .9rem;
+    padding-bottom: .3rem;
+    //border-bottom: solid .3rem transparent;
+    border-top: solid .3rem transparent;
+    transition: border-color .2s, background-color .2s;
 
     > a {
       text-transform: uppercase;
@@ -18,8 +23,10 @@
     }
 
     &:hover, &.active {
-      background: #d18380;
-      //background: green;
+      background: #A54141;
+      //border-bottom-color: #ffdd51;
+      border-top-color: #ffdd51;
+      //background: linear-gradient(#ac4d4d, indianred);
     }
   }
 }

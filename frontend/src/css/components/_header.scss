@@ -1,7 +1,7 @@
 header {
   text-align: center;
   //padding: 2rem 0;
-  background: silver;
+  //background: silver;
   color: #404040;
 }
 
@@ -19,6 +19,9 @@ header {
 
     > .field__icon {
       //float: left;
+      padding: .1rem .2rem;
+      background: #ddd;
+      color: indianred;
     }
 
     > .field__button {
@@ -45,9 +48,11 @@ header {
 }
 
 .block__cart {
-  padding: 2.5rem 0;
-
-  background: gray;
+  padding: .5rem 0;
+  background: #ABABAB;
+  color: white;
+  border-bottom-left-radius: 10%;
+  border-bottom-right-radius: 10%;
 }
 
 .block__user {

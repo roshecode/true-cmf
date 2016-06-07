@@ -1,0 +1,21 @@
+aside {
+  padding: 1.5rem;
+  //background: red;
+  color: #444;
+}
+
+.block__categories {
+  padding: 1rem 0;
+
+  > ul {
+    > li {
+      &:nth-child(2n) {
+        background: #DEDEDE;
+      }
+
+      > a {
+        padding: .25rem;
+      }
+    }
+  }
+}
