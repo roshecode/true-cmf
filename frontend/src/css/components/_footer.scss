@@ -2,11 +2,12 @@ footer {
   float: left;
   width: 100%;
   text-align: center;
-  border-top: solid #cd5c5c;
+  border-top: solid .4rem #cd5c5c;
   background: #444;
   color: #bbb;
 
   > div {
+    margin: 1rem 0;
 
     &:nth-child(2) {
       border-left: dotted 2px gray;
@@ -21,7 +22,7 @@ footer {
       //text-decoration: underline;
     }
 
-    > nav > a {
+    a {
       &:hover {
         text-decoration: underline;
       }
@@ -37,12 +38,8 @@ footer {
     clear: both;
     background: #2D2D2D;
   }
-}
 
-.block__phones {
-  > .field__phone {
-    > .field__operator {
-      text-align: right;
-    }
+  .block__phones {
+    padding: 0;
   }
 }

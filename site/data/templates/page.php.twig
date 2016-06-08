@@ -1,8 +1,8 @@
 {% extends 'main.php.twig' %}
 
-{% block page %}
+{% block main_content %}
   <div class="c-m-9 block__content">
-    <h1>{{ title }}</h1>
-    {{ text|raw }}
+    <h1>{{ page.title }}</h1>
+    {{ page.text|raw }}
   </div>
 {% endblock %}

@@ -38,9 +38,23 @@
       }
 
       .price {
-        min-width: 6rem;
+        min-width: 7rem;
+        color: #A54141;
       }
 
+      .quantity {
+        margin-right: .3rem;
+        padding: 0;
+        width: 2rem;
+      }
+
+      .add-to-cart {
+        min-width: 5rem;
+
+        > label {
+          float: left;
+        }
+      }
     }
   }
 }

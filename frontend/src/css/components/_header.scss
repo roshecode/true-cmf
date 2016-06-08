@@ -38,7 +38,9 @@ header {
     padding: .1rem 0;
 
     > .field__operator {
-      text-align: left;
+      text-align: right;
+      line-height: 1;
+      padding-right: .25rem;
 
       &:after {
         content: ': ';
@@ -53,6 +55,10 @@ header {
   color: white;
   border-bottom-left-radius: 10%;
   border-bottom-right-radius: 10%;
+
+  p {
+    padding: 0;
+  }
 }
 
 .block__user {

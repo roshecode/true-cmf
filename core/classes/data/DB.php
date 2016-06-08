@@ -49,8 +49,11 @@ class DB {
     return self::$_instance;
   }
 
-  public function prepare($query)
-  {
+  public function lastInsertId($name = null) {
+    return intval($this->_dbh->lastInsertId($name));
+  }
+
+  public function prepare($query) {
     $this->_stmt = $this->_dbh->prepare($query);
   }
 
@@ -68,7 +71,7 @@ class DB {
   public function queryMap($query)
   {
 //    return $this->_dbh->query($query)->fetchAll(PDO::FETCH_CLASS, get_called_class());
-    return $this->_dbh->query($query)->fetchAll(PDO::FETCH_CLASS, get_called_class());
+    return $this->_dbh->query($query)->fetchAll(PDO::FETCH_ASSOC);
 //    return $this->_dbh->query($query, PDO::FETCH_CLASS, get_called_class());
   }
   public function queryMapData($query, $data)
@@ -77,20 +80,44 @@ class DB {
     return $this->queryData($query, $data)->fetchAll(PDO::FETCH_ASSOC);
   }
 
+  private function str_insert($table, &$data) {
+    return
+      'INSERT INTO ' . $table . '(' . implode(',', array_keys($data)) . ')' .
+      ' VALUES (?' . str_repeat(',?', count($data) - 1) . ')';
+  }
+
+  private function str_leftJoin($select, $leftTable, $rightTable, $matches) {
+    return 'SELECT ' . implode(',', $select) . ' FROM ' . $leftTable . ' LEFT JOIN ' . $rightTable .
+    ' ON ' . $leftTable . '.' . array_keys($matches)[0] . '=' . $rightTable . '.' . array_values($matches)[0];
+  }
+
   public function insert($table, $data) {
-    $this->prepare('INSERT INTO ' . $table .
-      '(' . implode(',', array_keys($data)) . ')' .
-      ' VALUES (?' . str_repeat(',?', count($data) - 1) . ')');
+    $this->prepare($this->str_insert($table, $data));
     return self::$_instance->execute(array_values($data));
   }
 
-  public function select($table, $what, $data) {
+  public function select($what, $table, $data) {
     $this->_stmt = $this->_dbh->prepare('SELECT ' . implode(',', $what) . ' FROM ' . $table .
       ' WHERE ' . array_keys($data)[0] . '=?');
     $this->_stmt->execute(array_values($data));
     return $this->_stmt->fetchAll(PDO::FETCH_ASSOC);
 //    return $this->_stmt->fetchAll(PDO::FETCH_BOUND);
   }
+
+  public function selectAll($table) {
+    return $this->queryMap('SELECT * FROM ' . $table);
+  }
+
+  public function leftJoin($select, $leftTable, $rightTable, $matches, $condition = 'AND') {
+    return $this->queryMap($this->str_leftJoin($select, $leftTable, $rightTable, $matches));
+  }
+
+  public function leftJoinCond($select, $leftTable, $rightTable, $matches, $cond) {
+    return $this->queryMapData($this->str_leftJoin($select, $leftTable, $rightTable, $matches) .
+      ' WHERE ' . array_keys($cond)[0] . '=?', array_values($cond));
+  }
+
+//  public selectRange($what, $table, $)
 
   public function update($table, $data) {
     $data = array_reverse($data);
@@ -105,50 +132,14 @@ class DB {
 //    print_r($data);
     return $this->_stmt->execute(array_values($data));
   }
+  
+  public function save($table, $data, $duplicate = ['id' => 'id']) {
+    return $this->queryData($this->str_insert($table, $data) .
+      ' ON DUPLICATE KEY UPDATE ' .
+      array_keys($duplicate)[0] . '=' . array_values($duplicate)[0], array_values($data));
+  }
 
-  public function import($file, $settings) {
-    if (file_exists($file) && is_readable($file)) {
-      if ($fh = fopen($file, "rb")) {
-        $delimiter = $settings['delimiter'];
-        $categoryIndex = 0;
-        $vendorIndex = 0;
-        if (!feof($fh)) {
-          fgets($fh);
-        }
-        while (!feof($fh)) {
-          $row = explode($delimiter, fgets($fh));
-          ?><pre><?php
-          echo $row[3] . PHP_EOL;
-          ?></pre><?php
-
-          try {
-            $this->insert('categories', [
-              'id' => ++$categoryIndex,
-              'name' => preg_split('/(\s[a-zA-Z])|([,;:])/', $row[3])[0]
-            ]);
-          } catch (PDOException $e) {
-            --$categoryIndex;
-          }
-          try {
-            $this->insert('vendor', [
-              'id' => ++$vendorIndex,
-              'name' => $row[1]
-            ]);
-          } catch (PDOException $e) {
-            --$vendorIndex;
-          }
-          $this->insert('products', [
-            'code' => $row[0],
-            'vendor_id' => $vendorIndex,
-            'category_id' => $categoryIndex,
-            'name' => $row[2],
-            'description' => $row[3],
-            'price' => intval($row[4])
-          ]);
-        }
-      }
-      else echo "Ошибка при открытии файла!";
-      fclose($fh);
-    }
+  public function getIdOfName($table, $match) {
+    return self::select(['id'], $table, ['name' => $match])[0]['id'];
   }
 }

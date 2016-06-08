@@ -6,8 +6,8 @@
   <div class="c-s-4">
     <h3>Информация</h3>
     <nav>
-      {% for item in menu_items %}
-        <a href="{{ home + item.id }}">{{ item.text }}</a>
+      {% for item in menu_links %}
+        <a href="{{ home }}/page/{{ item.id }}">{{ item.text }}</a>
       {% endfor %}
     </nav>
   </div>
@@ -16,15 +16,15 @@
     <div class="block__phones">
       <div class="r field__phone">
         <span class="c-t-5 field__operator">Kyivstar</span>
-        <a href="tel:+380975343332">+38 (097) 534 33 32</a>
+        <a href="tel:+380975343332" class="c-t-7"> +38 (097) 534 33 32</a>
       </div>
       <div class="r field__phone">
         <span class="c-t-5 field__operator">MTS</span>
-        <a href="tel:+380665713332">+38 (066) 571 33 32</a>
+        <a href="tel:+380665713332" class="c-t-7"> +38 (066) 571 33 32</a>
       </div>
       <div class="r field__phone">
         <span class="c-t-5 field__operator">Life</span>
-        <a href="tel:+380935203332">+38 (093) 520 33 32</a>
+        <a href="tel:+380935203332" class="c-t-7"> +38 (093) 520 33 32</a>
       </div>
     </div>
   </div>

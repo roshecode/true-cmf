@@ -4,10 +4,11 @@
   </div>
   <div class="block__categories">
     <ul>
-    {% for category in categories %}
-        <li>
-<!--          <i class="fa fa-gear" style="float: left;"></i>-->
-          <a href="{{ home }}/category/{{ category.id }}">{{ category.name }}</a>
+    {% for key, category in categories %}
+        <li class="{{ category.active ? 'active' }}">
+            {#<i class="fa fa-gear" style="float: left;"></i>#}
+          {#<a href="{{ home }}/product/{{ category.id }}?i={{ key }}">{{ category.name }}</a>#}
+          <a href="{{ home }}/product/{{ category.id }}?i={{ key }}">{{ category.name }}</a>
         </li>
       {% endfor %}
     </ul>

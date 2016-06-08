@@ -31,11 +31,13 @@ abstract class BaseModel {
   }
   public static function getAll()
   {
-    return self::$_db->queryMap('SELECT * FROM ' . static::$_table);
+//    return self::$_db->queryMap('SELECT * FROM ' . static::$_table);
+    return self::$_db->selectAll(static::$_table);
   }
   public static function get($id)
   {
-    return self::$_db->queryMapData('SELECT * FROM ' . static::$_table .' WHERE id = ?', [$id])[0];
+//    return self::$_db->queryMapData('SELECT * FROM ' . static::$_table .' WHERE id = ?', [$id])[0];
+    return self::$_db->select(['*'], static::$_table , ['id' => $id])[0];
   }
   public static function removeAll()
   {

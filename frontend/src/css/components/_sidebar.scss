@@ -13,6 +13,11 @@ aside {
         background: #DEDEDE;
       }
 
+      &.active {
+        background: indianred;
+        color: white;
+      }
+
       > a {
         padding: .25rem;
       }

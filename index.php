@@ -10,38 +10,45 @@ $twig = new Twig_Environment($loader, array(
   'cache' => SITE . '/compilation_cache',
   'auto_reload' => true
 ));
+$filter = new Twig_SimpleFilter('correctEnd', function($val, $zero, $one, $two) {
+  echo \Tools\Functions::correctEnd($val, $zero, $one, $two);
+});
+$twig->addFilter($filter);
 
-$twig->render('test.php.twig', ['text' => 'HEllo world!!!']);
-
-$url = str_replace('/' . DOMAIN . '/', '', $_SERVER['REQUEST_URI']);
+//$url = $_SERVER['REQUEST_URI'];
+$url = str_replace('/' . DOMAIN, '', $_SERVER['REQUEST_URI']);
 $controllers = explode('/', $url);
+array_shift($controllers);
 $action = array_pop($controllers);
 $view = array_pop($controllers);
 
-//print_r($controllers);
-//print_r($view);
-//print_r($action);
-
 if (empty($controllers)) {
-  $controllers[0] = 'home';
-//  if (!$controllers[0]) {
-//    $controllers[0] = 'home';
-//  }
+  $controllers = 'front';
+} else {
+  $controllers = $controllers[0];
 }
 if (!$view) {
   $view = 'page';
 }
 if (!$action) {
-  $action = 'home';
+  $action = 0;
 }
+//\Tools\Functions::printr($controllers);
+//\Tools\Functions::printr($view);
+//\Tools\Functions::printr($action);
 
-$session = \Data\Session::getInstance();
+$session = \Data\Session::employ([
+  'products' => [],
+  'productsCount' => 0,
+  'totalCost' => 0
+]);
+//\Tools\Functions::printr($_SESSION);
+//\Data\Session::destroy();
 \Models\BaseModel::init();
 
-$controllerName = '\\Controllers\\' . ucfirst($controllers[0]) . 'Controller';
+$controllerName = '\\Controllers\\' . ucfirst($controllers) . 'Controller';
 $controller = new $controllerName($twig);
-$actionMethod = 'action' . ucfirst($view);
+$actionMethod = 'act' . ucfirst(strtolower($view));
 $controller->$actionMethod($action);
 
 //\Data\Transfer::import('test.csv', ['delimiter' => '&']);
-//include TEMPLATE . '/html.php';

@@ -1,0 +1,30 @@
+<div class="block_cart">
+    <table>
+        <thead>
+        <tr>
+            <td>Код</td>
+            <td>Поставщик</td>
+            <td>Название</td>
+            <td>Описание</td>
+            {#<td>Цена, грн.</td>#}
+            <td>Цена</td>
+            <td>Удалить</td>
+        </tr>
+        </thead>
+        <tbody>
+        {% for product in cart %}
+            <tr>
+                <td>{{ product.code }}</td>
+                <td>{{ product.vendor }}</td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.description }}</td>
+                <td class="price">{{ product.price }} грн.</td>
+            </tr>
+        {% endfor %}
+            <tr>
+                <td colspan="4">Общая стоимость: </td>
+                <td>{{ totalCost }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
