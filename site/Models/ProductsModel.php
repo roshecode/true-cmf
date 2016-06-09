@@ -4,9 +4,8 @@ namespace Models;
 
 class ProductsModel extends BaseModel {
   protected static $_table = 'products';
-  
-  public static function get($category) {
-//    return self::$_db->select(['*'], static::$_table, ['category_id' => $category]);
+
+  protected static function leftJoinCond($cond) {
     return self::$_db->leftJoinCond([
       'products.id',
       'products.code',
@@ -14,7 +13,19 @@ class ProductsModel extends BaseModel {
       'products.name',
       'products.description',
       'products.price',
-    ], static::$_table, 'vendors', ['vendor_id' => 'id'], ['category_id' => $category]);
+    ], static::$_table, 'vendors', ['vendor_id' => 'id'], $cond);
+  }
+
+  public static function get($id) {
+    return static::leftJoinCond(['products.id' => $id])[0];
+  }
+
+  public static function getWithCategory($category) {
+    return static::leftJoinCond(['category_id' => $category]);
+  }
+
+  public static function getWithCode($code) {
+    return static::leftJoinCond(['code' => $code]);
   }
 
   public static function getPrice($product_id) {

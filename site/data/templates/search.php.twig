@@ -1,4 +1,4 @@
-{#<div class="block__content">#}
+{#<div class="c-m-9 block__content">#}
     <table>
         <thead>
         <tr>
@@ -8,29 +8,25 @@
             <td>Описание</td>
             {#<td>Цена, грн.</td>#}
             <td>Цена</td>
-            <td>Кол-во</td>
-            <td>Стоимость</td>
-            <td>Удалить</td>
+            <td>Купить</td>
         </tr>
         </thead>
         <tbody>
-        {% for product in cart %}
+        {% for product in products %}
             <tr>
                 <td>{{ product.code }}</td>
                 <td>{{ product.vendor }}</td>
                 <td>{{ product.name }}</td>
                 <td>{{ product.description }}</td>
                 <td class="price">{{ product.price }} грн.</td>
-                <td>x{{ product.quantity }}</td>
-                <td>{{ product.summary }} грн.</td>
-                <td class="remove"><i class="fa fa-close fa-lg"></i></td>
+                <td class="add-to-cart">
+                    <label>x<input class="quantity" type="number" value="1" min="1" max="99" /></label>
+                    <a class="field_add-button" href="{{ home }}/addtocart/{{ product.id }}">
+                        <i class="fa fa-shopping-cart fa-lg"></i>
+                    </a>
+                </td>
             </tr>
         {% endfor %}
-            <tr>
-                <td colspan="5">Общая стоимость: </td>
-                <td>x{{ session.productsCount }}</td>
-                <td>{{ session.totalCost }} грн.</td>
-            </tr>
         </tbody>
     </table>
 {#</div>#}

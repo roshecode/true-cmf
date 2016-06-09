@@ -2,6 +2,8 @@
 
 namespace Data;
 
+use Tools\Functions;
+
 class Session {
   const SESSION_STARTED = TRUE;
   const SESSION_NOT_STARTED = FALSE;
@@ -12,26 +14,27 @@ class Session {
   // THE only instance of the class
   private static $instance;
 
-  private function __construct($data) {
-//    if ($data) {
-      foreach ($data as $key => $value) {
-        $_SESSION[$key] = $value;
-      }
-//    }
-  }
+  private function __construct() {}
 
   public static function employ($data = null) {
     if (!isset(self::$instance)) {
 //      session_start();
-      self::$instance = new self($data);
+      self::$instance = new self();
     }
-    self::$instance->start();
+    self::$instance->start($data);
     return self::$instance;
   }
 
-  public static function start() {
+  public static function start($data = null) {
     if (self::$sessionState == self::SESSION_NOT_STARTED) {
       self::$sessionState = session_start();
+//      Functions::printr($_SESSION);
+//      if (!isset($_SESSION)) {
+      if (empty($_SESSION)) {
+        foreach ($data as $key => $value) {
+          $_SESSION[$key] = $value;
+        }
+      }
     }
     return self::$sessionState;
   }
@@ -47,6 +50,13 @@ class Session {
   public static function get($name, $ifNotExistReturn = null) {
     if (isset($_SESSION[$name])) {
       return $_SESSION[$name];
+    }
+    return $ifNotExistReturn;
+  }
+
+  public static function getAll($ifNotExistReturn = null) {
+    if (isset($_SESSION)) {
+      return $_SESSION;
     }
     return $ifNotExistReturn;
   }

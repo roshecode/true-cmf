@@ -40,12 +40,11 @@ class FrontController extends BaseController {
   public function actProduct($category) {
     $this->data['categories'][$_GET['i']]['active'] = true;
 //    $this->data['categories'][$_POST['i']]['active'] = true;
-    $this->data['products'] = ProductsModel::get($category);
+    $this->data['products'] = ProductsModel::getWithCategory($category);
     echo $this->templateParser->render('products.php.twig', $this->data);
   }
 
   public function actAddToCart($product_id) {
-//    Functions::printr($_GET);
 //    $products = Session::getReference('products');
     if ($_GET['x'] < 0) $_GET['x'] = 0;
     $products = Session::get('products');
@@ -60,6 +59,23 @@ class FrontController extends BaseController {
     $response['productsCount'] = Functions::correctEnd(Session::get('productsCount'), ' товаров', ' товар', ' товара');
     $response['totalCost'] = Session::get('totalCost') . '  грн.';
     echo json_encode($response);
+  }
+
+  public function actSearch($code) {
+    $this->data['products'] = ProductsModel::getWithCode(Functions::leaveLettersAndNumbers($code));
+    echo $this->templateParser->render('search.php.twig', $this->data);
+  }
+  
+  public function actCart() {
+    $products = [];
+    $i = 0;
+    foreach (Session::get('products') as $productId => $quantity) {
+      $products[$i] = ProductsModel::get($productId);
+      $products[$i]['quantity'] = $quantity;
+      $products[$i]['summary'] = $products[$i]['price'] * $quantity;
+      ++$i;
+    }
+    echo $this->templateParser->render('cart.php.twig', ['cart' => $products, 'session' => Session::getAll()]);
   }
 }
 

@@ -15,12 +15,17 @@ $filter = new Twig_SimpleFilter('correctEnd', function($val, $zero, $one, $two) 
 });
 $twig->addFilter($filter);
 
-//$url = $_SERVER['REQUEST_URI'];
-$url = str_replace('/' . DOMAIN, '', $_SERVER['REQUEST_URI']);
+//$url = strtok($_SERVER["REQUEST_URI"], '?');
+$url = str_replace('/' . DOMAIN, '', strtok($_SERVER["REQUEST_URI"], '?'));
 $controllers = explode('/', $url);
 array_shift($controllers);
+$countControllers = count($controllers);
+$action = 0;
 $action = array_pop($controllers);
 $view = array_pop($controllers);
+if ($countControllers < 2) {
+  $view = $action;
+}
 
 if (empty($controllers)) {
   $controllers = 'front';
@@ -30,9 +35,10 @@ if (empty($controllers)) {
 if (!$view) {
   $view = 'page';
 }
-if (!$action) {
-  $action = 0;
-}
+//if (!$action) {
+//  $action = 0;
+//}
+
 //\Tools\Functions::printr($controllers);
 //\Tools\Functions::printr($view);
 //\Tools\Functions::printr($action);

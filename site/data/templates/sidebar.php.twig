@@ -1,7 +1,9 @@
 <aside class="c-m-3">
-  <div class="block__search">
-    <input type="search" placeholder="Поиск по коду..." />
-  </div>
+    <div class="block__search">
+        <input type="search" placeholder="Поиск по коду..." />
+        <input type="submit" value="Поиск" />
+        {#<a class="submit">Поиск</a>#}
+    </div>
   <div class="block__categories">
     <ul>
     {% for key, category in categories %}

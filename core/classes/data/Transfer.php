@@ -21,7 +21,7 @@ class Transfer {
 //          ++$i;
           $row = explode($delimiter, fgets($fh));
           $vendor = trim($row[1]);
-          $category = trim(Functions::replaceEnToRus($row[3]));
+          $category = trim(Functions::replaceSameLettersEnToRus($row[3]));
           echo $category;
 
           $dbh->save('vendors', ['name' => $vendor]);
@@ -37,7 +37,7 @@ class Transfer {
 //          ], ['category' => 'category']);
 
           $dbh->insert('products', [
-            'code' => preg_replace ('/[^a-zA-ZА-Яа-я0-9]/', '', $row[0]),
+            'code' => Functions::leaveLettersAndNumbers($row[0]),
             'vendor_id' => $dbh->getIdOfName('vendors', $vendor),
             'category_id' => $dbh->getIdOfName('categories', $category),
             'name' => $row[2],

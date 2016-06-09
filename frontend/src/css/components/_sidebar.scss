@@ -4,6 +4,12 @@ aside {
   color: #444;
 }
 
+.block__search {
+  > input[type=submit] {
+    min-width: 6.8193356990814203988371389186795rem;
+  }
+}
+
 .block__categories {
   padding: 1rem 0;
 

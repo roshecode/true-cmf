@@ -19,7 +19,11 @@ class Functions {
     echo '</pre>' . PHP_EOL;
   }
 
-  public static function replaceEnToRus($str) {
+  public static function leaveLettersAndNumbers($str) {
+    return preg_replace ('/[^a-zA-ZА-Яа-я0-9]/', '', $str);
+  }
+
+  public static function replaceSameLettersEnToRus($str) {
     return strtr(preg_split('/(\s[a-zA-Z])|([,;:])/', $str)[0],
 //      'aeopcyxABEHOPCTX', 'аеорсухАВЕНОРСТХ');
       [
