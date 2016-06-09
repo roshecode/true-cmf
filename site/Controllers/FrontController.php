@@ -75,7 +75,13 @@ class FrontController extends BaseController {
       $products[$i]['summary'] = $products[$i]['price'] * $quantity;
       ++$i;
     }
-    echo $this->templateParser->render('cart.php.twig', ['cart' => $products, 'session' => Session::getAll()]);
+    if (isset($_GET['part'])) {
+      if ($_GET['part']) {
+        echo $this->templateParser->render('cart.php.twig', ['cart' => $products, 'session' => Session::getAll()]);
+      }
+    } else {
+      echo 'FULL';
+    }
   }
 }
 
