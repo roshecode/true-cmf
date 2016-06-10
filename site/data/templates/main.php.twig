@@ -4,8 +4,11 @@
     {% include 'header.php.twig' %}
     <div class="content">
         {% include 'sidebar.php.twig' %}
-        {% block main_content %}
-        {% endblock %}
+        {#{% block main_content %}#}
+        {#{% endblock %}#}
+        <div class="c-m-9 block__content">
+            {% include content %}
+        </div>
     </div>
     {% include 'footer.php.twig' %}
 {% endblock %}

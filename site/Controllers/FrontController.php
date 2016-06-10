@@ -31,17 +31,31 @@ class FrontController extends BaseController {
     $this->data['categories'] = CategoriesModel::getAll();
   }
 
+  protected function display($template, $vars) {
+    if (isset($_GET['part']) && $_GET['part']) {
+//      $this->templateParser->loadTemplate('main_part.php.twig');
+    } else {
+//      $this->templateParser->loadTemplate('main.php.twig');
+      $vars['content'] = $template . '.php.twig';
+      $template = 'main';
+    }
+    $th = $this->templateParser->loadTemplate($template . '.php.twig');
+    $th->display($vars);
+  }
+
   public function actPage($page) {
     if ($page > 0) $this->data['menu_links'][$page - 1]['active'] = true;
     $this->data['page'] = PageModel::get($page);
-    echo $this->templateParser->render('page.php.twig', $this->data);
+//    echo $this->templateParser->render('page.php.twig', $this->data);
+    $this->display('page', $this->data);
   }
 
   public function actProduct($category) {
-    $this->data['categories'][$_GET['i']]['active'] = true;
+//    $this->data['categories'][$_GET['i']]['active'] = true;
 //    $this->data['categories'][$_POST['i']]['active'] = true;
     $this->data['products'] = ProductsModel::getWithCategory($category);
-    echo $this->templateParser->render('products.php.twig', $this->data);
+//    echo $this->templateParser->render('products.php.twig', $this->data);
+    $this->display('products', $this->data);
   }
 
   public function actAddToCart($product_id) {
@@ -63,7 +77,8 @@ class FrontController extends BaseController {
 
   public function actSearch($code) {
     $this->data['products'] = ProductsModel::getWithCode(Functions::leaveLettersAndNumbers($code));
-    echo $this->templateParser->render('search.php.twig', $this->data);
+//    echo $this->templateParser->render('search.php.twig', $this->data);
+    $this->display('products', $this->data);
   }
   
   public function actCart() {
@@ -75,13 +90,7 @@ class FrontController extends BaseController {
       $products[$i]['summary'] = $products[$i]['price'] * $quantity;
       ++$i;
     }
-    if (isset($_GET['part'])) {
-      if ($_GET['part']) {
-        echo $this->templateParser->render('cart.php.twig', ['cart' => $products, 'session' => Session::getAll()]);
-      }
-    } else {
-      echo 'FULL';
-    }
+    $this->display('cart', ['cart' => $products, 'session' => Session::getAll()]);
   }
 }
 

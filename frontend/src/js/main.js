@@ -1,33 +1,24 @@
 // var $ = document;
+var t = {};
 +function($) {
     // let home = 'http://work/avtomagazin.dp.ua';
     // let home = 'http://avto.emis.net.ua';
-    let home = window.location.protocol + '//' + window.location.host + '/avtomagazin.dp.ua';
 
-    let placeholder_productsCount = $.querySelector('.block__cart > .field > p');
-    let placeholder_totalCost = $.querySelector('.block__cart > .field > .total-cost');
-    let placeholder_content = $.querySelector('.block__content');
-    let buttons_addToCart = $.querySelectorAll('.field_add-button');
-    let button_showCart = $.querySelector('.block__cart');
-    let button_search = $.querySelector('.block__search > input[type=submit]');
-    let value_search = $.querySelector('.block__search > input[type=search]');
-
-    let lastUrl = window.location.pathname;
-    let skip = false;
-    var changeUrlListener = function() {
-        let url = window.location.pathname;
-        // console.log('CURR URL: ' + url);
-        if (url != lastUrl && !t.ajax.skip) {
-            lastUrl = url;
-            t.ajax.skip = true;
-            console.log('changed');
-            // console.log('LAST URL: ' + lastUrl);
-            content.views[content.data.view]();
-        }
+    t.data = {
+        home: window.location.protocol + '//' + window.location.host + '/avtomagazin.dp.ua',
+        placeholder_productsCount: $.querySelector('.block__cart > .field > p'),
+        placeholder_totalCost: $.querySelector('.block__cart > .field > .total-cost'),
+        placeholder_content: $.querySelector('.block__content'),
+        // buttons_page: $.querySelectorAll('.block__menu > li > a'),
+        buttons_page: $.querySelectorAll('.links_pages a'),
+        buttons_product: $.querySelectorAll('.block__categories > ul > li > a'),
+        // buttons_addToCart: $.querySelectorAll('.field_add-button'),
+        button_home: $.querySelector('.block__brand > a'),
+        button_cart: $.querySelector('.block__cart'),
+        button_search: $.querySelector('.block__search > input[type=submit]'),
+        value_search: $.querySelector('.block__search > input[type=search]')
     };
-    setInterval(changeUrlListener, 1000);
-
-    var t = {};
+    
     t.ajax = function(params) {
         // alert(params.url + params.data);
         let type = params.type || 'GET',
@@ -59,18 +50,6 @@
         request = null;
     };
 
-    t.smartAjax = function(params, skip = true) {
-        history.pushState({}, '', params.url);
-        t.ajax.skip = skip;
-        params.url = params.url + '?part=1';
-        t.ajax(params);
-    };
-
-    t.setUrl = function(view, data) {
-        content.data.view = view || home;
-        history.pushState({}, '', home + '/' + view + (data ? '/' + data : ''));
-    };
-
     t.replaceScript = function (oldSrc, newSrc) {
         let oldScript = $.querySelector('script[src="' + oldSrc + '"]');
         let newScript = $.createElement('script');
@@ -83,62 +62,84 @@
         t.replaceScript(src, src);
     };
 
-    // This object contains content showing functions
-    let content = { data: {} };
-    content.views = {
-        home: function (full) {
-            alert('home');
-        },
-        cart: function (full) {
-            t.smartAjax({
-                type: 'GET',
-                url: home + '/cart',
-                success: function (msg) {
-                    placeholder_content.innerHTML = msg;
-                }
-            });
-        },
-        search: function (full) {
-            t.smartAjax({
-                type: 'GET',
-                url: home + '/search/' + value_search.value,
-                success: function(msg) {
-                    placeholder_content.innerHTML = msg;
-                    t.updateScript(home + '/frontend/build/js/main.js');
-                }
-            })
-        }
+    t.one = function(node, type, callback) {
+        // create event
+        node.addEventListener(type, function(e) {
+            // remove event
+            e.target.removeEventListener(e.type, arguments.callee);
+            // call handler
+            return callback(e);
+        });
     };
 
-    for (let i = 0; i < buttons_addToCart.length; ++i) {
-        buttons_addToCart[i].addEventListener('click', function(e) {
+    t.data.button_home.onclick = function (e) {
+        e.preventDefault();
+        History.pushState(null, 'Главная | Автомагазин', this.getAttribute('href'));
+    };
+
+    for (let i = 0; i < t.data.buttons_page.length; ++i) {
+        t.data.buttons_page[i].onclick = function(e) {
             e.preventDefault();
-            t.ajax({
-                type: 'GET',
-                url: e.target.parentNode.getAttribute('href'),
-                data: '?x=' + e.target.parentNode.parentNode.querySelector('.quantity').value,
-                dataType: 'json',
-                success: function(msg) {
-                    placeholder_productsCount.innerHTML = msg.productsCount;
-                    placeholder_totalCost.innerHTML = msg.totalCost;
-                }
-            });
-        });
+            History.pushState(null, this.innerText, this.getAttribute('href'));
+        };
     }
 
-    button_showCart.addEventListener('click', function(e) {
-        
-        content.views.cart();
-        // t.setUrl('cart');
-    });
+    for (let i = 0; i < t.data.buttons_product.length; ++i) {
+        t.data.buttons_product[i].onclick = function(e) {
+            e.preventDefault();
+            History.pushState(null, this.innerText, this.getAttribute('href'));
+        };
+    }
 
-    button_search.addEventListener('click', function(e) {
-        // skip = true;
+    function addToCart() {
+        // alert('connect');
+        let buttons_addToCart = $.querySelectorAll('.field_add-button');
+        for (let i = 0; i < buttons_addToCart.length; ++i) {
+            // buttons_addToCart[i].addEventListener('click', function(e) {
+            buttons_addToCart[i].onclick = function(e) {
+                e.preventDefault();
+                t.ajax({
+                    type: 'GET',
+                    url: this.getAttribute('href'),
+                    data: '?x=' + this.parentNode.querySelector('.quantity').value,
+                    dataType: 'json',
+                    success: function(msg) {
+                        t.data.placeholder_productsCount.innerHTML = msg.productsCount;
+                        t.data.placeholder_totalCost.innerHTML = msg.totalCost;
+                    }
+                });
+            };
+        }
+    }
+    addToCart();
+
+    t.data.button_cart.onclick = function(e) {
         e.preventDefault();
-        // history.pushState({}, 'TEST', home + '/search/' + value_search.value);
-        // content.views.search();
-        // t.setUrl('search', value_search.value);
-        content.views.search();
+        History.pushState(null, 'Корзина', this.getAttribute('href'));
+    };
+
+    t.data.button_search.onclick = function(e) {
+        e.preventDefault();
+        History.pushState(null, 'Результат поиска', t.data.home + '/search/' +
+            t.data.value_search.value.replace(/[^a-zA-Z0-9]/g, ''));
+        t.ajax.updateScript = true;
+    };
+
+    History.Adapter.bind(window, 'statechange', function(){ // Note: We are using statechange instead of popstate
+        t.ajax({
+            type: 'GET',
+            url: History.getState().url + '?part=1',
+            success: function(msg) {
+                t.data.placeholder_content.innerHTML = msg;
+                // eval(t.data.placeholder_content.getElementsByTagName('script')[0].innerText);
+                // eval('+' + addToCart.toString() + '()');
+                addToCart();
+
+                // jQuery(t.data.placeholder_content).html(msg);
+                // if (t.ajax.updateScript) t.updateScript(src);
+                // t.updateScript(home + '/frontend/build/js/main.js');
+            }
+        })
     });
 
     // let removeProductFromCart

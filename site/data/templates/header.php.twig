@@ -26,13 +26,13 @@
         <a href="tel:+380935203332">+38 (093) 520 33 32</a>
       </div>
     </div>
-    <div class="c-t-6 c-m-3 os-l-8 c-l-2 os-h-0 c-h-1 block__cart">
+    <a href="{{ home }}/cart" class="c-t-6 c-m-3 os-l-8 c-l-2 os-h-0 c-h-1 block__cart">
       <div class="field">
         <i class="fa fa-shopping-cart fa-3x"></i>
         <p>{{ session.productsCount|correctEnd(' товаров', ' товар', ' товара') }}</p>
         <p class="total-cost">{{ session.totalCost }} грн.</p>
       </div>
-    </div>
+    </a>
     <div class="c-t-6 c-m-3 c-l-2 c-h-1 block__user">
       <div class="field"><a href="#">Вход</a></div>
       <div class="field"><a href="#">Регистрация</a></div>

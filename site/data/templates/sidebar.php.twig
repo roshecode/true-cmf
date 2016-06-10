@@ -7,10 +7,11 @@
   <div class="block__categories">
     <ul>
     {% for key, category in categories %}
-        <li class="{{ category.active ? 'active' }}">
+        {#<li class="{{ category.active ? 'active' }}">#}
+        <li>
             {#<i class="fa fa-gear" style="float: left;"></i>#}
           {#<a href="{{ home }}/product/{{ category.id }}?i={{ key }}">{{ category.name }}</a>#}
-          <a href="{{ home }}/product/{{ category.id }}?i={{ key }}">{{ category.name }}</a>
+          <a href="{{ home }}/product/{{ category.id }}">{{ category.name }}</a>
         </li>
       {% endfor %}
     </ul>
