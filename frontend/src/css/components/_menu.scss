@@ -6,22 +6,26 @@
   background: indianred;
 
   > li {
+    float: left;
     box-sizing: border-box;
     //float: left;
     //font-size: .9rem;
-    padding-bottom: .3rem;
+    //padding-bottom: .3rem;
     //border-bottom: solid .3rem transparent;
     //border-top: solid .3rem transparent;
-    background: linear-gradient(to right bottom, #B36161 10%, #CD5C5C 50%);
-    transition: border-color .2s, background-color .2s;
+    border-right: solid 1px #943D3D;
+    //background: linear-gradient(to right bottom, #B36161 10%, #CD5C5C 50%);
 
     > a {
       display: table;
       font-size: 1.2rem;
       font-weight: bold;
-      text-transform: uppercase;
+      //text-transform: uppercase;
+      //padding: .5rem;
       //height: 3.8rem;
+      background: url('http://work/avtomagazin.dp.ua/site/data/img/bg-texture-00.svg');
       color: white;
+      transition: border-color .2s, background-color .2s;
 
       //&:before {
       //  content: '';
@@ -30,7 +34,19 @@
       //  height: 100%;
       //}
 
+      &:hover, &.active {
+        background: #A54141 url('http://work/avtomagazin.dp.ua/site/data/img/bg-texture-00.svg');
+        //border-bottom-color: #ffdd51;
+        //border-top-color: #ffdd51;
+        //background: linear-gradient(#ac4d4d, indianred);
+
+        > span {
+          width: 12rem;
+        }
+      }
+
       > i {
+        float: left;
         //margin-right: .5rem;
         border-radius: 50%;
         margin: .5rem;
@@ -40,18 +56,20 @@
       }
 
       > span {
-        display: table-cell;
-        vertical-align: middle;
+        text-transform: uppercase;
+        //display: table-cell;
+        //display: none;
+        overflow: hidden;
+        float: left;
+        white-space: nowrap;
+        //vertical-align: middle;
         text-align: center;
-        width: 100%;
+        padding: 1rem 0;
+        //width: 100%;
+        width: 0;
+        color: #f1f1f1;
+        transition: width .6s;
       }
-    }
-
-    &:hover, &.active {
-      background: #A54141;
-      //border-bottom-color: #ffdd51;
-      //border-top-color: #ffdd51;
-      //background: linear-gradient(#ac4d4d, indianred);
     }
   }
 }

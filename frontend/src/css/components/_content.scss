@@ -24,7 +24,8 @@
     > thead {
       text-transform: uppercase;
       //background: #66625d;
-      background: #E6AE68;
+      //background: #E6AE68;
+      background: #BD8465;
       //color: #333;
       color: white;
     }
@@ -48,6 +49,10 @@
         width: 2rem;
       }
 
+      .cart-quantity {
+        min-width: 4.5rem;
+      }
+
       .add-to-cart {
         min-width: 5rem;
 
@@ -55,6 +60,33 @@
           float: left;
         }
       }
+
+      .price, .summary, .cart-quantity {
+        text-align: right;
+      }
     }
+
+    > tfoot {
+      > .summary {
+        background: #F9CF94;
+      }
+
+      .element_products-count, .element_total-cost {
+        text-align: right;
+      }
+    }
+
+    .remove {
+      text-align: center;
+    }
+  }
+
+  > a {
+    float: right;
+    text-transform: uppercase;
+    margin-top: .5rem;
+    padding: 1rem;
+    background: #D25757;
+    color: white;
   }
 }

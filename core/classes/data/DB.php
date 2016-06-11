@@ -8,6 +8,7 @@ use PDOStatement;
 class DB {
   private $_dbh;
   private $_stmt;
+  private $_pre;
   /**
    * @var DB|PDOStatement
    */
@@ -77,10 +78,11 @@ class DB {
   public function queryMapData($query, $data)
   {
 //    return $this->queryData($query, $data)->fetchAll(PDO::FETCH_CLASS, get_called_class());
+//    return $this->queryData(($this->_pre ? $this->_pre : '') . $query, $data)->fetchAll(PDO::FETCH_ASSOC);
     return $this->queryData($query, $data)->fetchAll(PDO::FETCH_ASSOC);
   }
 
-  private function str_insert($table, &$data) {
+  private function str_insert($table, $data) {
     return
       'INSERT INTO ' . $table . '(' . implode(',', array_keys($data)) . ')' .
       ' VALUES (?' . str_repeat(',?', count($data) - 1) . ')';
@@ -89,6 +91,10 @@ class DB {
   private function str_leftJoin($select, $leftTable, $rightTable, $matches) {
     return 'SELECT ' . implode(',', $select) . ' FROM ' . $leftTable . ' LEFT JOIN ' . $rightTable .
     ' ON ' . $leftTable . '.' . array_keys($matches)[0] . '=' . $rightTable . '.' . array_values($matches)[0];
+  }
+
+  public function set($name, $value) {
+    $this->_pre = 'SET @' . $name . '=' . $value . ';';
   }
 
   public function insert($table, $data) {
@@ -104,6 +110,10 @@ class DB {
 //    return $this->_stmt->fetchAll(PDO::FETCH_BOUND);
   }
 
+  public function selectAllOrderBy($table, $order) {
+    return $this->queryMap('SELECT * FROM ' . $table . ' ORDER BY ' . $order);
+  }
+
   public function selectAll($table) {
     return $this->queryMap('SELECT * FROM ' . $table);
   }
@@ -113,6 +123,11 @@ class DB {
   }
 
   public function leftJoinCond($select, $leftTable, $rightTable, $matches, $cond) {
+    return $this->queryMapData($this->str_leftJoin($select, $leftTable, $rightTable, $matches) .
+      ' WHERE ' . array_keys($cond)[0] . '=?', array_values($cond));
+  }
+
+  public function leftJoinCondRange($select, $leftTable, $rightTable, $matches, $cond, $range) {
     return $this->queryMapData($this->str_leftJoin($select, $leftTable, $rightTable, $matches) .
       ' WHERE ' . array_keys($cond)[0] . '=?', array_values($cond));
   }

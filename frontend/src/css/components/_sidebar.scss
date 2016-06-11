@@ -15,17 +15,27 @@ aside {
 
   > ul {
     > li {
+      //background: #cccccc;
+
       &:nth-child(2n) {
         background: #DEDEDE;
       }
 
-      &.active {
-        background: indianred;
-        color: white;
-      }
-
       > a {
         padding: .25rem;
+        transition: padding-left .4s, background .2s, color .2s;
+
+        &:hover {
+          background: #bbbbbb;
+          color: #f1f1f1;
+          padding-left: 1rem;
+        }
+
+        &.active {
+          padding-left: 1rem;
+          background: indianred;
+          color: white;
+        }
       }
     }
   }

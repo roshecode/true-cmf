@@ -3,8 +3,8 @@
 {#{% block menu %}#}
     <menu class="r block__menu links_pages">
         {% for item in menu_links %}
-            <li class="c-m-2 {{ item.active ? 'active' }}">
-                <a href="{{ home }}/page/{{ item.id }}">
+            <li>
+                <a data-title="{{ item.text }}" href="{{ home }}/page/{{ item.id }}">
                     <i class="fa fa-{{ item.icon }} fa-lg"></i>
                     <span>{{ item.text }}</span>
                 </a>

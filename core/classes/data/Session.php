@@ -44,7 +44,15 @@ class Session {
   }
 
   public static function add($name , $value) {
-    $_SESSION[$name] += $value;
+//    return $_SESSION[$name] += $value;
+    return $_SESSION[$name] = round($_SESSION[$name] + $value, 2);
+//    return $_SESSION[$name] = gmp_add($_SESSION[$name], $value);
+  }
+
+  public static function sub($name , $value) {
+//    return $_SESSION[$name] -= $value;
+    return $_SESSION[$name] = round($_SESSION[$name] - $value, 2);
+//    return $_SESSION[$name] = gmp_sub($_SESSION[$name], $value);
   }
 
   public static function get($name, $ifNotExistReturn = null) {

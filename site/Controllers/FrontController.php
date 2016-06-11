@@ -51,8 +51,10 @@ class FrontController extends BaseController {
   }
 
   public function actProduct($category) {
+    $this->data['categories'][CategoriesModel::getOrderWithId($category) - 1]['active'] = true;
 //    $this->data['categories'][$_GET['i']]['active'] = true;
 //    $this->data['categories'][$_POST['i']]['active'] = true;
+//    $category_id = CategoriesModel::getIdWithOrder($category);
     $this->data['products'] = ProductsModel::getWithCategory($category);
 //    echo $this->templateParser->render('products.php.twig', $this->data);
     $this->display('products', $this->data);
@@ -90,7 +92,32 @@ class FrontController extends BaseController {
       $products[$i]['summary'] = $products[$i]['price'] * $quantity;
       ++$i;
     }
-    $this->display('cart', ['cart' => $products, 'session' => Session::getAll()]);
+    $this->data['cart'] = $products;
+    $this->data['session'] = Session::getAll();
+    $this->display('cart', $this->data);
+  }
+
+  public function actRemove($product_id) {
+    if ($product_id == 'all') {
+      Session::put('products', []);
+      Session::put('productsCount', 0);
+      Session::put('totalCost', 0);
+      $response['productsCount'] = 0 . ' товаров';
+      $response['totalCost'] = 0 . ' грн.';
+      echo json_encode($response);
+    } else {
+      $_SESSION['productsCount'] -= $_SESSION['products'][$product_id];
+      $totalCost = $_SESSION['products'][$product_id] * ProductsModel::getPrice($product_id);
+      Session::sub('totalCost', $totalCost);
+      unset($_SESSION['products'][$product_id]);
+      $response['productsCount'] = Functions::correctEnd(Session::get('productsCount'), ' товаров', ' товар', ' товара');
+      $response['totalCost'] = Session::get('totalCost') . '  грн.';
+      echo json_encode($response);
+    }
+  }
+
+  public function actOrder() {
+    echo 'Coming soon..';
   }
 }
 

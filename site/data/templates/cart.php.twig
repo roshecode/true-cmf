@@ -21,16 +21,26 @@
                 <td>{{ product.name }}</td>
                 <td>{{ product.description }}</td>
                 <td class="price">{{ product.price }} грн.</td>
-                <td>x{{ product.quantity }}</td>
-                <td>{{ product.summary }} грн.</td>
-                <td class="remove"><i class="fa fa-close fa-lg"></i></td>
+                <td class="cart-quantity">x{{ product.quantity }}</td>
+                {#<td><label>x<input class="quantity" type="number" value="{{ product.quantity }}" min="1" max="99" /></label></td>#}
+                <td class="summary">{{ product.summary }} грн.</td>
+                <td class="remove">
+                    <a href="{{ home }}/remove/{{ product.id }}"><i class="fa fa-close fa-lg"></i></a>
+                </td>
             </tr>
         {% endfor %}
-            <tr>
-                <td colspan="5">Общая стоимость: </td>
-                <td>x{{ session.productsCount }}</td>
-                <td>{{ session.totalCost }} грн.</td>
-            </tr>
         </tbody>
+        <tfoot>
+            <tr class="summary">
+                <td colspan="5">Общая стоимость: </td>
+                <td class="element_products-count">x{{ session.productsCount }}</td>
+                <td class="element_total-cost">{{ session.totalCost }} грн.</td>
+                <td class="remove">
+                    <a href="{{ home }}/remove/all"><i class="fa fa-close fa-lg"></i></a>
+                </td>
+            </tr>
+        </tfoot>
     </table>
+    {#<input type="submit" value="Оформить заказ" />#}
+    <a href="{{ home }}/order">Оформить заказ</a>
 {#</div>#}

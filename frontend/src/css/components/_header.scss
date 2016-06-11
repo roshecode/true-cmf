@@ -2,16 +2,32 @@ header {
   text-align: center;
   //padding: 2rem 0;
   //background: silver;
-  color: #404040;
+  background: #444 url('http://work/avtomagazin.dp.ua/site/data/img/bg-texture-00.svg');
+  color: #f1f1f1;
+  //color: #404040;
 }
 
 .block__brand {
   //margin: -2rem 0;
+  //-webkit-filter: invert(90%);
+
+  h1 {
+    text-transform: uppercase;
+    padding: 2rem 2rem 0;
+    font-size: 3.5rem;
+    color: indianred;
+  }
+
+  p {
+    text-transform: uppercase;
+    letter-spacing: 1rem;
+  }
 }
 
 .block__callback {
   //font-size: 1.2rem;
   padding: 2.299rem 0;
+  color: #444;
 
   > .field {
     display: block;
@@ -52,10 +68,13 @@ header {
 .block__cart {
   cursor: pointer;
   padding: .5rem 0;
-  background: #ABABAB;
+  //background: #ABABAB;
+  background: #CD5C5C;
   color: white;
   border-bottom-left-radius: 10%;
   border-bottom-right-radius: 10%;
+  border: solid .2rem #f1f1f1;
+  border-top: none;
 
   p {
     padding: 0;

@@ -6,6 +6,7 @@ class ProductsModel extends BaseModel {
   protected static $_table = 'products';
 
   protected static function leftJoinCond($cond) {
+    self::$_db->set('i', 0);
     return self::$_db->leftJoinCond([
       'products.id',
       'products.code',
@@ -18,6 +19,10 @@ class ProductsModel extends BaseModel {
 
   public static function get($id) {
     return static::leftJoinCond(['products.id' => $id])[0];
+  }
+
+  public static function getRage($fromId, $toId) {
+//    return static::leftJoinCond(['products.id' => $id])
   }
 
   public static function getWithCategory($category) {

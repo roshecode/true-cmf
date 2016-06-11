@@ -16,7 +16,7 @@ class Transfer {
         if (!feof($fh)) {
           fgets($fh);
         }
-//        $i = 0;
+//        $i = 1;
         while (!feof($fh) /*&& $i < 20*/) {
 //          ++$i;
           $row = explode($delimiter, fgets($fh));
@@ -30,7 +30,7 @@ class Transfer {
 //            'name' => $vendor
 //          ], ['vendor' => 'vendor']);
 
-          $dbh->save('categories', ['name' => $category]);
+          $dbh->save('categories', ['`order`' => 0, 'name' => $category]);
 //          $dbh->save('categories', [
 //            'id' => $categoryId,
 //            'name' => $category
@@ -51,5 +51,19 @@ class Transfer {
       }
       fclose($fh);
     }
+  }
+
+  public static function addOrder() {
+    $dbh = DB::getInstance();
+    $categories = $dbh->query('SELECT id FROM categories');
+    $categories = $categories->fetchAll();
+    print_r($categories);
+    foreach ($categories as $index => $category) {
+      $dbh->queryData('UPDATE categories SET `order`=? WHERE id=?',
+        [$index + 1, $category['id']]);
+    }
+//    for ($i = 0; $i < $categories[0]; ++$i) {
+//      $dbh->queryData('INSERT INTO categories (`order`) VALUES (?)', [$i + 1]);
+//    }
   }
 }
