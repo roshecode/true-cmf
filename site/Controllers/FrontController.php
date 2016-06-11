@@ -119,6 +119,20 @@ class FrontController extends BaseController {
   public function actOrder() {
     echo 'Coming soon..';
   }
+
+  public function actCallback($send) {
+    if ($send == 'send') {
+//      echo $_POST['name'];
+//      echo $_POST['phone'];
+      echo 'success';
+    } else {
+      $this->display('callback', $this->data);
+    }
+  }
+
+  public function actError() {
+    $this->display('error', $this->data);
+  }
 }
 
 //$view = new \Views\BaseView(TEMPLATE);

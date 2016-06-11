@@ -55,7 +55,12 @@ $session = \Data\Session::employ([
 $controllerName = '\\Controllers\\' . ucfirst($controllers) . 'Controller';
 $controller = new $controllerName($twig);
 $actionMethod = 'act' . ucfirst(strtolower($view));
-$controller->$actionMethod($action);
+try {
+  $controller->$actionMethod($action);
+} catch (Error $error) {
+//  echo 'Here will be 404 page soon';
+  $controller->actError();
+}
 
 //\Data\Transfer::import('test.csv', ['delimiter' => '&']);
 //\Data\Transfer::addOrder();

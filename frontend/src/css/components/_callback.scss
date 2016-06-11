@@ -1,0 +1,58 @@
+.block_callback-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,.5);
+  transition: all.4s;
+}
+.block_callback {
+  margin: 8% auto;
+  max-width: 20rem;
+  color: indianred;
+  box-shadow: 0 0 10px #444;
+
+  header {
+    background: #585858;
+
+    > i {
+      float: right;
+      padding: .5rem 1rem;
+
+      &:hover {
+        cursor: pointer;
+        background: #616161;
+      }
+    }
+  }
+
+  > form {
+    padding: 1rem;
+    background: #444;
+
+    > label {
+      font-size: 2rem;
+      display: block;
+      width: 100%;
+
+      > input {
+        float: right;
+        max-width: 18rem;
+        color: #444;
+        box-shadow: 0 0 .3rem #444 inset;
+      }
+    }
+
+    > div {
+
+      > input {
+        display: block;
+        text-transform: uppercase;
+        margin: 1rem auto 0;
+        padding: 1rem;
+        color: #444;
+      }
+    }
+  }
+}
