@@ -15,30 +15,34 @@
     let body = $(document.body), placeholder_content = $('.block__content'),
         ajax = {
             init: () => {
+                ajax.type = 'html';
+                ajax.mods = 'html';
                 ajax.currentLink = ajax.lastLink = $('a[href$="' + window.location.href + '"]').addClass('active');
                 ajax.loader.exist = false;
-                // for (let init in ajax.init) {
-                //     if (ajax.init.hasOwnProperty(init)) {
-                //         ajax.init[init]();
-                //     }
-                // }
-                ajax.init.load('load');
+                for (let init in ajax.init) {
+                    if (ajax.init.hasOwnProperty(init)) {
+                        ajax.init[init]();
+                    }
+                }
+                // ajax.init.load('load');
             },
-            magic: () => {
-                ajax.type = ajax.data('type');
-                ajax.putItemsArr = ajax.data('to').split(' ');
-                ajax.putNodesArr = $.each(ajax.putItemsArr, (index, value) => {
+            prepare: () => {
+                ajax.putItems = ajax.data('to'  ).split(' ') || null;
+                ajax.putNodes = $.each(ajax.putItems, (index, value) => {
+                    ajax.mods[index] = ajax.mods;
                     return '[data-ajax-put*="' + value + '"]';
                 });
+                ajax.type = ajax.data('type');
+                ajax.mods = ajax.data('mod' ).split(' ') || ajax.mods;
             },
             put: (msg) => {
                 if (ajax.type == 'json') {
-                    $(ajax.putNodesArr).each((index) => {
-                        $(this).html(msg[$.camelCase(ajax.putItemsArr(index))]);
+                    $.each(ajax.putNodes, (index) => {
+                        $(this)[ajax.mods[index]](msg[$.camelCase(ajax.putItems(index))]);
                     });
                 } else {
-                    $.each(ajax.putNodesArr, (index) => {
-                        $(this).html(msg);
+                    $.each(ajax.putNodes, (index) => {
+                        $(this)[ajax.mods[index]](msg);
                     });
                 }
             },
@@ -61,7 +65,7 @@
     };
 
     $.extend(ajax.init, {
-        load: (name, group = false) => {
+        load: () => {
             $('a[data-ajax="load"]').click(function (e) {
                 e.preventDefault();
                 ajax.currentLink = $(this);
@@ -78,7 +82,8 @@
         loadGroup: () => {
             $('a[data-ajax="load-group"]').click(function (e) {
                 e.preventDefault();
-                ajax.currentLink = $(e.target.tagName == 'A' ? e.target : $(e.target).parent('a'));
+                // ajax.currentLink = $(e.target.tagName == 'A' ? e.target : $(e.target).parent('a'));
+                ajax.currentLink = $(e.target).closest('a');
                 ajax.toggleLoader();
                 $.ajax(ajax.ref(ajax.currentLink.attr('href')), {
                     success: (msg) => {
@@ -90,30 +95,26 @@
             });
         },
         link: () => {
-            $('a[data-ajax="link"]').click(function (e) {
+            $('[data-ajax="link"]').click(function (e) {
                 e.preventDefault();
-                ajax.currentLink = $(this);
-                History.pushState(null, ajax.currentLink.attr('data-title') || ajax.currentLink.text(),
-                    ajax.currentLink.attr('href'));
-            });
-        },
-        linkGroup: () => {
-            $('[data-ajax="link-group"]').click(function (e) {
-                e.preventDefault();
-                if (this.tagName != e.target.tagName) {
-                    ajax.currentLink = $(e.target.tagName == 'A' ? e.target : $(e.target).parent('a'));
+                // ajax.currentLink = $(this);
+                ajax.currentLink = $(e.target).closest('a');
+                ajax.currentLink.attr('href') ?
                     History.pushState(null, ajax.currentLink.attr('data-title') || ajax.currentLink.text(),
-                        ajax.currentLink.attr('href'));
-                }
+                    ajax.currentLink.attr('href')) : 0;
             });
         },
+        // linkGroup: () => {
+        //     $('[data-ajax="link-group"]').click(function (e) {
+        //         e.preventDefault();
+        //         ajax.currentLink = $(e.target).closest('a');
+        //         ajax.currentLink.attr('href') ?
+        //             History.pushState(null, ajax.currentLink.attr('data-title') || ajax.currentLink.text(),
+        //                 ajax.currentLink.attr('href')) : 0;
+        //     });
+        // },
         form: () => {
-            $('form[data-ajax="form"]').click(function (e) {
-                e.preventDefault();
-            });
-        },
-        formSearch: () => {
-            $('form[data-ajax="form-search"]').click(function (e) {
+            $('form[data-ajax="form"]').submit(function (e) {
                 e.preventDefault();
             });
         }

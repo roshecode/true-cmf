@@ -1,7 +1,7 @@
 {#{% extends 'header.php.twig' %}#}
 
 {#{% block menu %}#}
-    <menu data-ajax="link-group" class="r block__menu links_pages">
+    <menu data-ajax="link" class="r block__menu links_pages">
         {% for item in menu_links %}
             <li>
                 <a data-title="{{ item.text }}" href="{{ home }}/page/{{ item.id }}">

@@ -9,8 +9,9 @@
       </a>
     </div>
     <div class="c-s-6 c-m-4 c-l-3 c-h-2 block__callback">
-      <a data-ajax     ="load"
+      <a data-ajax="load"
          data-ajax-init="form"
+         data-ajax-to="callback"
          href="{{ home }}/callback" class="field button_callback">
         <i class="field__icon fa fa-phone-square fa-2x"></i>
         <input type="button" value="Обратный звонок" class="field__button" />
@@ -31,11 +32,13 @@
         <a href="tel:+380935203332">+38 (093) 520 33 32</a>
       </div>
     </div>
-    <a data-ajax="link" data-title="Корзина" href="{{ home }}/cart" class="c-t-6 c-m-3 os-l-8 c-l-2 os-h-0 c-h-1 block__cart">
+    <a data-ajax="link"
+       data-title="Корзина"
+       href="{{ home }}/cart" class="c-t-6 c-m-3 os-l-8 c-l-2 os-h-0 c-h-1 block__cart">
       <div class="field">
         <i class="fa fa-shopping-cart fa-3x"></i>
-        <p data-ajax-put="products-count">{{ session.productsCount|correctEnd(' товаров', ' товар', ' товара') }}</p>
-        <p data-ajax-put="total-cost" class="total-cost">{{ session.totalCost }} грн.</p>
+        <p data-ajax-put="cart-products-count">{{ session.productsCount|correctEnd(' товаров', ' товар', ' товара') }}</p>
+        <p data-ajax-put="cart-total-cost" class="total-cost">{{ session.totalCost }} грн.</p>
       </div>
     </a>
     <div class="c-t-6 c-m-3 c-l-2 c-h-1 block__user">
