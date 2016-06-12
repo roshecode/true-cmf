@@ -2,13 +2,13 @@
 
 {% block main %}
     {% include 'header.php.twig' %}
-    <div data-ajax-put="content callback"
-         data-ajax-mod="html append"
+    <div data-ajax-put="callback"
          class="content">
         {% include 'sidebar.php.twig' %}
         {#{% block main_content %}#}
         {#{% endblock %}#}
-        <div class="c-m-9 block__content">
+        <div data-ajax-put="content"
+             class="c-m-9 block__content">
             {% include content %}
         </div>
     </div>
