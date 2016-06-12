@@ -1,7 +1,9 @@
 <div class="block_callback-wrapper">
     <div class="block_callback">
         <header class="r"><i class="fa fa-close fa-2x"></i></header>
-        <form class="r" action="{{ home }}/callback/send" method="post">
+        <form data-ajax   ="form"
+              data-ajax-to="status"
+              class="r" action="{{ home }}/callback/send" method="post">
             <label for="phone" class="r">
                 <span>Ваш телефон</span>
                 <input type="text" name="phone" />
@@ -10,6 +12,9 @@
                 <span>Ваше имя</span>
                 <input type="text" name="name" />
             </label>
+            <div class="r">
+                <p data-ajax-put="status"></p>
+            </div>
             <div class="r">
                 <input class="button_callback-send" type="submit" value="Перезвоните мне" />
             </div>

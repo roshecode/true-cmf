@@ -5,10 +5,9 @@
   </div>
   <div class="c-s-4">
     <h3>Информация</h3>
-    {#<nav class="links_pages">#}
-    <nav>
+    <nav data-ajax="link-group">
       {% for item in menu_links %}
-        <a href="{{ home }}/page/{{ item.id }}">{{ item.text }}</a>
+        <a data-title="{{ item.text }}" href="{{ home }}/page/{{ item.id }}">{{ item.text }}</a>
       {% endfor %}
     </nav>
   </div>

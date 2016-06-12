@@ -1,17 +1,13 @@
 <aside class="c-m-3">
-    <div class="block__search">
+    <form data-ajax="form-search" data-title="Результаты поиска" class="block__search">
         <input type="search" placeholder="Поиск по коду..." />
         <input type="submit" value="Поиск" />
-        {#<a class="submit">Поиск</a>#}
-    </div>
+    </form>
   <div class="block__categories">
-    <ul>
+    <ul data-ajax="link-group">
     {% for key, category in categories %}
-        {#<li class="{{ category.active ? 'active' }}">#}
         <li>
-            {#<i class="fa fa-gear" style="float: left;"></i>#}
-          {#<a href="{{ home }}/product/{{ category.id }}?i={{ key }}">{{ category.name }}</a>#}
-          <a href="{{ home }}/product/{{ category.id }}">{{ category.name }}</a>
+          <a data-title="{{ category.name }}" href="{{ home }}/product/{{ category.id }}">{{ category.name }}</a>
         </li>
       {% endfor %}
     </ul>

@@ -160,6 +160,11 @@ Object.prototype.assign = function () {
         console.log(this);
     };
 
+    let dataset = q('.region_header').node.dataset;
+    // console.dir(q('.region_header').node.outerHTML.match(/(.+?)&[>]/i));
+    // console.dir(q('.region_header').node.outerHTML.match(/<(.+?)>/i));
+    console.dir(q('.region_header').node.attributes);
+
     // q('header').validation();
 
     // let test = q('.block__content');
