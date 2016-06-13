@@ -22,23 +22,31 @@
 
     let body = $(document.body),
         ajax = {
+            linkChanged: true,
+            initMsg: 'part=1',
             globalInit: (parents) => {
                 ajax.initScripts(body);
-                ajax.lastLink = $('a[href$="' + window.location.href + '"]').addClass('active');
+                ajax.curentLink = ajax.lastLink = $('a[href$="' + window.location.href + '"]').addClass('active');
             },
-            initMsg: 'part=1',
             init: () => {
-                // ajax.globalLink = true;
-                // ajax.nodes = [];
-                // ajax.currentNode
-                // ajax.loader.exist = false;
                 for (let init in ajax.init) {
                     if (ajax.init.hasOwnProperty(init)) {
                         ajax.init[init](body);
                     }
                 }
                 ajax.lastLink = $('a[href$="' + window.location.href + '"]').addClass('active');
-                // ajax.init.load('load');
+            },
+            initScripts: (ctx) => {
+                ctx.find('[data-ajax]').each(function () {
+                    let node = $(this);
+                    (ajax.initEventName = node.data('ajax')) ? ajax.init[ajax.initEventName](this) : 0;
+                    ajax.initScriptNames = node.data('ajax-src');
+                    if (ajax.initScriptNames) {
+                        $.each(ajax.initScriptNames.split(' '), function () {
+                            ajax.scripts[this](node);
+                        });
+                    }
+                });
             },
             loader: $(document.createElement('div')).addClass('ajax-loader'),
             toggleLoader: () => {
@@ -46,28 +54,50 @@
                 ajax.loader.remove() && (ajax.loader.exist = false) :
                 body.append(ajax.loader) && (ajax.loader.exist = true);
             },
+            showLoader: () => {
+                !ajax.loader.exist ? body.append(ajax.loader) && (ajax.loader.exist = true) : 0;
+            },
+            hideLoader: () => {
+                ajax.loader.exist ? ajax.loader.remove() && (ajax.loader.exist = false) : 0;
+            },
             attr: (attr) => {
                 return ajax.currentNode.data('ajax-' + attr);
             },
             createCache: (ctx, index) => {
-                return ajax.nodes[index] = $('[data-ajax-put*="' + ctx + '"]');
+                // return ajax.nodes[index] = $('[data-ajax-put*="' + ctx + '"]');
+                ajax.nodes[index] = $('[data-ajax-put*="' + ctx + '"]');
+                //------------------------------------
+                // console.log('create cahce');
+                // console.log(ajax.nodes[index]);
+                //-------------------------------------
+                return ajax.nodes[index];
             },
-            prepare: (ctx, event, tag) => {
-                // ajax.toggleLoader();
+            prepareLink: (ctx, event, tag) => {
                 event.preventDefault();
                 ajax.currentNode = $(ctx);
                 ajax.currentLink = $(event.target).closest(tag);
+            },
+            prepareData: () => {
                 ajax.type = ajax.attr('type');
                 ajax.lazy = ajax.attr('init');
                 ajax.mods = ajax.attr('mod');
                 ajax.placeholders = ajax.attr('to');
-
                 // If have placeholders - split -it
                 if (ajax.placeholders) {
                     if (ajax.placeholders == ajax.lastPlaceholders) {
-                        ajax.nodesCache = (ctx, index) => { return ajax.nodes[index]; };
+                        ajax.nodesCache = (ctx, index) => {
+                            //------------------------------------
+                            // console.log('use cahce');
+                            // console.log(ajax.nodes[index]);
+                            //----------------------------------
+                            return ajax.nodes[index]; };
                     } else {
+//!!!!!!!!!!!!!!!!!!!!
                         ajax.lastPlaceholders = ajax.placeholders;
+//                         if (ajax.linkChanged) {
+//                             ajax.linkChanged = false;
+//                             ajax.lastPlaceholders = ajax.placeholders;
+//                         }
                         // Clear previous cache
                         ajax.nodes = [];
                         ajax.nodesCache = ajax.createCache;
@@ -77,6 +107,8 @@
                     ajax.placeholders = ['body'];
                     ajax.nodesCache = (ctx) => { return $(ctx); };
                 }
+
+                // console.log(ajax.nodes);
 
                 // If has mods - split them
                 if (ajax.mods) {
@@ -90,23 +122,9 @@
                     ajax.getMods = () => { return ajax.mods; };
                 }
             },
-            initScripts: (ctx) => {
-                ctx.find('[data-ajax]').each(function () {
-
-                    console.log('add event: ' + $(this).data('ajax'));
-
-                    let node = $(this);
-                    (ajax.initEventName = node.data('ajax')) ? ajax.init[ajax.initEventName](this) : 0;
-                    ajax.initScriptNames = node.data('ajax-src');
-                    if (ajax.initScriptNames) {
-                        $.each(ajax.initScriptNames.split(' '), function () {
-
-                            console.log('load script: ' + this);
-
-                            ajax.scripts[this](node);
-                        });
-                    }
-                });
+            prepare: (ctx, event, tag) => {
+                ajax.prepareLink(ctx, event, tag);
+                ajax.prepareData();
             },
             put: (msg) => {
                 // Check content type
@@ -134,6 +152,7 @@
                     data: data || ajax.initMsg,
                     success: ajax.put,
                     error: function(a, b, msg) {
+                        // ajax.hideLoader();
                         console.log('ERROR: ' + msg)
                     }
                 })
@@ -146,7 +165,7 @@
             //     $(this).find('[data-ajax="load"]').click(function (e) {
                 $(parent).click(function (e) {
                     ajax.prepare(this, e, 'a');
-                    ajax.toggleLoader();
+                    // ajax.toggleLoader();
                     ajax.send(ajax.currentLink.attr('href'));
                 });
             // });
@@ -156,7 +175,8 @@
             // $.each(parents, function () {
             //     $(this).find('[data-ajax="link"]').click(function (e) {
                 $(parent).click(function (e) {
-                    ajax.prepare(this, e, 'a');
+                    // ajax.prepare(this, e, 'a');
+                    ajax.prepareLink(this, e, 'a');
                     ajax.currentLink.attr('href') ?
                         History.pushState(null, ajax.currentLink.attr('data-title') || ajax.currentLink.text(),
                             ajax.currentLink.attr('href')) : 0;
@@ -168,17 +188,29 @@
             //     $(this).find('[data-ajax="form"]').submit(function (e) {
                 $(parent).submit(function (e) {
                     ajax.prepare(this, e, 'form');
-                    ajax.toggleLoader();
+                    // ajax.toggleLoader();
                     ajax.send(ajax.currentLink.attr('action'), 'get', ajax.currentLink.serialize() + '&' + ajax.initMsg)
                 });
             // });
         }
     });
 
+    $(document).bind("ajaxSend", function(){
+        // $("#loading").show();
+        ajax.toggleLoader();
+    }).bind("ajaxComplete", function(){
+        // $("#loading").hide();
+        ajax.toggleLoader();
+    });
+
     History.Adapter.bind(window, 'statechange', function(e) { // Note: We are using statechange instead of popstate
         ajax.lastLink.removeClass('active');
         ajax.currentLink = ajax.lastLink = $('a[href$="' + window.location.href + '"]').addClass('active');
-        ajax.toggleLoader();
+        // ajax.toggleLoader();
+
+        // ajax.linkChanged = true;
+        // ajax.prepare(this, null, 'a');
+        ajax.prepareData();
         ajax.send(History.getState().url);
     });
 
@@ -212,7 +244,7 @@
                 }
             });
             $('tfoot .remove').click((e) => {
-                e.preventDefault();
+                // e.preventDefault();
                 cartBody.remove();
             });
         }
