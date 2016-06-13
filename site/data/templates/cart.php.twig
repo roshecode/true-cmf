@@ -1,7 +1,8 @@
 {#<div class="block__content">#}
     <table data-ajax="load"
            data-ajax-type="json"
-           data-ajax-to="products-count count-alone total-cost">
+           data-ajax-to="products-count count-alone total-cost"
+           data-ajax-src="cart">
         <thead>
         <tr>
             <td>Код</td>
@@ -24,7 +25,9 @@
                 <td>{{ product.description }}</td>
                 <td class="price">{{ product.price }} грн.</td>
                 <td class="cart-quantity">x{{ product.quantity }}</td>
-                {#<td><label>x<input class="quantity" type="number" value="{{ product.quantity }}" min="1" max="99" /></label></td>#}
+                {#<td>#}
+                    {#<label>x<input class="quantity" type="number" value="{{ product.quantity }}" min="1" max="99" /></label>#}
+                {#</td>#}
                 <td class="summary">{{ product.summary }} грн.</td>
                 <td class="remove">
                     <a href="{{ home }}/remove/{{ product.id }}"><i class="fa fa-close fa-lg"></i></a>

@@ -22,12 +22,16 @@
 
     let body = $(document.body),
         ajax = {
+            globalInit: (parents) => {
+                ajax.initScripts(body);
+                ajax.lastLink = $('a[href$="' + window.location.href + '"]').addClass('active');
+            },
             initMsg: 'part=1',
             init: () => {
                 // ajax.globalLink = true;
                 // ajax.nodes = [];
                 // ajax.currentNode
-                ajax.loader.exist = false;
+                // ajax.loader.exist = false;
                 for (let init in ajax.init) {
                     if (ajax.init.hasOwnProperty(init)) {
                         ajax.init[init](body);
@@ -42,7 +46,7 @@
                 ajax.loader.remove() && (ajax.loader.exist = false) :
                 body.append(ajax.loader) && (ajax.loader.exist = true);
             },
-            dataAttr: (attr) => {
+            attr: (attr) => {
                 return ajax.currentNode.data('ajax-' + attr);
             },
             createCache: (ctx, index) => {
@@ -53,42 +57,75 @@
                 event.preventDefault();
                 ajax.currentNode = $(ctx);
                 ajax.currentLink = $(event.target).closest(tag);
-                ajax.type = ajax.dataAttr('type');
-                ajax.lazy = ajax.dataAttr('init');
-                ajax.mods = ajax.dataAttr('mod');
-                ajax.placeholders = ajax.dataAttr('to') || 'body';
-                if (ajax.placeholders && (ajax.placeholders !== ajax.lastPlaceholders)) {
-                    ajax.lastPlaceholders = ajax.placeholders;
-                    ajax.nodes = [];
-                    ajax.nodesCache = ajax.createCache;
+                ajax.type = ajax.attr('type');
+                ajax.lazy = ajax.attr('init');
+                ajax.mods = ajax.attr('mod');
+                ajax.placeholders = ajax.attr('to');
+
+                // If have placeholders - split -it
+                if (ajax.placeholders) {
+                    if (ajax.placeholders == ajax.lastPlaceholders) {
+                        ajax.nodesCache = (ctx, index) => { return ajax.nodes[index]; };
+                    } else {
+                        ajax.lastPlaceholders = ajax.placeholders;
+                        // Clear previous cache
+                        ajax.nodes = [];
+                        ajax.nodesCache = ajax.createCache;
+                    }
+                    ajax.placeholders = ajax.placeholders.split(' ');
                 } else {
-                    ajax.nodesCache = (ctx, index) => { return ajax.nodes[index]; };
+                    ajax.placeholders = ['body'];
+                    ajax.nodesCache = (ctx) => { return $(ctx); };
                 }
-                ajax.placeholders = ajax.placeholders.split(' ');
-                if (ajax.mods && (ajax.mods.length == ajax.placeholders.length)) {
+
+                // If has mods - split them
+                if (ajax.mods) {
                     ajax.mods = ajax.mods.split(' ');
-                    ajax.getMods = (index) => { return ajax.mods[index]; };
+                    if (ajax.mods.length == ajax.placeholders.length) {
+                        ajax.getMods = (index) => { return ajax.mods[index]; };
+                    } else {
+                        ajax.getMods = () => { return ajax.mods[0]; };
+                    }
                 } else {
-                    ajax.mods = ajax.mods || 'html';
                     ajax.getMods = () => { return ajax.mods; };
                 }
             },
+            initScripts: (ctx) => {
+                ctx.find('[data-ajax]').each(function () {
+
+                    console.log('add event: ' + $(this).data('ajax'));
+
+                    let node = $(this);
+                    (ajax.initEventName = node.data('ajax')) ? ajax.init[ajax.initEventName](this) : 0;
+                    ajax.initScriptNames = node.data('ajax-src');
+                    if (ajax.initScriptNames) {
+                        $.each(ajax.initScriptNames.split(' '), function () {
+
+                            console.log('load script: ' + this);
+
+                            ajax.scripts[this](node);
+                        });
+                    }
+                });
+            },
             put: (msg) => {
+                // Check content type
                 if (ajax.type === 'json') {
-                    $.each(ajax.placeholders, function (index) {
-                        ajax.nodesCache(this, index)[ajax.getMods(index)](msg[$.camelCase(ajax.placeholders[index])]);
-                        // $('[data-ajax-put*="' + this + '"]').text(msg[$.camelCase(ajax.placeholders[index])]);
-                    });
+                    ajax.mods = ajax.mods || 'text';
+                    ajax.msg = (ctx) => { return msg[$.camelCase(ctx)]; };
                 } else {
-                    $.each(ajax.placeholders, function (index) {
-                        ajax.nodesCache(this , index)[ajax.getMods(index)](msg);
-                        // $('[data-ajax-put*="' + this + '"]')[ajax.getMods(index)](msg);
-                    });
+                    ajax.mods = ajax.mods || 'html';
+                    ajax.msg = () => { return msg; };
                 }
-                ajax.lazy ? $.each(ajax.lazy.split(' '), function () {
-                    ajax.init[$.camelCase(this)](ajax.nodes);
-                }) : 0;
-                ajax.toggleLoader();
+                // Insert content
+                $.each(ajax.placeholders, function (index) {
+                    ajax.nodesCache(this , index)[ajax.getMods(index)](ajax.msg(this));
+                    // $('[data-ajax-put*="' + this + '"]')[ajax.getMods(index)](ajax.msg(this));
+                });
+                // Init logic
+                $.each(ajax.nodes, function () {
+                    ajax.initScripts(this);
+                });
             },
             send: (url, method, data) => {
                 $.ajax(url, {
@@ -104,34 +141,37 @@
         };
 
     $.extend(ajax.init, {
-        load: (parents) => {
-            $.each(parents, function () {
-                $(this).find('[data-ajax="load"]').click(function (e) {
+        load: (parent) => {
+            // $.each(parents, function () {
+            //     $(this).find('[data-ajax="load"]').click(function (e) {
+                $(parent).click(function (e) {
                     ajax.prepare(this, e, 'a');
                     ajax.toggleLoader();
                     ajax.send(ajax.currentLink.attr('href'));
                 });
-            });
+            // });
         },
-        link: (parents) => {
-            ajax.data = ajax.initMsg;
-            $.each(parents, function () {
-                $(this).find('[data-ajax="link"]').click(function (e) {
+        link: (parent) => {
+            // ajax.data = ajax.initMsg;
+            // $.each(parents, function () {
+            //     $(this).find('[data-ajax="link"]').click(function (e) {
+                $(parent).click(function (e) {
                     ajax.prepare(this, e, 'a');
                     ajax.currentLink.attr('href') ?
                         History.pushState(null, ajax.currentLink.attr('data-title') || ajax.currentLink.text(),
                             ajax.currentLink.attr('href')) : 0;
                 });
-            });
+            // });
         },
-        form: (parents) => {
-            $.each(parents, function () {
-                $(this).find('[data-ajax="form"]').submit(function (e) {
+        form: (parent) => {
+            // $.each(parents, function () {
+            //     $(this).find('[data-ajax="form"]').submit(function (e) {
+                $(parent).submit(function (e) {
                     ajax.prepare(this, e, 'form');
                     ajax.toggleLoader();
-                    ajax.send(ajax.currentLink.attr('action'), 'get', ajax.currentLink.serialize() + '&&' + ajax.initMsg)
+                    ajax.send(ajax.currentLink.attr('action'), 'get', ajax.currentLink.serialize() + '&' + ajax.initMsg)
                 });
-            });
+            // });
         }
     });
 
@@ -142,7 +182,7 @@
         ajax.send(History.getState().url);
     });
 
-    
+
     $('footer nav').click(function (e) {
         ajax.globalLink = true;
         $('html, body').animate({
@@ -150,7 +190,8 @@
         }, 300);
     });
 
-    $.extend(ajax.init, {
+    ajax.scripts = {};
+    $.extend(ajax.scripts, {
         callback: () => {
             let callback = $('.block_callback-wrapper');
             callback.click(function () {
@@ -178,5 +219,6 @@
     });
 
 
-    ajax.init();
+    // ajax.init();
+    ajax.globalInit();
 }(jQuery);

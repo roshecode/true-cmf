@@ -16,7 +16,8 @@
       </thead>
       <tbody data-ajax="form"
              data-ajax-type="json"
-             data-ajax-to="products-count total-cost">
+             data-ajax-to="products-count total-cost"
+             data-ajax-mod="append html">
       {% for product in products %}
         <tr>
           <td>{{ product.code }}</td>

@@ -20,7 +20,6 @@ class FrontController extends BaseController {
   protected $data;
 
   public function __construct($templateParser) {
-    global $session;
 //    $this->data['session'] = &$session;
     $this->data['session'] = $_SESSION;
 //    $this->data['session']->products = [];
