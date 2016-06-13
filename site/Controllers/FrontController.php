@@ -105,6 +105,7 @@ class FrontController extends BaseController {
       Session::put('products', []);
       Session::put('productsCount', 0);
       Session::put('totalCost', 0);
+      $response['countAlone'] = 'x0';
       $response['productsCount'] = 0 . ' товаров';
       $response['totalCost'] = 0 . ' грн.';
       echo json_encode($response);
@@ -114,6 +115,7 @@ class FrontController extends BaseController {
       Session::sub('totalCost', $totalCost);
       unset($_SESSION['products'][$product_id]);
       $response['productsCount'] = Functions::correctEnd(Session::get('productsCount'), ' товаров', ' товар', ' товара');
+      $response['countAlone'] = 'x' . Session::get('productsCount');
       $response['totalCost'] = Session::get('totalCost') . '  грн.';
       echo json_encode($response);
     }

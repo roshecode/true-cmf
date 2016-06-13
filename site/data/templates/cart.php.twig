@@ -1,7 +1,7 @@
 {#<div class="block__content">#}
     <table data-ajax="load"
            data-ajax-type="json"
-           data-ajax-to="products-count total-cost">
+           data-ajax-to="products-count count-alone total-cost">
         <thead>
         <tr>
             <td>Код</td>
@@ -35,8 +35,8 @@
         <tfoot>
             <tr class="summary">
                 <td colspan="5">Общая стоимость: </td>
-                <td class="element_products-count">x{{ session.productsCount }}</td>
-                <td class="element_total-cost">{{ session.totalCost }} грн.</td>
+                <td data-ajax-put="count-alone" class="element_products-count">x{{ session.productsCount }}</td>
+                <td data-ajax-put="total-cost" class="element_total-cost">{{ session.totalCost }} грн.</td>
                 <td class="remove">
                     <a href="{{ home }}/remove/all"><i class="fa fa-close fa-lg"></i></a>
                 </td>

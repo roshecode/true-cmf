@@ -4,15 +4,15 @@
       <a data-ajax="link"
          data-ajax-to="content"
          href="{{ home }}">
-        {#<img src="{{ data }}/img/logo.png" alt="Логотип"/>#}
+        <img src="{{ data }}/img/logo.png" alt="Логотип"/>
         {#<i class="fa fa-car fa-4x"></i>#}
-        <h1>avtomagazin.dp.ua</h1>
-        <p>Детали решают всё!!!</p>
+        {#<h1>avtomagazin.dp.ua</h1>#}
+        {#<p>Детали решают всё!!!</p>#}
       </a>
     </div>
     <div class="c-s-6 c-m-4 c-l-3 c-h-2 block__callback">
       <a data-ajax="load"
-         data-ajax-init="form"
+         data-ajax-init="form callback"
          data-ajax-to="content"
          data-ajax-mod="prepend"
          href="{{ home }}/callback" class="field button_callback">
@@ -37,7 +37,7 @@
     </div>
     <a data-ajax="link"
        data-ajax-to="content"
-       data-ajax-init="load"
+       data-ajax-init="load cart"
        data-title="Корзина"
        href="{{ home }}/cart"
        class="c-t-6 c-m-3 os-l-8 c-l-2 os-h-0 c-h-1 block__cart">

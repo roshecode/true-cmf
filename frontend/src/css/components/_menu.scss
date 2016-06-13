@@ -23,7 +23,7 @@
       //text-transform: uppercase;
       //padding: .5rem;
       //height: 3.8rem;
-      background: url('http://work/avtomagazin.dp.ua/site/data/img/bg-texture-00.svg');
+      //background: url('../img/bg-texture-00.svg');
       color: white;
       transition: border-color .2s, background-color .2s;
 
@@ -35,13 +35,13 @@
       //}
 
       &:hover, &.active {
-        background: #A54141 url('http://work/avtomagazin.dp.ua/site/data/img/bg-texture-00.svg');
+        background: #A54141 url('../img/bg-texture-00.svg');
         //border-bottom-color: #ffdd51;
         //border-top-color: #ffdd51;
         //background: linear-gradient(#ac4d4d, indianred);
 
         > span {
-          width: 12rem;
+          //width: 12rem;
         }
       }
 
@@ -66,7 +66,8 @@
         text-align: center;
         padding: 1rem 0;
         //width: 100%;
-        width: 0;
+        //width: 0;
+        width: 12rem;
         color: #f1f1f1;
         transition: width .6s;
       }
