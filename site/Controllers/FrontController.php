@@ -62,23 +62,26 @@ class FrontController extends BaseController {
 
   public function actAddToCart($product_id) {
 //    $products = Session::getReference('products');
-    if ($_GET['x'] < 0) $_GET['x'] = 0;
+//    $fh = fopen('log.txt', 'a+'); fwrite($fh, $product_id . ': ' . $_GET['quantity'] . PHP_EOL);
+    $quantity = $_GET['quantity'];
+    if ($quantity < 0) $quantity = 0;
     $products = Session::get('products');
     if (isset($products[$product_id])) {
-      $products[$product_id] += $_GET['x'];
+      $products[$product_id] += $quantity;
     } else {
-      $products[$product_id] = $_GET['x'];
+      $products[$product_id] = $quantity;
     }
     Session::put('products', $products);
     Session::put('productsCount', Session::countValues('products'));
-    Session::add('totalCost', $_GET['x'] * ProductsModel::getPrice($product_id));
+    Session::add('totalCost', $quantity * ProductsModel::getPrice($product_id));
     $response['productsCount'] = Functions::correctEnd(Session::get('productsCount'), ' товаров', ' товар', ' товара');
     $response['totalCost'] = Session::get('totalCost') . '  грн.';
     echo json_encode($response);
   }
 
   public function actSearch($code) {
-    $this->data['products'] = ProductsModel::getWithCode(Functions::leaveLettersAndNumbers($code));
+//    $this->data['products'] = ProductsModel::getWithCode(Functions::leaveLettersAndNumbers($code));
+    $this->data['products'] = ProductsModel::getWithCode(Functions::leaveLettersAndNumbers($_GET['code']));
 //    echo $this->templateParser->render('search.php.twig', $this->data);
     $this->display('products', $this->data);
   }

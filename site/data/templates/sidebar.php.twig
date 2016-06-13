@@ -1,11 +1,15 @@
 <aside class="c-m-3">
-    <form data-ajax="form-search" data-title="Результаты поиска" class="block__search">
-        <input type="search" placeholder="Поиск по коду..." />
+    <form method="get" action="{{ home }}/search"
+          data-ajax="form"
+          data-ajax-to="content"
+          data-title="Результаты поиска" class="block__search">
+        <input name="code" type="search" placeholder="Поиск по коду..." />
         <input type="submit" value="Поиск" />
     </form>
   <div class="block__categories">
     <ul data-ajax="link"
-        data-ajax-to="content">
+        data-ajax-to="content"
+        data-ajax-init="form">
     {% for key, category in categories %}
         <li>
           <a data-title="{{ category.name }}" href="{{ home }}/product/{{ category.id }}">{{ category.name }}</a>

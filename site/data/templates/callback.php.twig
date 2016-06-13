@@ -13,7 +13,7 @@
                 <input type="text" name="name" />
             </label>
             <div class="r">
-                <p data-ajax-put="status"></p>
+                <h3 data-ajax-put="status"></h3>
             </div>
             <div class="r">
                 <input class="button_callback-send" type="submit" value="Перезвоните мне" />
@@ -21,3 +21,16 @@
         </form>
     </div>
 </div>
+
+<script>
+    var _w = $('.block_callback-wrapper');
+    _w.click(function () {
+        _w.remove();
+    });
+    _w.find('.block_callback').click(function (e) {
+        e.stopPropagation();
+    });
+    _w.find('.block_callback > header > i').click(function () {
+        _w.remove();
+    });
+</script>
