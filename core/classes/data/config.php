@@ -1,5 +1,7 @@
 <?php
 
+//defined(DB_ACCESS) or die('Forbidden');
+
 return array(
   'DB_DRIVER'   => 'mysql',
   'DB_HOST'     => 'localhost',

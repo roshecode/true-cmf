@@ -1,5 +1,5 @@
 <aside class="c-m-3">
-    <form method="get" action="{{ home }}/search"
+    <form method="get" action="/search"
           data-ajax="form"
           data-ajax-to="content"
           data-ajax-init="form"
@@ -13,7 +13,7 @@
         data-ajax-init="form">
     {% for key, category in categories %}
         <li>
-          <a data-title="{{ category.name }}" href="{{ home }}/product/{{ category.id }}">{{ category.name }}</a>
+          <a data-title="{{ category.name }}" href="/product/{{ category.id }}">{{ category.name }}</a>
         </li>
       {% endfor %}
     </ul>

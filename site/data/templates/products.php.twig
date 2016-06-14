@@ -16,8 +16,8 @@
       </thead>
       <tbody data-ajax="form"
              data-ajax-type="json"
-             data-ajax-to="products-count total-cost"
-             data-ajax-mod="append html">
+             data-ajax-to="products-text total-cost"
+             {#data-ajax-mod="append html"#}>
       {% for product in products %}
         <tr>
           <td>{{ product.code }}</td>
@@ -26,7 +26,7 @@
           <td>{{ product.description }}</td>
           <td class="price">{{ product.price }} грн.</td>
           <td class="add-to-cart">
-            <form method="get" action="{{ home }}/addtocart/{{ product.id }}" class="add-to-cart">
+            <form method="get" action="/add/{{ product.id }}" class="add-to-cart">
               <label for="quantity">x<input name="quantity" class="quantity" type="number" value="1" min="1" max="99" /></label>
               <button class='field_add-button'>
                 <i class="fa fa-shopping-cart fa-lg"></i>

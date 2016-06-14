@@ -8,6 +8,8 @@ class Session {
   const SESSION_STARTED = TRUE;
   const SESSION_NOT_STARTED = FALSE;
 
+  private static $initData;
+
   // The state of the session
   private static $sessionState = self::SESSION_NOT_STARTED;
 
@@ -16,7 +18,8 @@ class Session {
 
   private function __construct() {}
 
-  public static function employ($data = null) {
+  public static function init($data = null) {
+    self::$initData = $data;
     if (!isset(self::$instance)) {
 //      session_start();
       self::$instance = new self();
@@ -31,6 +34,7 @@ class Session {
 //      Functions::printr($_SESSION);
 //      if (!isset($_SESSION)) {
       if (empty($_SESSION)) {
+        $_SESSION['_init'] = $data;
         foreach ($data as $key => $value) {
           $_SESSION[$key] = $value;
         }
@@ -92,6 +96,12 @@ class Session {
       $count += $item;
     }
     return $count;
+  }
+
+  public static function clear() {
+//    $_SESSION = $_SESSION['_init'];
+//    $_SESSION['_init'] = $_SESSION;
+    return $_SESSION = self::$initData;
   }
 
   public static function destroy() {

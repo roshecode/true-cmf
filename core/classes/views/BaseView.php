@@ -3,45 +3,69 @@
 namespace Views;
 
 class BaseView implements \Iterator {
-  protected static $_template = 'unknown';
-  protected $data = [];
-  public static $items = [];
+  /**
+   * @var \Twig_Environment
+   */
+  protected static $tplParser;
+  protected $template = 'unknown';
+//  protected $data = [];
+  public $vars = [];
+
+  public static function init($tplParser) {
+    static::$tplParser = $tplParser;
+  }
+
+  public function __construct() {
+    $this->vars['session'] = $_SESSION;
+    $this->vars['title'] = TITLE;
+    $this->vars['home'] = HOME;
+    $this->vars['data'] = explode('/', HOME, 2)[0] . '/' . DATA;
+  }
 
   public function __set($name, $value) {
-    $this->data[$name] = $value;
+    $this->vars[$name] = $value;
   }
   public function __get($name) {
-    return $this->data[$name];
+    echo $name;
+    return $this->vars[$name];
   }
 
-  public static function display($items = null)
+  public function display($template)
   {
-    static::$items = $items;
-//    foreach ($this->data as $key => $val) {
-//      $$key = $val;
-//    }
-    include TEMPLATE . '/' . static::$_template;
+//    print_r($template);
+    if (isset($_GET['ajax']) && $_GET['ajax']) {
+      // ajax: return only needed part
+      if (is_array($template)) {
+        echo json_encode($template);
+        return;
+      }
+    } else {
+      $this->vars['content'] = $template . '.php.twig';
+      $template = 'main';
+    }
+    $th = static::$tplParser->loadTemplate($template . '.php.twig');
+    $th->display($this->vars);
   }
 
   public function current()
   {
-    return current($this->data);
+    return current($this->vars);
   }
   public function next()
   {
-    return next($this->data);
+    return next($this->vars);
   }
   public function key()
   {
-    return key($this->data);
+    return key($this->vars);
   }
   public function valid()
   {
-    $key = key($this->data);
+    $key = key($this->vars);
     return $key !== NULL && $key !== FALSE;
   }
   public function rewind()
   {
-    reset($this->data);
+    reset($this->vars);
   }
 }

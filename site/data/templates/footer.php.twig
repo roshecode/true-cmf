@@ -7,8 +7,8 @@
     <h3>Информация</h3>
     <nav data-ajax="link"
          data-ajax-to="content">
-      {% for item in menu_links %}
-        <a data-title="{{ item.text }}" href="{{ home }}/page/{{ item.id }}">{{ item.text }}</a>
+      {% for link in menu_links %}
+        <a data-title="{{ link.text }}" href="/page/{{ link.alias }}">{{ link.text }}</a>
       {% endfor %}
     </nav>
   </div>

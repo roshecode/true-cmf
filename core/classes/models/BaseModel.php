@@ -1,21 +1,23 @@
 <?php
 
 namespace Models;
-use Data\DB;
+use Data\Dbi;
+use Tools\Functions;
 
 /**
  * Class BaseModel
  * @property $id
  */
 abstract class BaseModel {
-  /** @var DB */
-  protected static $_db;
-  protected static $_table = 'unknown';
-  protected $_data = [];
+  /** @var Dbi */
+//  protected static $db;
+  public static $db;
+  protected static $table = 'unknown';
+  protected $data = [];
   
   public static function init()
   {
-    self::$_db = DB::getInstance();
+    self::$db = Dbi::getInstance();
   }
 //  public function __construct() {
 //    self::$_db = DB::getInstance();
@@ -31,46 +33,31 @@ abstract class BaseModel {
   }
   public static function getAll()
   {
-//    return self::$_db->queryMap('SELECT * FROM ' . static::$_table);
-    return self::$_db->selectAll(static::$_table);
+    return self::$db->select('*')->from(static::$table)->assoc();
   }
-  public static function get($id)
+  public static function getById($id)
   {
-//    return self::$_db->queryMapData('SELECT * FROM ' . static::$_table .' WHERE id = ?', [$id])[0];
-    return self::$_db->select(['*'], static::$_table , ['id' => $id])[0];
+    return self::$db->select('*')->from(static::$table)->where('id', $id)->assoc()[0];
+  }
+  public static function removeById($id)
+  {
+    return self::$db->delete()->from(static::$table)->where('id', $id)->run();
   }
   public static function removeAll()
   {
-    // TODO: remove all news
+    return self::$db->truncate(static::$table);
   }
-  public static function remove($id)
+  public static function add($data)
   {
-    $db = self::$_db;
-    $db->queryData('DELETE FROM ' . static::$_table . ' WHERE id = ?', [$id]);
+    return self::$db->insertInto(static::$table, array_keys($data))->values(array_values($data))->run();
   }
-  public function insert()
+  public static function update($field, $value, $data)
   {
-//    $q = 'INSERT INTO ' . static::$_table . '(' . implode(',', array_keys($this->data)) .
-//      ') VALUES (?' . str_repeat(',?', count($this->data) - 1) . ')';
-//    return self::$_db->queryData($q, array_values($this->data));
-    return self::$_db->insert(static::$_table, $this->_data);
+    return self::$db->update(static::$table)->set($data)->where($field, $value)->run();
   }
-  public function update()
+  public static function save($data, $field1 = 'id', $field2 = 'id')
   {
-    $arr = array_keys($this->_data);
-    array_pop($arr);
-    $q = 'UPDATE ' . static::$_table . ' SET ' . implode('=?,', $arr) . '=? WHERE id=?';
-    $data = array_values($this->_data);
-    self::$_db->queryData($q, $data);
-  }
-  public function save()
-  {
-    if (!$this->insert()) {
-      $this->update();
-    }
-  }
-  public function delete()
-  {
-    self::remove($this->id);
+    return self::$db->insertInto(static::$table, array_keys($data))->values(array_values($data))
+      ->onDuplicateKeyUpdate($field1, $field2)->run();
   }
 }

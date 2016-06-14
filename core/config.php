@@ -2,15 +2,17 @@
 ini_set('display_errors',1);
 error_reporting(E_ALL);
 
-define('DOMAIN', 'avtomagazin.dp.ua');
-define('HOME', 'http://work/avtomagazin.dp.ua'); // domain
+define('CUT'  , '/avtomagazin.dp.ua/');
+//define('HOME' , 'http://work/avtomagazin.dp.ua'); // domain
+define('HOME' , 'http://avto.ua'); // domain
 define('TITLE', 'Интернет-магазин автозапчастей');
-define('DATA', HOME . '/site/data');
 
-define('MODEL'      , __DIR__ . '/models');
-define('CONTROLLER' , __DIR__ . '/controllers');
-define('VIEW'       , __DIR__ . '/views');
-define('SITE'       , getcwd() . '/site'); // active template
-define('THEME'      , SITE . '/theme'); // active template
-define('TEMPLATE'   , SITE . '/data/templates'); // active template
-//define('TEMPLATE', __DIR__ . '/../site/theme/default/templates/'); // active template
+define('APP'        , getcwd());
+define('LIB'        , APP . '/core/lib');
+define('SITE'       , APP . '/site');
+define('THEME'      , SITE . '/theme');
+define('DATA'       , SITE . '/data');
+define('TEMPLATE'   , SITE . '/data/templates');
+
+define('TPL_PARSER_CACHE', SITE . '/compilation_cache');
+define('TPL_PARSER_AUTO_RELOAD', true);

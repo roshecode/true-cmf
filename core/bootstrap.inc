@@ -8,7 +8,7 @@ function autoload($class)
     require_once $file;
   }
   else {
-    $file = __DIR__ . '/../site/' . /*lcfirst*/(str_replace('\\', '/', $class)) . '.php';
+    $file = SITE . '/' . lcfirst(str_replace('\\', '/', $class)) . '.php';
     if (file_exists($file)) {
       require_once $file;
     }
