@@ -1,0 +1,22 @@
+#vin-form, #order-form {
+  float: none;
+  margin: auto;
+  padding: 1rem;
+  background: #F7F7F7;
+
+  label {
+    text-align: left;
+  }
+
+  input, textarea {
+    border: solid 1px silver;
+  }
+
+  textarea, input[type=submit] {
+    margin-top: 1rem;
+  }
+
+  textarea {
+    max-width: 100%;
+  }
+}

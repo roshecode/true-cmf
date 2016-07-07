@@ -1,0 +1,9 @@
+<h2>Изменение страницы</h2>
+<div class="edit">
+    <form action="/admin/save/page/{{ page.id }}" data-ajax="form" data-ajax-src="editor" method="post">
+        {#<label for="editor">{{ page.title }}</label>#}
+        <input name="title" type="text" value="{{ page.title }}" />
+        <textarea name="editor" id="editor" cols="30" rows="20">{{ page.text }}</textarea>
+        {#<input type="submit" value="Сохранить" />#}
+    </form>
+</div>

@@ -9,6 +9,7 @@
 @import "components/sidebar";
 @import "components/content";
 @import "components/callback";
+@import "components/form";
 
 //i {
 //  float: left;
@@ -19,6 +20,12 @@ body {
   //padding: 0 1.5rem;
   //background: #F1F1F1;
   background: #E8E8E8;
+}
+
+.review {
+  tr {
+    background: none;
+  }
 }
 
 .ajax-loader {

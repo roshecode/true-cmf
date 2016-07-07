@@ -90,11 +90,44 @@ class Dbi {
     return self::$_instance;
   }
 
-  public static function where($field, $value) {
+  public static function whereE($field, $value) {
+//    if ($value) {
 //    self::$query .= ' WHERE `' . $field . '`=?';
-    self::$query .= ' WHERE ' . $field . '=?';
-//    self::$data[] = $value;
-    self::$data = [$value];
+      self::$query .= ' WHERE ' . $field . '=?';
+    self::$data[] = $value;
+//      self::$data = [$value];
+//    } else {
+//      self::$query .= ' WHERE ' . $field;
+//    }
+    return self::$_instance;
+  }
+
+  public static function where($field) {
+    self::$query .= ' WHERE ' . $field;
+    return self::$_instance;
+  }
+
+  public static function s($op) {
+    self::$query .= ' ' . $op . ' ';
+    return self::$_instance;
+  }
+
+  public static function limit($start, $how = null) {
+    self::$query .= ' LIMIT ' . intval($start);
+    if ($how) self::$query .= ',' . $how;
+//    self::$data[] = $val;
+    return self::$_instance;
+  }
+
+  public static function likeAny($tpl) {
+    self::$query .= ' LIKE \'%' . $tpl . '%\'';
+    return self::$_instance;
+  }
+
+  public static function between($start, $end) {
+    self::$query .= ' BETWEEN ? AND ?';
+    self::$data[] = $start;
+    self::$data[] = $end;
     return self::$_instance;
   }
 
@@ -113,7 +146,7 @@ class Dbi {
 
   public static function set($data) {
 //    self::$query .= ' SET `' . implode('`=?,', array_keys($data)) . '`';
-    self::$query .= ' SET ' . implode('=?,', array_keys($data));
+    self::$query .= ' SET ' . implode('=?,', array_keys($data)) . '=?';
     self::$data = array_values($data);
     return self::$_instance;
   }
@@ -126,7 +159,7 @@ class Dbi {
   public static function onDuplicateKeyUpdate($field1, $field2) {
 //    self::$data[] = $value;
 //    self::$query .= ' ON DUPLICATE KEY UPDATE `' . $field1 . '`=`' . $field2 . '`';
-    self::$query .= ' ON DUPLICATE KEY UPDATE ' . $field1 . '=' . $field2;
+    self::$query .= ' ON DUPLICATE KEY UPDATE ' . $field1 . '=VALUES(' . $field2 .')';
     return self::$_instance;
   }
 
@@ -134,9 +167,14 @@ class Dbi {
     if (self::$data) {
       self::$stmt = self::$dbh->prepare(self::$query);
       self::$stmt->execute(self::$data);
+      self::$data = Array();
       return self::$stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     return self::$dbh->query(self::$query)->fetchAll(PDO::FETCH_ASSOC);
+  }
+
+  public static function statement() {
+    return self::$dbh->prepare(self::$query);
   }
 
   public static function run($type = null) {
@@ -149,17 +187,26 @@ class Dbi {
     if (self::$data) {
       self::$stmt = self::$dbh->prepare(self::$query);
       $state = self::$stmt->execute(self::$data);
-//      self::$data = [];
+      self::$data = Array();
       return $type ? self::$stmt->fetchAll($type) : $state;
     }
     return $type ? self::$dbh->query(self::$query) : self::$dbh->query(self::$query)->fetchAll($type);
   }
 
-  public static function getIdOfName($table, $id, $name) {
-    return self::select($name)->from($table)->where('id', $id)->assoc()[0]['id'];
+  public function runData() {
+    self::$stmt = self::$dbh->prepare(self::$query);
+    return self::$stmt->execute(self::$data);
   }
 
-  public static function getNameOfId($table, $name, $id) {
-    return self::select($id)->from($table)->where('name', $name)->assoc()[0]['name'];
+  public static function getNameById($table, $id) {
+//    return self::select('name')->from($table)->whereE('id', $id)->assoc()[0]['name'];
+    $out = self::select('name')->from($table)->whereE('id', $id)->assoc();
+    return $out[0]['name'];
+  }
+
+  public static function getIdByName($table, $name) {
+//    return self::select('id')->from($table)->whereE('name', $name)->assoc()[0]['id'];
+    $out = self::select('id')->from($table)->whereE('name', $name)->assoc();
+    return $out[0]['id'];
   }
 }

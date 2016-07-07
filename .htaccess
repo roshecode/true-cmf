@@ -4,11 +4,16 @@ php_flag magic_quotes_gpc Off
 # CHarset configuration
 AddDefaultCharset utf-8
 
+#RewriteEngine On
+#
+##Rewrite rules
+#RewriteCond %{REQUEST_FILENAME} !-d
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-l
+#
+#RewriteRule ^(.+)$ index.php
+
 RewriteEngine On
-
-#Rewrite rules
-RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-l
-
-RewriteRule ^(.+)$ index.php
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule .* index.php [L]

@@ -9,6 +9,10 @@ class CategoriesModel extends BaseModel {
 //    return self::$_db->selectAllOrderBy(static::$_table, '`order`');
     return self::$db->select('*')->from(static::$table)->orderBy('`order`')->assoc();
   }
+
+  public static function getIdByName($name) {
+    return self::$db->getIdByName(static::$table, $name);
+  }
   
 //  public static function getIdByOrder($order) {
 //    return self::$_db->select(['id'], static::$_table, ['`order`' => $order])[0]['id'];

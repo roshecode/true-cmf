@@ -1,0 +1,23 @@
+<p>
+    <strong>Подготовка файла перед импортом: </strong>
+    <ul>
+        <li>Удалить лишние строки перед товарами (самая первая строка должна содержать первый товар)</li>
+        <li>В Excel'е нажать "Меню -> Сохранить как -> Другие форматы".</li>
+        <li>В ячейке "Тип файла" выбрать "CSV (разделители - запятые)".</li>
+        <li>Нажать "Сохранить".</li>
+        <li>Открыть сохранённый файл в блокноте.</li>
+        <li>В блокноте нажать "Файл -> Сохранить как".></li>
+        <li>В ячейке "Кодировка" выбрать "UTF-8"</li>
+        <li>Нажать "Сохранить".</li>
+    </ul>
+</p>
+<form class="form_import" data-ajax-src="import" action="/admin/importprice" method="post" enctype="multipart/form-data">
+    <select name="category">
+        <option>Легковые</option>
+        <option>Грузовые TATA</option>
+        <option>Автобусы ASHOK LEYLAND</option>
+    </select>
+    <input name="file" type="file" />
+    <label for="delimiter">Разделитель: </label><input name="delimiter" type="text" value=";" />
+    <input name="submit" type="submit" value="Загрузить" />
+</form>

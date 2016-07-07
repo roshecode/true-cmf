@@ -1,51 +1,47 @@
 {#<div class="block__content">#}
-    <table data-ajax="load"
-           data-ajax-type="json"
-           data-ajax-to="products-count products-text total-cost"
-           data-ajax-src="cart">
-        <thead>
+<table data-ajax="load" data-ajax-type="json" data-ajax-to=".products-count .products-text .total-cost" data-ajax-src="cart">
+    <thead>
+    <tr>
+        <td>Код</td>
+        <td>Поставщик</td>
+        <td>Название</td>
+        <td>Описание</td>
+        <td>Цена</td>
+        <td>Кол-во</td>
+        <td>Стоимость</td>
+        <td>Удалить</td>
+    </tr>
+    </thead>
+    <tbody>
+    {% for product in products %}
         <tr>
-            <td>Код</td>
-            <td>Поставщик</td>
-            <td>Название</td>
-            <td>Описание</td>
-            {#<td>Цена, грн.</td>#}
-            <td>Цена</td>
-            <td>Кол-во</td>
-            <td>Стоимость</td>
-            <td>Удалить</td>
+            <td>{{ product.code }}</td>
+            <td>{{ product.vendor }}</td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.description }}</td>
+            <td class="price">{{ product.price }} грн.</td>
+            <td class="cart-quantity">x{{ product.quantity }}</td>
+            {#<td>#}
+            {#<label>x<input class="quantity" type="number" value="{{ product.quantity }}" min="1" max="99" /></label>#}
+            {#</td>#}
+            <td class="summary">{{ product.summary }} грн.</td>
+            <td class="remove">
+                <a href="/cart/remove/{{ product.id }}"><i class="fa fa-close fa-lg"></i></a>
+            </td>
         </tr>
-        </thead>
-        <tbody>
-        {% for product in products %}
-            <tr>
-                <td>{{ product.code }}</td>
-                <td>{{ product.vendor }}</td>
-                <td>{{ product.name }}</td>
-                <td>{{ product.description }}</td>
-                <td class="price">{{ product.price }} грн.</td>
-                <td class="cart-quantity">x{{ product.quantity }}</td>
-                {#<td>#}
-                    {#<label>x<input class="quantity" type="number" value="{{ product.quantity }}" min="1" max="99" /></label>#}
-                {#</td>#}
-                <td class="summary">{{ product.summary }} грн.</td>
-                <td class="remove">
-                    <a href="/remove/{{ product.id }}"><i class="fa fa-close fa-lg"></i></a>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-        <tfoot>
-            <tr class="summary">
-                <td colspan="5">Общая стоимость: </td>
-                <td data-ajax-put="products-count" class="element_products-count">x{{ session.productsCount }}</td>
-                <td data-ajax-put="total-cost" class="element_total-cost">{{ session.totalCost }} грн.</td>
-                <td class="remove">
-                    <a href="/remove/all"><i class="fa fa-close fa-lg"></i></a>
-                </td>
-            </tr>
-        </tfoot>
-    </table>
+    {% endfor %}
+    </tbody>
+    <tfoot>
+    <tr class="summary">
+        <td colspan="5">Общая стоимость: </td>
+        <td class="products-count">x{{ session.productsCount }}</td>
+        <td class="total-cost">{{ session.totalCost }} грн.</td>
+        <td class="remove">
+            <a href="/cart/remove/all"><i class="fa fa-close fa-lg"></i></a>
+        </td>
+    </tr>
+    </tfoot>
+</table>
     {#<input type="submit" value="Оформить заказ" />#}
-    <a href="/order">Оформить заказ</a>
+<a data-ajax='loadLink' data-ajax-to=".region_content" href="/cart/order">Оформить заказ</a>
 {#</div>#}

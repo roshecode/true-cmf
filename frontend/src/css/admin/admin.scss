@@ -1,0 +1,46 @@
+@import "../default/reset";
+@import "../default/extend";
+@import "../default/configs/default";
+@import "../default/grid";
+
+.admin {
+  //background: silver;
+}
+
+.edit {
+  > form {
+    > input[name=title] {
+      width: 100%;
+      border: solid .1rem silver;
+    }
+  }
+}
+
+aside {
+  ul {
+    > li {
+      font-size: 1.3rem;
+    }
+
+    nav {
+      > a {
+        font-size: 1rem;
+        margin: 4px;
+        padding-left: 1rem;
+        background: #D6D6D6;
+        color: #646464;
+      }
+    }
+  }
+}
+
+.region_content {
+  label {
+    display: inline-block;
+  }
+
+  input {
+    //float: left;
+    border: solid .1rem silver;
+  }
+}

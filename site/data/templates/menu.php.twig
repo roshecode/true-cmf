@@ -1,10 +1,8 @@
 {#{% extends 'header.php.twig' %}#}
 
 {#{% block menu %}#}
-    <menu data-ajax="link"
-          data-ajax-to="content"
-          {#data-ajax-mod="append"#}
-          class="r block__menu links_pages">
+    <menu data-ajax="loadLink" data-ajax-to=".region_content"
+          class="r block_menu links_pages">
         {% for link in menu_links %}
             <li>
                 <a data-title="{{ link.text }}" href="/page/{{ link.alias }}">

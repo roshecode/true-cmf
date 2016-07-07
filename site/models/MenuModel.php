@@ -6,6 +6,7 @@ class MenuModel extends BaseModel {
   protected static $table = 'menu';
 
   public static function getIdByAlias($alias) {
-    return self::$db->select('id')->from(static::$table)->where('alias', $alias)->assoc()[0]['id'];
+    $out = self::$db->select('id')->from(static::$table)->whereE('alias', $alias)->assoc();
+    return $out[0]['id'];
   }
 }

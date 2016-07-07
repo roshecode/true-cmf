@@ -23,7 +23,7 @@ a, h1, h2, h3, h4, h5, h6 {
   color: inherit;
 }
 
-h1, h2, h3, h4, h5, h6, input {
+h1, h2, h3, h4, h5, h6, p, input, label {
   //margin-bottom: .5rem;
   padding: .5rem;
 }
@@ -36,21 +36,18 @@ article, aside {
   //padding: 1rem;
 }
 
-p {
-  padding: .5rem;
-}
-
 h1 {
   font-size: 2em;
 }
 
 menu, ul, ol {
+  list-style: none;
   margin: 0;
   padding: 0;
 }
 
 li {
-  list-style: none;
+  //list-style: none;
 }
 
 a {
@@ -82,6 +79,6 @@ svg {
   height: 100%;
 }
 
-input[type='submit'], input[type='button'], select {
+input[type=submit], input[type=button], select {
   cursor: pointer;
 }

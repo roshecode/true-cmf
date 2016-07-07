@@ -37,6 +37,7 @@ $column-width: 100% / $grid-columns;
 }
 
 .#{$grid-row-name} { @extend %clearfix;
+  clear: both;
   //margin: 0 (-$grid-columns-margin);
 
   //background: repeating-linear-gradient(to right, silver 0, silver $column-width, lightgray $column-width, lightgray $column-width * 2);

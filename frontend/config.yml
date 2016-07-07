@@ -86,7 +86,7 @@ dir:
 
   src: # DIRECTORIES OF SOURCE FILES FOR BUILDING --------------------------------------------------------------------
     html:         'src/templates/**/*.html'
-    css:          'src/css/style.scss'
+    css:          ['src/css/style.scss', 'src/css/admin/admin.scss']
     js:           'src/js/**/*.js'
     svg:          'src/img/inline/**/*.svg'
     img:          ['src/img/**/*.*', '!src/img/inline/**']

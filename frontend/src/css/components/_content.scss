@@ -1,7 +1,14 @@
-.block__content {
+.region_content {
   padding: 1rem;
   background: white;
   color: #444;
+
+  ul {
+    //float: left;
+    list-style: initial;
+    //padding-left: 2rem;
+    padding-left: 40px;
+  }
 
   //> h1, div {
   > h1 {
@@ -10,7 +17,7 @@
   }
 
   > div {
-    text-align: center;
+    //text-align: center;
   }
 
   > table {
@@ -62,6 +69,7 @@
 
         > label {
           float: left;
+          padding: 0;
         }
       }
 
@@ -75,7 +83,7 @@
         background: #F9CF94;
       }
 
-      .element_products-count, .element_total-cost {
+      .products-count, .total-cost {
         text-align: right;
       }
     }
@@ -85,12 +93,27 @@
     }
   }
 
-  > a {
+  > a, .pagination > a {
+    margin: .1rem;
+    padding: 1rem;
+    border: solid .1rem;
+    background: #D25757;
+    color: white;
+  }
+
+  > a, > .pagination {
     float: right;
     text-transform: uppercase;
     margin-top: .5rem;
-    padding: 1rem;
-    background: #D25757;
-    color: white;
+
+    > a {
+      float: left;
+
+      &.active {
+        border-color: indianred;
+        background: #f1f1f1;
+        color: #444;
+      }
+    }
   }
 }

@@ -7,7 +7,7 @@
   color: #404040;
 }
 
-.block__brand {
+.block_brand {
   //margin: -2rem 0;
   //-webkit-filter: invert(90%);
 
@@ -24,7 +24,7 @@
   }
 }
 
-.block__callback {
+.block_callback {
   //font-size: 1.2rem;
   padding: 2.299rem 0;
   color: #444;
@@ -33,27 +33,27 @@
     display: block;
     margin: 0 auto;
 
-    > .field__icon {
+    > .field_icon {
       //float: left;
       padding: .1rem .2rem;
       background: #ddd;
       color: indianred;
     }
 
-    > .field__button {
+    > .field_button {
       text-transform: uppercase;
     }
   }
 }
 
-.block__phones {
+.block_phones {
   padding: 1.5rem 0;
 
-  > .field__phone {
+  > .field_phone {
     text-align: left;
     padding: .1rem 0;
 
-    > .field__operator {
+    > .field_operator {
       text-align: right;
       line-height: 1;
       padding-right: .25rem;
@@ -65,10 +65,10 @@
   }
 }
 
-.block__cart {
+.block_cart {
   cursor: pointer;
   padding: .5rem 0;
-  background: #ABABAB;
+  //background: #ABABAB;
   background: #CD5C5C;
   color: white;
   border-bottom-left-radius: 10%;
@@ -81,7 +81,7 @@
   }
 }
 
-.block__user {
+.block_user {
   padding: 2rem 0;
 
   &:before {

@@ -2,9 +2,9 @@
 
 namespace External;
 
-class Lib {
+class Libs {
   public static function twig() {
-    require_once LIB . '/Twig/Autoloader.php';
+    require_once LIBS . '/Twig/Autoloader.php';
     \Twig_Autoloader::register();
     $loader = new \Twig_Loader_Filesystem(SITE . '/data/templates');
     $twig = new \Twig_Environment($loader, array(
@@ -18,5 +18,10 @@ class Lib {
     });
     $twig->addFilter($filter);
     return $twig;
+  }
+  
+  public static function phpMailer() {
+    require_once LIBS . '/PHPMailer/PHPMailerAutoload.php';
+    return new \PHPMailer();
   }
 }

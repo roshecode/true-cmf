@@ -4,10 +4,7 @@
     {% include 'header.php.twig' %}
     <div class="content">
         {% include 'sidebar.php.twig' %}
-        {#{% block main_content %}#}
-        {#{% endblock %}#}
-        <div data-ajax-put="content"
-             class="c-m-9 block__content">
+        <div class="c-m-9 region_content">
             {% include content %}
         </div>
     </div>

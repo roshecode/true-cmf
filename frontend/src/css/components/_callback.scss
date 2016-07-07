@@ -1,4 +1,4 @@
-.block_callback-wrapper {
+.form_callback-wrapper {
   position: fixed;
   top: 0;
   left: 0;
@@ -7,14 +7,15 @@
   background: rgba(0,0,0,.5);
   transition: all.4s;
 }
-.block_callback {
+.form_callback {
   margin: 8% auto;
   max-width: 20rem;
   color: indianred;
   box-shadow: 0 0 10px #444;
 
   header {
-    background: #585858;
+    //background: #585858;
+    background: #D6D6D6;
 
     > i {
       float: right;
@@ -22,14 +23,16 @@
 
       &:hover {
         cursor: pointer;
-        background: #616161;
+        //background: #616161;
+        background: #c6c6c6;
       }
     }
   }
 
   > form {
     padding: 1rem;
-    background: #444;
+    //background: #444;
+    background: #F3F3F3;
 
     > label {
       font-size: 2rem;
@@ -38,9 +41,10 @@
 
       > input {
         float: right;
-        max-width: 18rem;
+        max-width: 17rem;
         color: #444;
-        box-shadow: 0 0 .3rem #444 inset;
+        //box-shadow: 0 0 .3rem #444 inset;
+        box-shadow: 0 0 .1rem #444 inset;
       }
     }
 

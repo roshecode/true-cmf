@@ -1,0 +1,24 @@
+<form id="order-form" data-ajax="form" data-ajax-to=".region_content" action="/cart/order/send" method="post" class="vin c-m-8">
+    <div class="r">
+        <label for="name" class="c-m-5">Имя и фамилия</label>
+        <input type="text" name="name" placeholder="например: Иван Иванов" class="c-m-7" required />
+    </div>
+    <div class="r">
+        <label for="phone" class="c-m-5">Телефон</label>
+        <input type="text" name="phone" placeholder="+380" class="c-m-7" required />
+    </div>
+    <div class="r">
+        <label for="email" class="c-m-5">E-mail</label>
+        <input type="email" name="email" placeholder="например: example@mail.com" class="c-m-7" />
+    </div>
+    <div class="r">
+        <label for="city" class="c-m-5">Город</label>
+        <input type="text" name="city" placeholder="например: Днепропетровск" class="c-m-7" />
+    </div>
+    <div class="r">
+        <textarea name="comment" id="" cols="30" rows="10" placeholder="Введите здесь свой комментарий" class="c-m-12"></textarea>
+    </div>
+    <div class="r">
+        <input type="submit" value="Отправить" class="os-m-8 c-m-4" />
+    </div>
+</form>

@@ -1,0 +1,31 @@
+<form id="vin-form" data-ajax="form" data-ajax-src="vin" data-ajax-to=".region_content" action="/form/vin/send" method="post" class="c-m-8">
+    <div class="r">
+        <label for="phone" class="c-m-5">Телефон</label>
+        <input type="phone" name="phone" placeholder="+380" class="c-m-7" required />
+    </div>
+    <div class="r">
+        <label for="email" class="c-m-5">E-mail</label>
+        <input type="email" name="email" placeholder="example@mail.com" class="c-m-7" />
+    </div>
+    <div class="r">
+        <label for="vin" class="c-m-5">Номер кузова (vin-код)</label>
+        <input type="text" name="vin" placeholder="12345" class="c-m-7" required />
+    </div>
+    <div class="r details">
+        <label for="details[]" class="c-m-5">Укажите необходимые запчасти</label>
+        <div class="os-m-5 detail-row">
+            <input type="text" name="details[]" placeholder="Запчасть" class="c-m-10" required />
+            <input type="number" name="quantity[]" value="1" min="1" max="99" class="c-m-2" required />
+        </div>
+    </div>
+    <div class="r os-m-5 c-m-7">
+        <input type="button" value="Добавить строку" class="c-m-6 add-row" />
+        <input type="button" value="Удалить строку" class="c-m-6 remove-row" />
+    </div>
+    <div class="r">
+        <textarea name="comment" id="" cols="30" rows="10" placeholder="Введите здесь свой комментарий" class="c-m-12"></textarea>
+    </div>
+    <div class="r">
+        <input type="submit" value="Отправить" class="os-m-8 c-m-4" />
+    </div>
+</form>

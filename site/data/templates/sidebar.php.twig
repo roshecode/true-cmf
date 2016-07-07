@@ -1,21 +1,37 @@
-<aside class="c-m-3">
-    <form method="get" action="/search"
-          data-ajax="form"
-          data-ajax-to="content"
-          data-ajax-init="form"
-          data-title="Результаты поиска" class="block__search">
-        <input name="code" type="search" placeholder="Поиск по коду..." />
+<aside class="c-m-3 region_sidebar">
+    {#<form data-ajax="formLink" data-ajax-to=".region_content" data-title="Результаты поиска"#}
+    <form data-title="Результаты поиска"
+          method="get" action="/search" class="block_search">
+        <input name="search" type="search" placeholder="Поиск..." />
+        {#<label><input name="type" type="radio" value="code" />По коду</label>#}
+        {#<label><input name="type" type="radio" value="description" />В описании</label>#}
+        <input name="page" type="hidden" value="1" />
         <input type="submit" value="Поиск" />
     </form>
-  <div class="block__categories">
-    <ul data-ajax="link"
-        data-ajax-to="content"
-        data-ajax-init="form">
-    {% for key, category in categories %}
-        <li>
-          <a data-title="{{ category.name }}" href="/product/{{ category.id }}">{{ category.name }}</a>
-        </li>
-      {% endfor %}
+
+  <div class="block_categories">
+    <ul data-ajax="loadLink" data-ajax-to=".region_content">
+        {#{% for key, category in categories if category.id == 2 or category.id == 3 %}#}
+            {#<li>#}
+                {#<a data-title="{{ category.name }}" href="/product/{{ category.id }}/1">{{ category.name }}</a>#}
+            {#</li>#}
+        {#{% endfor %}#}
+        {#<li>#}
+            {#<span>Легковые</span>#}
+            {#<ul>#}
+                {#{% for key, category in categories if category.id > 3 %}#}
+                    {#<li>#}
+                        {#<a data-title="{{ category.name }}" href="/product/{{ category.id }}/1">{{ category.name }}</a>#}
+                    {#</li>#}
+                {#{% endfor %}#}
+            {#</ul>#}
+        {#</li>#}
+        {% for key, category in categories %}
+            <li>
+                <a data-title="{{ category.name }}" href="/product/{{ category.id }}/1">{{ category.name }}</a>
+            </li>
+        {% endfor %}
     </ul>
   </div>
+    <a data-ajax="loadLink" data-ajax-to=".region_content" href="/form/vin" class="vin-ref">VIN-запрос</a>
 </aside>

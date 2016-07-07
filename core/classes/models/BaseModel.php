@@ -13,7 +13,7 @@ abstract class BaseModel {
 //  protected static $db;
   public static $db;
   protected static $table = 'unknown';
-  protected $data = [];
+  protected $data = Array();
   
   public static function init()
   {
@@ -31,17 +31,24 @@ abstract class BaseModel {
   {
     return $this->_data[$key];
   }
+  public static function count() {
+//    return self::$db->select('COUNT(*)')->from(static::$table)->assoc()[0]['COUNT(*)'];
+    $out = self::$db->select('COUNT(*)')->from(static::$table)->assoc();
+    return $out[0]['COUNT(*)'];
+  }
   public static function getAll()
   {
     return self::$db->select('*')->from(static::$table)->assoc();
   }
   public static function getById($id)
   {
-    return self::$db->select('*')->from(static::$table)->where('id', $id)->assoc()[0];
+//    return self::$db->select('*')->from(static::$table)->whereE('id', $id)->assoc()[0];
+    $out = self::$db->select('*')->from(static::$table)->whereE('id', $id)->assoc();
+    return $out[0];
   }
   public static function removeById($id)
   {
-    return self::$db->delete()->from(static::$table)->where('id', $id)->run();
+    return self::$db->delete()->from(static::$table)->whereE('id', $id)->run();
   }
   public static function removeAll()
   {
@@ -53,7 +60,7 @@ abstract class BaseModel {
   }
   public static function update($field, $value, $data)
   {
-    return self::$db->update(static::$table)->set($data)->where($field, $value)->run();
+    return self::$db->update(static::$table)->set($data)->whereE($field, $value)->run();
   }
   public static function save($data, $field1 = 'id', $field2 = 'id')
   {

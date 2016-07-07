@@ -1,16 +1,26 @@
+.vin-ref {
+  text-transform: uppercase;
+  margin-top: 1rem;
+  padding: .5rem;
+  border: solid .2rem #a3a29b;
+  //background: #F9CF94;
+  background: #f6f9f4;
+  color: #444;
+}
+
 aside {
   padding: 1.5rem;
   //background: red;
   color: #444;
 }
 
-.block__search {
+.block_search {
   > input[type=submit] {
     min-width: 6.8193356990814203988371389186795rem;
   }
 }
 
-.block__categories {
+.block_categories {
   padding: 1rem 0;
 
   > ul {
