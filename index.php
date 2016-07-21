@@ -8,23 +8,7 @@
 
 //setcookie("name", 'Roman', time() + 600, "/index.php", ".avto.ua");
 
-require_once __DIR__ . '/core/config.php';
 require_once __DIR__ . '/core/bootstrap.inc';
+Autoloader::register('True', __DIR__ . '/core');
 
-\Data\Session::init(Array(
-  'products' => Array(),
-  'productsCount' => 0,
-  'totalCost' => 0
-));
-//\Data\Session::destroy();
-\Models\BaseModel::init();
-\Views\BaseView::init(\External\Libs::twig());
-//$mail = \External\Libs::phpMailer();
-
-\Data\Mail::init();
-//\Route\Router::init();
-\Route\Router::start();
-
-//\Data\Transfer::import('test.csv', ['delimiter' => '&']);
-//\Data\Transfer::import('price.csv', ['delimiter' => '&']);
-//\Data\Transfer::addOrder();
+\True\Routing\Router::start();
