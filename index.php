@@ -9,6 +9,5 @@
 //setcookie("name", 'Roman', time() + 600, "/index.php", ".avto.ua");
 
 require_once __DIR__ . '/core/bootstrap.inc';
-Autoloader::register('True', __DIR__ . '/core');
 
-\True\Routing\Router::start();
+\True\Routing\Route::start();
