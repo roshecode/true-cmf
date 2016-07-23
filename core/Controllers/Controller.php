@@ -8,14 +8,14 @@
 
 namespace True\Controllers;
 
-use True\Routing\Router;
+use True\Routing\Route;
 
-abstract class BaseController {
+abstract class Controller {
     public function index() {
         echo '404';
     }
 
     public function __call($name, $arguments) {
-        Router::move(ucfirst($name).'Controller');
+        Route::move(ucfirst($name).'Controller');
     }
 }

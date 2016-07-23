@@ -2,7 +2,9 @@
 
 namespace True\Routing;
 
-class Route
+use True\Multilingual\Lang;
+
+class Router
 {
     private static $host;
     private static $path;
@@ -10,7 +12,11 @@ class Route
 
     public function __construct($host = null)
     {
-        self::$host = $host;
+        if (is_string($host)) {
+            self::$host = $host;
+        } else {
+            throw new \InvalidArgumentException(Lang::get('exceptions')['invalidArgument']['host']);
+        }
     }
 
     public static function start() {
@@ -26,5 +32,9 @@ class Route
         } elseif (is_callable($func)) {
             $func('Roman');
         }
+    }
+
+    public static function redirect($url) {
+        header('Location: ', $url);
     }
 }

@@ -1,10 +1,19 @@
 <?php
-//ini_set('display_errors',1);
-//error_reporting(E_ALL);
 
-return array(
-    'log' => array(
+return [
+    'directories' => [
+        'languages' => '/core/Multilingual/Languages'
+    ],
+    'localization' => [
+        'language' => 'en',
+        'timezone' => 3
+    ],
+    'errors' => [
+        'display' => true,
+        'reporting' => E_ALL
+    ],
+    'log' => [
         'debug' => '/app/log/debug.log',
-        ''
-    )
-);
+        'error'
+    ]
+];

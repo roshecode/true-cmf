@@ -2,7 +2,6 @@
 
 namespace True\Contracts\IoC;
 
-
 interface Container
 {
     /**

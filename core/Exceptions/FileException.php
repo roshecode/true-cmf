@@ -1,9 +1,9 @@
 <?php
 
-namespace Exceptions;
+namespace True\Exceptions;
 
 
-class FileException
+class FileException extends \Exception
 {
-
+    protected $message = 'File exception';
 }
