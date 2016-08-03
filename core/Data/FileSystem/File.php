@@ -36,7 +36,7 @@ class File
                 if (is_readable($filePath)) {
                     return $callback();
                 } else {
-                    throw new FileUnreadableException(Lang::get('exceptions')['file_is_unreadable']);
+                    throw new FileUnreadableException(Lang::get('exceptions.file_is_unreadable'));
                 }
             } else {
                 throw new FileNotFoundException(Lang::get('exceptions')['file_not_found']);
@@ -132,6 +132,14 @@ class File
         return self::existAndReadable($filePath, function() use($filePath) {
             return require_once $filePath;
         });
+    }
+
+    /**
+     * @param string $filePath
+     * @return FileArray
+     */
+    public static function loadArray($filePath) {
+        return new FileArray($filePath);
     }
 
     /**

@@ -5,11 +5,17 @@ namespace True\Multilingual;
 use InvalidArgumentException;
 use True\Data\FileSystem\File;
 use True\Data\FileSystem\FileArray;
+use True\Data\FileSystem\FileArrayFacade;
 use True\System\Config;
 
-class Lang extends FileArray
+class Lang extends FileArrayFacade
 {
-    const BASE_LANG = 'en';
+    const BASE_LANG = 'en-EN';
+
+    /**
+     * @var FileArray
+     */
+    protected static $data;
 
     protected static $base_data = null;
 
@@ -19,28 +25,14 @@ class Lang extends FileArray
      * @throws InvalidArgumentException
      */
     public static function load($filePath) {
-        if (Config::get('localization.language') === 'en')
-        self::$data = File::inc($filePath);
-        if (self::$base_data === null) {
-            self::$base_data = File::reqOnce(Config::getPath('languages').self::BASE_LANG.'.php');
-        }
-    }
+        parent::load(Config::get('app_dir').$filePath);
 
-    /**
-     * @param string $param
-     * @return mixed
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function get($param) {
-        $getParam = parent::get($param);
-        if ($getParam === null) {
-
-        }
-        if (array_key_exists($param, self::$data)) {
-            return self::$data[$param];
-        } else {
-            return self::$base_data[$param];
-        }
+//        if (Config::get('localization.language') === self::BASE_LANG) {
+//
+//        }
+//        self::$data = File::inc($filePath);
+//        if (self::$base_data === null) {
+//            self::$base_data = File::reqOnce(Config::getDirectoryPath('languages').self::BASE_LANG.'.php');
+//        }
     }
 }

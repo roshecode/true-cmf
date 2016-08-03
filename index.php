@@ -1,5 +1,11 @@
 <?php
 
+use True\Routing\Router;
+
 require_once __DIR__ . '/core/bootstrap.inc';
 
-\True\Routing\Router::start();
+Router::start();
+Router::get('', function($data) {
+    echo $data;
+});
+

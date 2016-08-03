@@ -11,7 +11,8 @@ class Loader {
 
     public static function register($prefix, $base_dir/* = __DIR__*/, $extension = '.php') {
         spl_autoload_register(function($class) use($prefix, $base_dir, $extension) {
-            $prefix = $prefix . '\\';
+
+//            $prefix = $prefix . '\\';
             $base_dir = getcwd() . $base_dir . DIRECTORY_SEPARATOR;
             $len = strlen($prefix);
             if (strncmp($prefix, $class, $len) !== 0) {
@@ -19,16 +20,18 @@ class Loader {
                 return;
             }
             $relative_class = substr($class, $len);
+            // TODO: Linux and Windows directory separator
             $filePath = $base_dir . (DIRECTORY_SEPARATOR == '/' ?
                     str_replace('\\', '/', $relative_class) : $relative_class) . $extension;
             if (file_exists($filePath)) {
                 if (is_readable($filePath)) {
                     require_once $filePath;
                 } else {
-                    throw new FileUnreadableException('File is unreadable');
+//                    throw new FileUnreadableException(Lang::get('exceptions.file_is_unreadable'));
+                    throw new FileUnreadableException('AUTOLOADER: exceptions.file_is_unreadable');
                 }
             } else {
-                throw new FileNotFoundException('File not found'/*Lang::get('FileNotFound')*/);
+                throw new FileNotFoundException(('AUTOLOADER: exceptions.file_not_found'));
             }
         });
     }

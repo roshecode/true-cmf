@@ -12,15 +12,30 @@ class FileArray
      *
      * @var array
      */
-    protected static $data;
+    protected $data;
+
+    public function __construct($filePath)
+    {
+        $this->load($filePath);
+    }
+
+//    public function __get($name)
+//    {
+//        return $this->data[$name];
+//    }
+//
+//    public function __set($name, $value)
+//    {
+//        $this->data[$name] = $value;
+//    }
 
     /**
      * Load array from file.
      *
      * @param string $filePath
      */
-    public static function load($filePath) {
-        self::$data = File::reqOnce($filePath);
+    public function load($filePath) {
+        $this->data = File::inc($filePath);
     }
 
     /**
@@ -29,8 +44,13 @@ class FileArray
      * @param string $query
      * @return mixed
      */
-    public static function get($query) {
+    public function get($query) {
         $query = new ArrayQuery($query);
-        return $query->apply(self::$data);
+        return $query->apply($this->data);
+    }
+
+    public function set($query, $value) {
+        // TODO: query set implementation
+        $this->data[$query] = $value;
     }
 }

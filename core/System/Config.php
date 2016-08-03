@@ -4,20 +4,27 @@ namespace True\System;
 
 use InvalidArgumentException;
 use True\Data\FileSystem\FileArray;
+use True\Data\FileSystem\FileArrayFacade;
 use True\Exceptions\FileNotFoundException;
 use True\Exceptions\FileUnreadableException;
 use True\Multilingual\Lang;
 
-class Config extends FileArray
+class Config extends FileArrayFacade
 {
+    /**
+     * @var FileArray
+     */
+    protected static $data;
+
     /**
      * @param string $filePath
      */
     public static function load($filePath) {
         parent::load($filePath);
-        self::setLanguage(self::$data['localization']['language']);
-        self::setErrors(self::$data['errors']);
-        self::$data['app_dir'] = getcwd();
+        self::set('app_dir', getcwd());
+
+        self::setLanguage(self::get('localization.language'));
+        self::setErrors(self::get('errors'));
     }
 
     /**
@@ -26,9 +33,11 @@ class Config extends FileArray
      *
      * @throws InvalidArgumentException
      */
-    public static function getPath($path) {
+    public static function getDirectoryPath($path) {
         if (is_string($path)) {
-            return Config::get('directories')[$path].DIRECTORY_SEPARATOR;
+            // TODO: directory separator to windows
+//            return str_replace('/', '\\', self::get('directories')[$path]).DIRECTORY_SEPARATOR; //WINDOWS
+            return str_replace('/', '\\', self::get('directories')[$path]).DIRECTORY_SEPARATOR;
         } else {
             throw new InvalidArgumentException(Lang::get('exceptions.invalid_argument'));
         }
@@ -43,9 +52,9 @@ class Config extends FileArray
      */
     public static function setLanguage($lang) {
         if (is_string($lang)) {
-            Lang::load(self::$data['directories']['languages'].DIRECTORY_SEPARATOR.$lang.'.php');
+            Lang::load(self::getDirectoryPath('languages').$lang.'.php');
         } else {
-            throw new InvalidArgumentException(Lang::get('exceptions')['invalid_argument']);
+            throw new InvalidArgumentException(Lang::get('exceptions.invalid_argument'));
         }
     }
 

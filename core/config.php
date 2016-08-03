@@ -5,7 +5,8 @@ return [
         'languages' => '/core/Multilingual/Languages'
     ],
     'localization' => [
-        'language' => 'en',
+        'language' => 'en-EN',
+//        'language' => 'ru-RU',
         'timezone' => 3
     ],
     'errors' => [

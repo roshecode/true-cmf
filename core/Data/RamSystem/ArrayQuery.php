@@ -34,20 +34,23 @@ class ArrayQuery
      * @param array $data
      * @return mixed|null
      */
-    public function apply($data) {
+    public function apply(&$data) {
         static $iteration = 0;
-        if (array_key_exists($data, $this->path[$iteration])) {
+        if (array_key_exists($this->path[$iteration], $data)) {
             $out = $data[$this->path[$iteration]];
         } else {
-            trigger_error(Lang::get('notices.key_does_not_exist'));
+//            trigger_error(Lang::get('notices.key_does_not_exist'));
+            trigger_error('notices.key_does_not_exist');
             $out = null;
         }
-        if ($iteration !== count($this->path)) {
+
+        if ($iteration !== (count($this->path) - 1)) {
             if (is_array($out)) {
                 ++$iteration;
-                self::apply($out);
+                return self::apply($out);
             } else {
-                trigger_error(Lang::get('notices.key_is_not_array'));
+//                trigger_error(Lang::get('notices.key_is_not_array'));
+                trigger_error('notices.key_is_not_array');
                 $out = null;
             }
         }
