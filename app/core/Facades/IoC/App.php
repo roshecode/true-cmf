@@ -7,14 +7,19 @@ use True\IoC\Container;
 
 /**
  * Class App
+ * @method static add
+ * @method static has
+ * @method static get
  * @package True\Facades\IoC
- * @subpackage True\IoC\Container
  */
 final class App extends Facade
 {
+    /**
+     * @var Container
+     */
+    protected static $instance;
+
     public static function init() {
         parent::setInstance(new Container());
     }
 }
-
-App::init();

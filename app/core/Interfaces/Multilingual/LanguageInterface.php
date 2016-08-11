@@ -2,7 +2,7 @@
 
 namespace True\Interfaces\Multilingual;
 
-interface Lang
+interface LanguageInterface
 {
 
 }

@@ -2,7 +2,7 @@
 
 namespace True\IoC;
 
-use True\Interfaces\IoC\Container as ContainerInterface;
+use True\Interfaces\IoC\ContainerInterface;
 
 class Container implements ContainerInterface
 {

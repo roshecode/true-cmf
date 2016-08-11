@@ -2,7 +2,7 @@
 
 return [
     'directories' => [
-        'languages' => '/core/Multilingual/Languages',
+        'languages' => '/core/Languages',
         'themes' => '/core/Themes',
         'cache' => [
             'themes' => '/app/cache/templates'

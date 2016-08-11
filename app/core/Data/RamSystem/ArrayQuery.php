@@ -3,7 +3,7 @@
 namespace True\Data\RamSystem;
 
 use InvalidArgumentException;
-use True\Multilingual\Lang;
+use True\Facades\Multilingual\Lang;
 
 class ArrayQuery
 {
@@ -36,6 +36,7 @@ class ArrayQuery
      */
     public function apply(&$data) {
         static $iteration = 0;
+
         if (array_key_exists($this->path[$iteration], $data)) {
             $out = $data[$this->path[$iteration]];
         } else {

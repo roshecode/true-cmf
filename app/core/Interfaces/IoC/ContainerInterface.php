@@ -2,7 +2,7 @@
 
 namespace True\Interfaces\IoC;
 
-interface Container
+interface ContainerInterface
 {
     /**
      * Checks if a service is registered.

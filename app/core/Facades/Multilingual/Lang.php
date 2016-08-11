@@ -1,23 +1,19 @@
 <?php
 
-namespace True\Multilingual;
+namespace True\Facades\Multilingual;
 
 use InvalidArgumentException;
-use True\Data\FileSystem\File;
 use True\Data\FileSystem\FileArray;
-use True\Data\FileSystem\FileArrayFacade;
-use True\System\Config;
+use True\Facades\Data\FileSystem\FileArrayFacade;
 
 class Lang extends FileArrayFacade
 {
-    const BASE_LANG = 'en-EN';
-
     /**
      * @var FileArray
      */
-    protected static $data;
+    protected static $instance;
 
-    protected static $base_data = null;
+    const BASE_LANG = 'en-EN';
 
     /**
      * @param string $filePath
@@ -25,7 +21,7 @@ class Lang extends FileArrayFacade
      * @throws InvalidArgumentException
      */
     public static function load($filePath) {
-        parent::load(Config::get('app_dir').$filePath);
+        parent::load($filePath);
 
 //        if (Config::get('localization.language') === self::BASE_LANG) {
 //

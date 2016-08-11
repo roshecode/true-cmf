@@ -1,27 +1,26 @@
 <?php
 
-namespace True\System;
+namespace True\Facades\System;
 
 use InvalidArgumentException;
 use True\Data\FileSystem\FileArray;
-use True\Data\FileSystem\FileArrayFacade;
+use True\Facades\Data\FileSystem\FileArrayFacade;
 use True\Exceptions\FileNotFoundException;
 use True\Exceptions\FileUnreadableException;
-use True\Multilingual\Lang;
+use True\Facades\Multilingual\Lang;
 
-class Config extends FileArrayFacade
+final class Config extends FileArrayFacade
 {
     /**
      * @var FileArray
      */
-    protected static $data;
+    protected static $instance;
 
     /**
      * @param string $filePath
      */
     public static function load($filePath) {
         parent::load($filePath);
-        self::set('app_dir', getcwd());
 
         self::setLanguage(self::get('localization.language'));
         self::setErrors(self::get('errors'));
@@ -73,7 +72,7 @@ class Config extends FileArrayFacade
                 error_reporting($params['reporting']);
             }
         } else {
-            throw new InvalidArgumentException(Lang::get('exceptions')['invalid_argument']);
+            throw new InvalidArgumentException(Lang::get('exceptions.invalid_argument'));
         }
     }
 

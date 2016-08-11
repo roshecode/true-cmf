@@ -3,9 +3,8 @@
 namespace True\Data\FileSystem;
 
 use True\Data\RamSystem\ArrayQuery;
-use True\Multilingual\Lang;
 
-class FileArray
+final class FileArray
 {
     /**
      * Loaded array from file.
@@ -18,16 +17,6 @@ class FileArray
     {
         $this->load($filePath);
     }
-
-//    public function __get($name)
-//    {
-//        return $this->data[$name];
-//    }
-//
-//    public function __set($name, $value)
-//    {
-//        $this->data[$name] = $value;
-//    }
 
     /**
      * Load array from file.
