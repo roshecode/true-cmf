@@ -6,7 +6,7 @@ use Closure;
 use InvalidArgumentException;
 use True\Exceptions\FileNotFoundException;
 use True\Exceptions\FileUnreadableException;
-use True\Facades\Multilingual\Lang;
+use True\IoC\Facades\Lang;
 
 class File
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace True\Data\RamSystem;
+namespace True\Data\FileSystem;
 
 use InvalidArgumentException;
-use True\Facades\Multilingual\Lang;
+use True\IoC\Facades\Lang;
 
 class ArrayQuery
 {

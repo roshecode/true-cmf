@@ -2,8 +2,6 @@
 
 namespace True\Data\FileSystem;
 
-use True\Data\RamSystem\ArrayQuery;
-
 final class FileArray
 {
     /**

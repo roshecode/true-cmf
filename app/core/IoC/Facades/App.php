@@ -1,6 +1,6 @@
 <?php
 
-namespace True\Facades\IoC;
+namespace True\IoC\Facades;
 
 use True\Facades\Facade;
 use True\IoC\Container;

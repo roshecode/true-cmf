@@ -1,9 +1,8 @@
 <?php
 
-namespace True\Facades\Data\FileSystem;
+namespace True\Facades;
 
 use True\Data\FileSystem\File;
-use True\Facades\Facade;
 
 class FileArrayFacade extends Facade
 {

@@ -1,13 +1,13 @@
 <?php
 
-namespace True\Facades\System;
+namespace True\IoC\Facades;
 
 use InvalidArgumentException;
 use True\Data\FileSystem\FileArray;
-use True\Facades\Data\FileSystem\FileArrayFacade;
+use True\Facades\FileArrayFacade;
 use True\Exceptions\FileNotFoundException;
 use True\Exceptions\FileUnreadableException;
-use True\Facades\Multilingual\Lang;
+use True\IoC\Facades\Lang;
 
 final class Config extends FileArrayFacade
 {

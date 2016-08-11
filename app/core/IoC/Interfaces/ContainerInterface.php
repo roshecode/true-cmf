@@ -1,6 +1,6 @@
 <?php
 
-namespace True\Interfaces\IoC;
+namespace True\IoC\Interfaces;
 
 interface ContainerInterface
 {

@@ -7,10 +7,9 @@ require_once __DIR__ . '/app/vendor/autoload.php';
 require_once __DIR__ . '/app/core/bootstrap.inc';
 
 use \True\View\Block;
-use \True\Facades\IoC\App;
+use \True\IoC\Facades\App;
 
 App::sayHello();
-dd(\True\Facades\System\Config::getAll());
 
 //$twig = new \True\View\Twig();
 //$static_block = new Block('logo');

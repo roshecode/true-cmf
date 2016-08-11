@@ -1,10 +1,10 @@
 <?php
 
-namespace True\Facades\Multilingual;
+namespace True\IoC\Facades;
 
 use InvalidArgumentException;
 use True\Data\FileSystem\FileArray;
-use True\Facades\Data\FileSystem\FileArrayFacade;
+use True\Facades\FileArrayFacade;
 
 class Lang extends FileArrayFacade
 {
