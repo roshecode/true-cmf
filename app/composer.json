@@ -1,0 +1,24 @@
+{
+    "name": "ma1oy/true-framework",
+    "description": "Best framework",
+    "type": "library",
+    "require": {
+        "twig/twig": "^1.24",
+        "symfony/yaml": "^3.1"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ma1oy",
+            "email": "iroman.via@gmail.com",
+            "homepage": "http://truecode.info",
+            "role": "Developer"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "True\\": "app/core"
+        }
+    }
+}

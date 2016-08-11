@@ -1,6 +1,9 @@
 .idea
 node_modules
+vendor
 build
 tmp
-/core/libs
+/app/cache
+/app/core/libs
+/app/vendor
 site/compilation_cache

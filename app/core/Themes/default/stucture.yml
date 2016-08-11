@@ -1,0 +1,7 @@
+blocks:
+  logo:
+    type: 0
+    layout: wrap
+  article:
+    type: 1
+    layout: list
