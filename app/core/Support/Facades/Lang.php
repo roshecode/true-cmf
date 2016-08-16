@@ -1,15 +1,15 @@
 <?php
 
-namespace True\IoC\Facades;
+namespace True\Support\Facades;
 
 use InvalidArgumentException;
-use True\Data\FileSystem\FileArray;
+use True\Data\FileSystem\FileArrayQuery;
 use True\Facades\FileArrayFacade;
 
 class Lang extends FileArrayFacade
 {
     /**
-     * @var FileArray
+     * @var FileArrayQuery
      */
     protected static $instance;
 

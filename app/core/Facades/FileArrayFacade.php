@@ -2,17 +2,17 @@
 
 namespace True\Facades;
 
-use True\Data\FileSystem\File;
+use True\Data\FileSystem\FS;
 
 class FileArrayFacade extends Facade
 {
     /**
-     * @var \True\Data\FileSystem\FileArray
+     * @var \True\Data\FileSystem\FileArrayQuery
      */
     protected static $instance;
 
     public static function load($filePath) {
-        parent::setInstance(File::loadArray(APP_DIR . $filePath));
+        parent::setInstance(FS::getAssoc(APP_DIR . $filePath));
 //        static::$data = File::loadArray($filePath);
     }
 

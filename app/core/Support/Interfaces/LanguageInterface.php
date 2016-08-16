@@ -1,6 +1,6 @@
 <?php
 
-namespace True\IoC\Interfaces;
+namespace True\Support\Interfaces;
 
 interface LanguageInterface
 {

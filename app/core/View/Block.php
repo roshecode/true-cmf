@@ -2,7 +2,7 @@
 
 namespace True\View;
 
-use True\System\Config;
+use True\Support\Facades\Config;
 
 class Block
 {

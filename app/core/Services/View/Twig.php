@@ -1,25 +1,24 @@
 <?php
 
-namespace True\View;
+namespace True\Services\View;
 
-use Symfony\Component\Yaml\Yaml;
-use True\System\Config;
 use Twig_Environment;
 use Twig_Extension_Debug;
 use Twig_Loader_Filesystem;
 
-interface TemplateEngine
-{
-    public function renderBlock(Block $block);
-}
+use Symfony\Component\Yaml\Yaml;
 
-class Twig implements TemplateEngine
+use True\Support\Facades\Config;
+use True\Support\Interfaces\ViewInterface;
+use True\View\Block;
+
+class Twig implements ViewInterface
 {
     protected $engine;
 
     public function __construct()
     {
-        $loader = new Twig_Loader_Filesystem(Config::get('app_dir') . Config::get('directories.themes'));
+        $loader = new Twig_Loader_Filesystem(APP_DIR . Config::getDirectoryPath('themes'));
         $this->engine = new Twig_Environment($loader, array(
             'cache' => Config::get('directories.cache.themes'),
             'debug' => true,
@@ -32,7 +31,7 @@ class Twig implements TemplateEngine
         echo $this->engine->render($block->layout, $block->data($data));
     }
 
-    public function render($file_with_structure) {
+    public function render($layout, $file_with_structure) {
         $structure = Yaml::parse(file_get_contents($file_with_structure));
         $data = [
             'logo' => [
@@ -49,5 +48,10 @@ class Twig implements TemplateEngine
                 ]
             ],
         ];
+    }
+
+    public function display($layout, $data)
+    {
+        // TODO: Implement display() method.
     }
 }

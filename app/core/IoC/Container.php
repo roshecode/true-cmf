@@ -2,7 +2,7 @@
 
 namespace True\IoC;
 
-use True\IoC\Interfaces\ContainerInterface;
+use True\Support\Interfaces\ContainerInterface;
 
 class Container implements ContainerInterface
 {
@@ -34,10 +34,6 @@ class Container implements ContainerInterface
         $this->shared = array();
     }
 
-    public function sayHello() {
-        echo 'HEEEEEEEEEEEEELO';
-    }
-
     /**
      * Registers a service with specific interface.
      *
@@ -53,10 +49,11 @@ class Container implements ContainerInterface
          * in the future even if you will change the service implementation.
          */
 
-        if (is_object($service) && $share) {
+        $is_object = is_object($service);
+        if ($is_object && $share) {
             $this->instantiated[$interface] = $service;
         }
-        $this->services[$interface] = (is_object($service) ? get_class($service) : $service);
+        $this->services[$interface] = ($is_object ? get_class($service) : $service);
         $this->shared[$interface] = $share;
     }
 
