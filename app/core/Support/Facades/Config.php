@@ -1,12 +1,12 @@
 <?php
 
-namespace True\Support\Facades;
+namespace Truth\Support\Facades;
 
 use InvalidArgumentException;
-use True\Data\FileSystem\FileArrayQuery;
-use True\Facades\FileArrayFacade;
-use True\Exceptions\FileNotFoundException;
-use True\Exceptions\FileUnreadableException;
+use Truth\Data\FileSystem\FileArrayQuery;
+use Truth\Facades\FileArrayFacade;
+use Truth\Exceptions\FileNotFoundException;
+use Truth\Exceptions\FileUnreadableException;
 
 final class Config extends FileArrayFacade
 {

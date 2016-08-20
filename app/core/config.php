@@ -5,7 +5,7 @@ return [
         'languages' => '/core/Languages',
         'themes' => '/core/Themes',
         'cache' => [
-            'themes' => '/app/cache/templates'
+            'themes' => '/cache/templates'
         ],
     ],
     'localization' => [
@@ -20,7 +20,7 @@ return [
     'aliases' => [
 //        'Config' => 'True\\Support\\Facades\\Config',
 //        'Lang' => 'True\\Support\\Facades\\Lang',
-        'View' => True\Support\Facades\View::$class,
+        'View' => Truth\Support\Facades\View::$class,
 //        'Log' => 'True\\Support\\Facades\\Log',
     ],
     'errors' => [

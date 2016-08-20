@@ -1,8 +1,8 @@
 <?php
 
-namespace True\Facades;
+namespace Truth\Facades;
 
-use True\Support\Facades\App;
+use Truth\Support\Facades\App;
 
 abstract class Facade
 {

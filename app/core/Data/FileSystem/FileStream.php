@@ -1,6 +1,6 @@
 <?php
 
-namespace True\Data\FileSystem;
+namespace Truth\Data\FileSystem;
 
 class FileStream
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace True\Services\Logging;
+namespace Truth\Services\Logging;
 
-use True\Support\Interfaces\LogInterface;
+use Truth\Support\Interfaces\LogInterface;
 
 class Monolog implements LogInterface
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace True\Routing;
+namespace Truth\Routing;
 
-use True\Multilingual\Lang;
+use Truth\Multilingual\Lang;
 
 class Router
 {

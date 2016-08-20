@@ -1,6 +1,6 @@
 <?php
 
-namespace True\Services\View;
+namespace Truth\Services\View;
 
 use Twig_Environment;
 use Twig_Extension_Debug;
@@ -8,9 +8,9 @@ use Twig_Loader_Filesystem;
 
 use Symfony\Component\Yaml\Yaml;
 
-use True\Support\Facades\Config;
-use True\Support\Interfaces\ViewInterface;
-use True\View\Block;
+use Truth\Support\Facades\Config;
+use Truth\Support\Interfaces\ViewInterface;
+use Truth\View\Block;
 
 class Twig implements ViewInterface
 {
@@ -18,9 +18,11 @@ class Twig implements ViewInterface
 
     public function __construct()
     {
-        $loader = new Twig_Loader_Filesystem(APP_DIR . Config::getDirectoryPath('themes'));
+//        $loader = new Twig_Loader_Filesystem(APP_DIR . Config::getDirectoryPath('themes'));
+        $loader = new Twig_Loader_Filesystem(APP_DIR . '/core/Themes');
         $this->engine = new Twig_Environment($loader, array(
-            'cache' => Config::get('directories.cache.themes'),
+//            'cache' => Config::get('directories.cache.themes'),
+            'cache' => APP_DIR . '/app/cache/templates',
             'debug' => true,
             'auto_reload' => true
         ));

@@ -1,9 +1,9 @@
 <?php
 
-namespace True\Support\Facades;
+namespace Truth\Support\Facades;
 
-use True\Facades\Facade;
-use True\IoC\Container;
+use Truth\Facades\Facade;
+use Truth\IoC\Container;
 
 /**
  * Class App

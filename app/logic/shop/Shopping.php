@@ -2,7 +2,7 @@
 
 namespace Logic\Shop;
 
-use True\Controllers\Controller;
+use Truth\Controllers\Controller;
 
 class Shopping extends Controller{
     public function product($name) {

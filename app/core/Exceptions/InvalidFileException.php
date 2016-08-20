@@ -1,6 +1,6 @@
 <?php
 
-namespace True\Exceptions;
+namespace Truth\Exceptions;
 
 final class InvalidFileException extends FileException
 {

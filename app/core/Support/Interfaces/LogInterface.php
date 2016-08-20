@@ -1,6 +1,6 @@
 <?php
 
-namespace True\Support\Interfaces;
+namespace Truth\Support\Interfaces;
 
 interface LogInterface
 {

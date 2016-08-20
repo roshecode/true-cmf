@@ -1,6 +1,6 @@
 <?php
 
-namespace True\Routing;
+namespace Truth\Routing;
 
 
 class RouteNode

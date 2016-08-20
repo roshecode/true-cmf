@@ -2,7 +2,7 @@
 
 namespace Logic;
 
-use True\Controllers\Controller;
+use Truth\Controllers\Controller;
 
 class Main extends Controller {
     public function index() {

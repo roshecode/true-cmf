@@ -1,13 +1,13 @@
 <?php
 
-namespace True\Facades;
+namespace Truth\Facades;
 
-use True\Data\FileSystem\FS;
+use Truth\Data\FileSystem\FS;
 
 class FileArrayFacade extends Facade
 {
     /**
-     * @var \True\Data\FileSystem\FileArrayQuery
+     * @var \Truth\Data\FileSystem\FileArrayQuery
      */
     protected static $instance;
 

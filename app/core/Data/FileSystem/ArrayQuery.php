@@ -1,9 +1,9 @@
 <?php
 
-namespace True\Data\FileSystem;
+namespace Truth\Data\FileSystem;
 
 use InvalidArgumentException;
-use True\Support\Facades\Lang;
+use Truth\Support\Facades\Lang;
 
 class ArrayQuery
 {
@@ -46,7 +46,7 @@ class ArrayQuery
      *
      * @throws InvalidArgumentException
      */
-    public function __construct(&$array, $separator = '.') {
+    public function __construct(array &$array, $separator = '.') {
         if (is_array($array) && is_string($separator)) {
             $this->array = $array;
             $this->separator = $separator;

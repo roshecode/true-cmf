@@ -1,17 +1,17 @@
 <?php
 
-namespace True\Data\FileSystem;
+namespace Truth\Data\FileSystem;
 
 use InvalidArgumentException;
-use True\Exceptions\InvalidFileException;
-use True\Support\Facades\Lang;
+use Truth\Exceptions\InvalidFileException;
+use Truth\Support\Facades\Lang;
 
 class FileArrayQuery extends ArrayQuery
 {
     /**
      * FileArray constructor.
      *
-     * @param $filePath
+     * @param string $filePath
      * @param string $separator
      *
      * @throws InvalidFileException
@@ -37,9 +37,13 @@ class FileArrayQuery extends ArrayQuery
      *
      * @throws InvalidFileException
      */
-    public function load($filePath) {
+    public function load($filePath) {// Except::notArray($array, 'InvalidFile')->data($filePath, 'ARRAY');
+        // Envisage::notArray($array)->serve();
+        // Envisage::notArray($array)->serve([]);
+        // Envisage::notArray($array, 'InvalidFile');
         $array = FS::insert($filePath);
         if (is_array($array)) {
+            unset($this->array);
             $this->array = $array;
         } else {
             throw new InvalidFileException(Lang::get('exceptions.invalid_file'));

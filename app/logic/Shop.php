@@ -2,7 +2,7 @@
 
 namespace Logic;
 
-use True\Controllers\Controller;
+use Truth\Controllers\Controller;
 
 class Shop extends Controller{
     public function index() {

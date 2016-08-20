@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <link href="{{ style }}" rel="stylesheet">
+    <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/styles/darcula.min.css">-->
+    <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/styles/tomorrow-night.min.css">-->
+    <link rel="stylesheet" href="{{ dir }}/theme-darcula.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/highlight.min.js"></script>
+    <!--<script src="//cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>-->
+</head>
+<body>
+<div class="container">
+    <aside class="envisage-left">
+        <h3 class="envisage-exception">{{ exception }}</h3>
+        <!--<pre><code id="editor" class="envisage-code php">{{ code }}</code></pre>-->
+        <pre class="prettyprint"><code id="editor" class="envisage-code language-java">{{ code }}</code></pre>
+        <script>hljs.initHighlightingOnLoad();</script>
+        <div class="envisage-info">
+            <h4 class="envisage-message">{{ message }}</h4>
+            <p class="envisage-trace">{{ trace }}</p>
+        </div>
+    </aside>
+    <aside class="envisage-right">
+        {{ server }}
+    </aside>
+</div>
+<script src="{{ script }}" type="text/javascript" charset="utf-8"></script>
+<script>
+    function initEditor() {
+        var editor = ace.edit("editor");
+        editor.setTheme("ace/theme/tomorrow_night");
+        editor.session.setMode("ace/mode/php");
+        editor.session.setUseWrapMode(true);
+    }
+    document.querySelector('#editor').addEventListener('click', function (e) {
+        initEditor();
+    });
+</script>
+</body>
+</html>

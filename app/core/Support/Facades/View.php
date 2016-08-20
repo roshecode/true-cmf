@@ -1,9 +1,9 @@
 <?php
 
-namespace True\Support\Facades;
+namespace Truth\Support\Facades;
 
-use True\Facades\Facade;
-use True\Support\Interfaces\ViewInterface;
+use Truth\Facades\Facade;
+use Truth\Support\Interfaces\ViewInterface;
 
 final class View extends Facade// implements FacadeInterface
 {

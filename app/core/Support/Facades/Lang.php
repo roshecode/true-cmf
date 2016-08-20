@@ -1,10 +1,10 @@
 <?php
 
-namespace True\Support\Facades;
+namespace Truth\Support\Facades;
 
 use InvalidArgumentException;
-use True\Data\FileSystem\FileArrayQuery;
-use True\Facades\FileArrayFacade;
+use Truth\Data\FileSystem\FileArrayQuery;
+use Truth\Facades\FileArrayFacade;
 
 class Lang extends FileArrayFacade
 {

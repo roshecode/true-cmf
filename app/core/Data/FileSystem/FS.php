@@ -1,12 +1,13 @@
 <?php
 
-namespace True\Data\FileSystem;
+namespace Truth\Data\FileSystem;
 
 use Closure;
 use InvalidArgumentException;
-use True\Exceptions\FileNotFoundException;
-use True\Exceptions\FileUnreadableException;
-use True\Support\Facades\Lang;
+use Truth\Exceptions\FileNotFoundException;
+use Truth\Exceptions\UnreadableFileException;
+use UnexpectedValueException;
+use Truth\Support\Facades\Lang;
 
 class FS
 {
@@ -22,23 +23,19 @@ class FS
      * @param string $filePath
      * @param Closure $callback
      *
-     * @throws InvalidArgumentException
      * @throws FileNotFoundException
-     * @throws FileUnreadableException
+     * @throws UnreadableFileException
      */
     private static function fileExistAndReadable($filePath, $callback) {
         if (is_file($filePath)) {
-            if (file_exists($filePath)) {
-                if (is_readable($filePath)) {
-                    return $callback($filePath);
-                } else {
-                    throw new FileUnreadableException(Lang::get('exceptions.file_is_unreadable'));
-                }
-            } else {
-                throw new FileNotFoundException(Lang::get('exceptions.file_not_found'));
-            }
+//            if (is_readable($filePath)) {
+                return $callback($filePath);
+//            } else {
+//                throw new UnreadableFileException(Lang::get('exceptions.file_is_unreadable'));
+//            }
         } else {
-            throw new InvalidArgumentException(Lang::get('exceptions.invalid_argument'));
+//            throw new FileNotFoundException(Lang::get('exceptions.file_not_found'));
+            throw new FileNotFoundException('File "' . $filePath . '" you try to open is not found');
         }
     }
 
@@ -99,11 +96,17 @@ class FS
      * @return mixed
      *
      * @throws InvalidArgumentException
+     * @throws UnexpectedValueException
      */
     public static function get($filePath, $getMethod) {
         return self::fileExistAndReadable($filePath, function() use($filePath, $getMethod) {
-            if (method_exists(get_called_class(), $getMethod)) {
-                return static::$getMethod($filePath);
+            if (is_string($getMethod)) {
+//                if (method_exists(get_called_class(), $getMethod)) {
+                if (is_callable([get_called_class(), $getMethod])) {
+                    return static::$getMethod($filePath);
+                } else {
+                    throw new UnexpectedValueException(Lang::get('exceptions.unexpected_value'));
+                }
             } else {
                 throw new InvalidArgumentException(Lang::get('exceptions.invalid_argument'));
             }

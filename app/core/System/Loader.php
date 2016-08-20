@@ -1,9 +1,9 @@
 <?php
 
-namespace True\System;
+namespace Truth\System;
 
-use True\Exceptions\FileNotFoundException;
-use True\Exceptions\FileUnreadableException;
+use Truth\Exceptions\FileNotFoundException;
+use Truth\Exceptions\FileUnreadableException;
 
 class Loader {
 //    private $prefix;
