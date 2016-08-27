@@ -20,8 +20,11 @@ body, ol, pre, .envisage-message {
 .envisage-right {
     float: right;
     width: 40%;
-    background-color: #3c3c3c;
+    background-color: #222;
     color: #aaa;
+}
+.envisage-right ul{
+    padding: 0 1rem;
 }
 .envisage-right strong {
     float: left;
@@ -31,16 +34,23 @@ body, ol, pre, .envisage-message {
 .envisage-right span {
     /*float: right;*/
     /*max-width: 100%;*/
+    word-wrap: break-word;
+}
+.envisage-data > div {
+    width: 50%;
 }
 .envisage-exception {
     padding: .8rem;
     background-color: #E91E63;
-    /*color: whitesmoke;*/
-    color: #bbb;
+    color: #ffacac;
+    /*color: #bbb;*/
 }
 .envisage-exception > mark {
+    font-size: 1.2rem;
     background-color: transparent;
     color: white;
+    /*color: #f16363;*/
+    /*text-shadow: 1px 1px gray, -1px 1px gray, 1px -1px gray, -1px -1px gray;*/
 }
 .envisage-code {
     position: relative;

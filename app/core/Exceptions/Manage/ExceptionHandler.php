@@ -8,13 +8,15 @@ class ExceptionHandler
 {
     public function __invoke(EnvisageException $exception)
     {
-        $trace = $exception->getFirstTrace();
+        $trace = $exception->getData();
+//        $trace = $exception->getTrace();
+//        $trace = $trace[count($trace) - 1];
         $errorLine = $trace['line'];
         $height = 7;
 
         $currentLine = 0;
-        $startLine = $errorLine > $height ? $errorLine - $height : $errorLine;
-        $endLine = $errorLine + 1 + $height;
+        $startLine = $errorLine > $height ? $errorLine - $height : 1;
+        $endLine = $errorLine + 0 + $height;
 
         $data = [];
         $data['title'] = 'Error!';
@@ -35,8 +37,9 @@ class ExceptionHandler
         }
         fclose($fh);
         $data['code'] .= '</ol>';
-        $data['exception'] = 'Truth\\Exceptions\\<mark>InvalidArgumentException</mark>';
-        $data['message'] = static::parseStr($exception->getMessage(), $trace, '<mark>', '</mark>');
+        $exceptionName = ltrim(strrchr($trace['exception'], '\\'), '\\');
+        $data['exception'] = str_replace($exceptionName, '<mark>' . $exceptionName . '</mark>', $trace['exception']);
+        $data['message'] = $exception->getMessage();
         $data['trace'] = $exception->getTraceAsString();
         $data['server'] = '<ul>';
         foreach ($_SERVER as $key => $value) {
@@ -45,14 +48,6 @@ class ExceptionHandler
         $data['server'] .= '</ul>';
         $data['dir'] = str_replace(getcwd(), '', __DIR__) . '/page';
         $data['script'] = str_replace(getcwd(), '', __DIR__) . '/../../External/ace-builds/src-noconflict/ace.js';
-        $data['style'] = str_replace(getcwd(), '', __DIR__) . '/page/style.css';
-        echo static::parseStr(file_get_contents(__DIR__ . '/page/template.html'), $data);
-    }
-
-    protected static function parseStr($str, $data, $wrapLeft = '', $wrapRight = '') {
-        return preg_replace_callback('|{{\s*\w+\s*}}|U', function($matches) use($data, $wrapLeft, $wrapRight) {
-            $key = trim($matches[0], '{ }');
-            return isset($data[$key]) ? $wrapLeft . $data[$key] . $wrapRight : '';
-        },$str);
+        echo $exception->parseStr(file_get_contents(__DIR__ . '/page/template.html'), $data);
     }
 }

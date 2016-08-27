@@ -1,8 +1,20 @@
 <?php
 
+function first(&$array) {
+//    if (!is_array($array)) return $array;
+    if (!count($array)) return null;
+    reset($array);
+    return $array[key($array)];
+}
+
+function last(&$array) {
+//    if (!is_array($array)) return $array;
+    if (!count($array)) return null;
+    end($array);
+    return $array[key($array)];
+}
+
 function d($v1, $v2 = null) {
-
-
     $v = ($v2 === null ? $v1 : $v2);
     $func = (is_string($v) || is_numeric($v) ? 'print_r' : 'var_dump');
     ?><pre><?php
@@ -13,5 +25,5 @@ function d($v1, $v2 = null) {
 
 function dd($v) {
     d($v);
-    die;
+    exit;
 }

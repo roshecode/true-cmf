@@ -1,13 +1,18 @@
 <?php
 
 return [
+    'before' => '{{ filename }}({{ line }}): ',
+    'after'  => ' Code {{ code }}',
     'exceptions' => [
-        'file_is_unreadable' => 'Файл %s, который Вы пытаетесь прочесть нечитаем!',
-        'file_not_found' => 'Файл %s, который Вы пытаетесь открыть не найден!',
-        'invalid_argument' => 'Неверный передаваемый аргумент %s!'
+        'UnreadableFile' => 'File %s you try to read is unreadable!',
+        'FileNotFound' => 'File %s you try to open is not found!',
+        'InvalidFile' => 'Passing file {0} is not {valid}',
+        'InvalidArgument' => 'значение "{{ 0 }}", переданное в параметре "{{ param }}" в функции "{{ function }}" на позиции {{ position }}, должно быть {{ expected }}, а не {{ given }}.',
+        'UnexpectedValue' => 'Passing value %s must be %s!',
+        'BadMethodCall' => 'Method %s does not exist',
+        'Range' => "Value %s must be less then %d and more than %d"
     ],
     'notices' => [
-        'key_does_not_exist' => 'Ключ массива %s не существует.',
-        'key_is_not_array' => 'Ячейка по ключу %s - не массив.'
+        'key_does_not_exist' => 'Array key %s does not exist.',
     ]
 ];

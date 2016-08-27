@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <link href="{{ dir }}/style.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <aside class="envisage-left">
+        <h3 class="envisage-exception">{{ title }}</h3>
+        <pre><code id="editor" class="envisage-code php"><ol start="1">
+		    {%   for  row in code   %}
+                <li>{{   row }}
+                {% for x in row %}
+                    <i>{{ x }}</i>
+                {% endfor %}
+                </li>
+            {% endfor %}
+        </ol></code></pre>
+    </aside>
+</div>
+</body>
+</html>

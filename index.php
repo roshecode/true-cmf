@@ -9,22 +9,24 @@ require_once __DIR__ . '/app/core/System/helpers.php';
 
 $whoops = new \Whoops\Run;
 $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
-$whoops->register();
+//$whoops->register();
 
 require_once __DIR__ . '/app/core/Data/FileSystem/FS.php';
 
 $ed = new \Truth\Exceptions\Manage\ExceptionDispatcher();
 $ed->register(new \Truth\Exceptions\Manage\ExceptionHandler());
 
-\Truth\Exceptions\Manage\Envisage::register();
-function test($arr) {
+use \Truth\Exceptions\Manage\Envisage;
+Envisage::register();
+/**
+ * @param array $arr
+ */
+function test(array $arr) {
 //    $some = $arr[2];
-    \Truth\Exceptions\Manage\Envisage::arr($arr, 'InvalidArgument');
+    Envisage::isArray($arr);
     print_r($arr);
-}
-test(new stdClass(), 'df');
-die;
-\Truth\Exceptions\Manage\Envisage::isArray(new stdClass(), 'Array', 'InvalidArgument'); // bgbgbgbgbgb
+} ?><?php
+test(new StdClass, 'fg');
 die;
 
 Truth\Data\FileSystem\FS::insert('gfg');

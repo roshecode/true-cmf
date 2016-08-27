@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'prefix' => '{{ filename }}({{ line }}): ',
-    'suffix' => ' Code {{ code }}',
+    'before' => '{{ filename }}({{ line }}): ',
+    'after'  => ' Code {{ code }}',
     'exceptions' => [
-        'UnreadableFile' => 'File %s you try to read is unreadable!',
-        'FileNotFound' => 'File %s you try to open is not found!',
-        'InvalidFile' => 'Passing file {0} is not {valid}',
-//        'InvalidArgument' => 'Passing argument %s is invalid. %s expected.',
-        'InvalidArgument' => 'value "{{ 0 }}" passed to "{{ function }}" function at position {{ num }} expected to be {{ valid }}, type {{ invalid }} given.',
-        'UnexpectedValue' => 'Passing value %s must be %s!',
-        'BadMethodCall' => 'Method %s does not exist',
-        'Range' => "Value %s must be less then %d and more than %d"
+        'UnreadableFile' => 'File {{ 0 }} you try to read is unreadable!',
+        'FileNotFound' => 'File {{ 0 }} you try to open is not found!',
+        'InvalidFile' => 'Passing file {{ 0 }} is invalid',
+//        'InvalidArgument' => 'value "{{ 0 }}" {% param ? passed to "{{ param }}" parameter %} in "{{ function }}" function at position {{ position }} expected to be {{ expected }}, type {{ given }} given.',
+        'InvalidArgument' => 'value "{{ 0 }}" passed to "{{ param }}" parameter in "{{ function }}" function at position {{ position }} expected to be {{ expected }}, type {{ given }} given.',
+        'UnexpectedValue' => 'Passing value {{ given }} must be {{ expected }}!',
+        'BadMethodCall' => 'Method {{ 0 }} does not exist',
+        'Range' => "Value {{ 0 }} must be less then {{ 1 }} and more than {{ 2 }}"
     ],
     'notices' => [
-        'key_does_not_exist' => 'Array key %s does not exist.',
+        'key_does_not_exist' => 'Array key {{ 0 }} does not exist.',
     ]
 ];

@@ -2,6 +2,8 @@
 
 namespace Truth\Exceptions\Manage;
 
+use Truth\Exceptions\EnvisageError;
+
 class ExceptionDispatcher
 {
     protected $stack;
@@ -10,7 +12,7 @@ class ExceptionDispatcher
         $this->stack[] = $handler;
         set_exception_handler([$this, 'exceptionHandler']);
         set_error_handler([$this, 'errorHandler'], E_ALL | E_STRICT);
-        register_shutdown_function([$this, "fatalHandler"]);
+//        register_shutdown_function([$this, "fatalHandler"]);
     }
 
     public function exceptionHandler(\Exception $exception) {
@@ -20,13 +22,12 @@ class ExceptionDispatcher
         }
     }
 
-    public function errorHandler($errno, $errstr, $errfile, $errline, $errcontext) {
-        if (!(error_reporting() & $errno)) {
-            dd($errstr);
+    public function errorHandler($errCode, $errStr, $errFile, $errLine, $errContext) {
+        if (!(error_reporting() & $errCode)) {
             // Этот код ошибки не входит в error_reporting
             return;
         }
-        throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
+        throw new EnvisageError($errCode, $errStr, $errFile, $errLine, $errContext);
     }
 
     public function fatalHandler() {
@@ -46,6 +47,11 @@ class ExceptionDispatcher
 //            error_mail(format_error( $errno, $errstr, $errfile, $errline));
 //            dd(format_error( $errno, $errstr, $errfile, $errline));
             dd($error);
+            foreach ($this->stack as $handler) {
+//            echo $handler($exception);
+                $handler($error);
+            }
         }
+        dd($error);
     }
 }
