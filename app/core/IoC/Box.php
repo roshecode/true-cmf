@@ -7,6 +7,7 @@ use BadMethodCallException;
 use Truth\Support\Facades\Lang;
 
 class StrictBox {
+    protected static $instance;
     /**
      * The container's bindings.
      *
@@ -16,27 +17,121 @@ class StrictBox {
     /*
      * ['abstract string' => [
      *      [
-     *          'concrete' => Closure,
-     *          'shared' => true|false
+     *          'concrete' => String|Closure|NULL,
+     *          'shared' => Object|false
      *      ]
      * ]]
      */
-    // Здесь хранятся только синглтоны
-    protected $instances = [];
+    /**
+     * The stack of concretions currently being built.
+     *
+     * @var array
+     */
+    protected $buildStack = [];
+
+    public function __construct()
+    {
+        self::$instance = $this;
+    }
+
+    protected function getStack(&$class, array &$stack = []) {
+        $constructor = (new \ReflectionClass($class))->getConstructor();
+        if($params = $constructor ? $constructor->getParameters() : false) {
+            foreach ($params as $index => $param) {
+                $nextClass = $param->getClass();
+                if ($nextClass) {
+                    $nextClassName = $nextClass->name;
+                    $stack[$nextClassName] = $this->getStack($nextClassName);
+//                    $nextStack = $this->getStack($nextClassName);
+//                    if (! $nextStack) {
+//                        $stack[] = $nextClassName;
+//                    }
+                } else {
+                    $stack[] = null;
+                }
+            }
+        };
+        return $stack;
+    }
+
+    protected function build(&$stack, &$params) {
+        foreach ($stack as $class => $nextStack) {
+            if ($nextStack) { // if we have dependency from another class
+//                $stack[$class] = $this->make($class, $this->build($nextStack, $params));
+                $stack[$class] = $this->newInstance($class, $this->build($nextStack, $params));
+            } elseif (is_string($class)) { // if item is class
+//                $stack[$class] = $this->makeRef($class, $params); // TODO: array
+                $stack[$class] = $this->newInstance($class, $params);
+
+//                $stack[$class] = $this->bindings[$class]['make']($params); // MAIN: CREATE ANY CLASS INSTANCE
+            } else { // if item is scalar
+                $stack[$class] = array_shift($params);
+            }
+        }
+        return $stack;
+    }
+
+    protected function newInstance(&$concrete, &$params) {
+//        return $params ?
+//            (new \ReflectionClass($concrete))->newInstanceArgs(
+//                $this->build($this->getStack($concrete), $params)) :
+//            new $concrete;
+        if ($params) {
+            return (new \ReflectionClass($concrete))->newInstanceArgs($params);
+        } else {
+            return new $concrete;
+        }
+    }
+
+    protected function getNonSharedClosure(&$concrete) {
+        return function(&$params) use($concrete) {
+            $params = $this->build($this->getStack($concrete), $params);
+            return $this->newInstance($concrete, $params);
+        };
+    }
+
+    protected function getSharedClosure(&$abstract, &$concrete) {
+        return function(&$params) use($abstract, $concrete) {
+            $shared = &$this->bindings[$abstract]['shared'];
+            $params = $this->build($this->getStack($concrete), $params);
+            return $shared === true ? $shared = $this->newInstance($concrete, $params) : $shared;
+//            $abstractReference = &$this->bindings[$abstract];
+//            return isset($abstractReference['shared']) ?
+//                $abstractReference['shared'] :
+//                $abstractReference['shared'] = $shared = $this->newInstance($concrete, $params);
+        };
+    }
+
+    protected function setStringBinding(&$abstract, &$concrete, &$share) {
+        $this->bindings[$abstract] = [
+            'make' => $share ?
+                $this->getSharedClosure($abstract, $concrete) : $this->getNonSharedClosure($concrete),
+            'shared' => $share
+        ];
+    }
+
+    protected function setClosureBinding($abstract, $closure, $share) {
+        $this->bindings[$abstract] = [
+            'make' => function() use($abstract, $closure) {
+                $shared = &$this->bindings[$abstract]['shared'];
+                return $shared === true ? $shared = $closure(self::$instance) : $shared;
+            },
+            'shared' => $share
+        ];
+    }
 
     public function bind($abstract, $concrete = null, $share = false)
     {
-        /*
-         * When you add a service, you should register it
-         * with its interface or with a string that you can use
-         * in the future even if you will change the service implementation.
-         */
-
-        if (is_object($concrete) && $share) {
-            $this->instances[$abstract] = $concrete;
+        if (is_null($concrete)) {
+            $this->setStringBinding($abstract, $abstract, $share); // return new or instance abstract
+        } elseif (is_string($concrete)) {
+            $this->setStringBinding($abstract, $concrete, $share); // return new or instance concrete
+//        } elseif (is_callable($concrete)) {
+        } elseif ($concrete instanceof Closure) {
+            $this->setClosureBinding($abstract, $concrete, $share); // return new or instance closure
+        } elseif (is_object($concrete)) {
+            $this->instance($abstract, $concrete);
         }
-        $this->services[$abstract] = (is_object($concrete) ? get_class($concrete) : $concrete);
-        $this->shared[$abstract] = $share;
     }
 
     /**
@@ -47,7 +142,21 @@ class StrictBox {
      * @return void
      */
     public function instance($abstract, $instance) {
-        $this->instances[$abstract] = $instance;
+        $this->bindings[$abstract] = [
+            'concrete' => function() use($instance) { return $instance; },
+            'shared' => $instance
+        ];
+    }
+
+    /**
+     * Register a shared binding in the container.
+     *
+     * @param  string|array $abstract
+     * @param  mixed $concrete
+     * @return void
+     */
+    public function singleton($abstract, $concrete) {
+        $this->bind($abstract, $concrete, true);
     }
 
     /**
@@ -56,15 +165,21 @@ class StrictBox {
      * @return mixed
      */
     public function make($abstract, array $parameters = []) {
-        // Если абстракция - синглтон и он уже создан - возвращаем его
-        if (isset($this->instances[$abstract])) {
-            return $this->instances[$abstract];
+        $abstractReference = &$this->bindings[$abstract];
+        if (! isset($abstractReference)) {
+            $this->bind($abstract);
+//            return $this->newInstance($abstract, $parameters);
         }
-        // Если абстракция - синглтон и он ещё не сохранён (о чём говорит проверка в инстансах выше),
-        // то сохраняем его в инстансы для последующего извлечения (кэшируем)
-        if ($this->bindings[$abstract]['shared']) {
-            $this->instances[$abstract] = null; //$object
+//        return $abstractReference['make']($parameters);
+        return $abstractReference['make']($parameters);
+    }
+
+    protected function makeRef($abstract, array &$parameters) {
+        $abstractReference = &$this->bindings[$abstract];
+        if (! isset($abstractReference)) {
+            $this->bind($abstract);
         }
+        return $abstractReference['make']($parameters);
     }
 
     /**
@@ -75,8 +190,7 @@ class StrictBox {
      */
     public function isShared($abstract)
     {
-        return isset($this->instances[$abstract]) ? true :
-            isset($this->bindings[$abstract]['shared']) ? $this->bindings[$abstract]['shared'] : false;
+        return !!$this->bindings[$abstract]['shared'];
     }
 
     protected function test($str) {
@@ -95,17 +209,11 @@ class Box extends StrictBox
     /**
      * Normalize the given class name by removing leading slashes.
      *
-     * @param  mixed  $service
-     * @return mixed
+     * @param mixed &$service
      */
-    protected function fix(&$service)
-    {
+    protected function fix(&$service) {
 //        $service = is_string($service) ? ltrim($service, '\\') : $service;
         $service = ltrim($service, '\\');
-    }
-
-    public function bind() {
-        print_r($this->bindings);
     }
 
     public function __call($name, $arguments) {

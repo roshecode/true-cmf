@@ -2,7 +2,7 @@
 
 namespace Truth\Exceptions;
 
-final class InvalidFileException extends FileException
+class InvalidFileException extends FileException
 {
 
 }

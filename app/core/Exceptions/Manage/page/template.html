@@ -16,6 +16,7 @@
         <h3 class="envisage-exception">{{ exception }}</h3>
         <pre><code id="editor" class="envisage-code php">{{ code }}</code></pre>
         <script>hljs.initHighlightingOnLoad();</script>
+        <button id="edit">EDIT</button>
         <div class="envisage-info">
             <h3 class="envisage-message">{{ message }}</h3>
             <p class="envisage-trace">{{ trace }}</p>
@@ -29,17 +30,17 @@
         <section class="envisage-server">{{ server }}</section>
     </aside>
 </div>
-<!--<script src="{{ script }}" type="text/javascript" charset="utf-8"></script>-->
-<!--<script>-->
-    <!--function initEditor() {-->
-        <!--var editor = ace.edit("editor");-->
-        <!--editor.setTheme("ace/theme/tomorrow_night");-->
-        <!--editor.session.setMode("ace/mode/php");-->
-        <!--editor.session.setUseWrapMode(true);-->
-    <!--}-->
-    <!--document.querySelector('#editor').addEventListener('click', function (e) {-->
-        <!--initEditor();-->
-    <!--});-->
-<!--</script>-->
+<script src="{{ script }}" type="text/javascript" charset="utf-8"></script>
+<script>
+    function initEditor() {
+        var editor = ace.edit("editor");
+        editor.setTheme("ace/theme/tomorrow_night");
+        editor.session.setMode("ace/mode/php");
+        editor.session.setUseWrapMode(true);
+    }
+    document.querySelector('#edit').addEventListener('click', function (e) {
+        initEditor();
+    });
+</script>
 </body>
 </html>

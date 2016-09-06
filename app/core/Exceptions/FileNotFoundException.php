@@ -2,7 +2,7 @@
 
 namespace Truth\Exceptions;
 
-final class FileNotFoundException extends FileException
+class FileNotFoundException extends FileException
 {
 
 }

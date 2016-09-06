@@ -2,7 +2,7 @@
 
 namespace Truth\Exceptions;
 
-final class UnreadableFileException extends FileException
+class UnreadableFileException extends FileException
 {
 
 }
