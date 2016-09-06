@@ -12,33 +12,28 @@ $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
 //$whoops->register();
 
 $box = new \Truth\IoC\Box();
-$box->bind('Twig_LoaderInterface', 'Twig_Loader_Filesystem');
-$box->singleton('Truth\Support\Interfaces\ViewInterface', 'Truth\Services\View\Twig');
-$View = $box->make('Truth\Support\Interfaces\ViewInterface', [
-    APP_DIR . '/core/Themes',
-    [
-        'cache' => APP_DIR . '/cache/themes',
-        'debug' => true,
-        'auto_reload' => true
-    ]
+
+//$box->bind('hi', function($firstName, $lastName) {
+//    return 'Hello, ' . $firstName . ' ' . $lastName . '!';
+//});
+//echo $box->make('hi', ['Roman', 'Shevchenko']);
+//echo $box->make('hi', ['Andrii', 'Zholob']);
+//die;
+
+use \Truth\Support\Facades\View;
+use \Truth\View\Block;
+\Truth\Services\View\Twig::register($box);
+//echo View::render('Layout 1');
+//echo View::render('Layout 2');
+//dd($box);
+
+$static_block = new Block('logo');
+$dynamic_block = new Block('article', Block::TYPE_DYNAMIC, 'list');
+View::renderBlock($static_block);
+View::renderBlock($dynamic_block, [
+    ['title' => 'My first article', 'text' => 'It will be awesome!!!'],
+    ['title' => 'My second article', 'text' => 'I like what I doing.'],
 ]);
-echo $View->render('Layout 1');
-echo $box->make('Truth\Support\Interfaces\ViewInterface')->render('Layout 2');
-dd($box);
-
-
-
-//use \Truth\View\Block;
-//use \Truth\Support\Facades\View;
-//
-//$static_block = new Block('logo');
-//$dynamic_block = new Block('article', Block::TYPE_DYNAMIC, 'list');
-//View::renderBlock($static_block);
-//View::renderBlock($dynamic_block, [
-//    ['title' => 'My first article', 'text' => 'It will be awesome!!!'],
-//    ['title' => 'My second article', 'text' => 'I like what I doing.'],
-//]);
-//View::test();
 
 //Router::start();
 //Router::get('home/page', function($data) {

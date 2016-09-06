@@ -4,18 +4,33 @@ namespace Truth\Services\View;
 
 use Twig_Environment;
 use Twig_Extension_Debug;
-use Twig_Loader_Filesystem;
-
 use Symfony\Component\Yaml\Yaml;
-
-use Truth\Support\Facades\Config;
 use Truth\Support\Interfaces\ViewInterface;
+use Truth\Support\ServiceProvider;
 use Truth\View\Block;
 
-class Twig implements ViewInterface
+class Twig implements ViewInterface, ServiceProvider
 {
     protected $layout;
     protected $engine;
+
+    /**
+     * @param \Truth\IoC\Box $box
+     * @return void
+     */
+    public static function register(&$box)
+    {
+        $box->bind('Twig_LoaderInterface', 'Twig_Loader_Filesystem');
+        $box->singleton('View', 'Truth\Services\View\Twig');
+        $box->make('View', [
+            APP_DIR . '/core/Themes',
+            [
+                'cache' => APP_DIR . '/cache/themes',
+                'debug' => true,
+                'auto_reload' => true
+            ]
+        ]);
+    }
 
     public function __construct(Twig_Environment $environment, Twig_Extension_Debug $debug)
 //    public function __construct()

@@ -3,10 +3,17 @@
 namespace Truth\IoC;
 
 use Closure;
+use ReflectionClass;
 use BadMethodCallException;
+use Truth\Support\Facades\Facade;
 use Truth\Support\Facades\Lang;
 
 class StrictBox {
+    /**
+     * Self reference
+     *
+     * @var StrictBox
+     */
     protected static $instance;
     /**
      * The container's bindings.
@@ -14,38 +21,22 @@ class StrictBox {
      * @var array
      */
     protected $bindings = [];
-    /*
-     * ['abstract string' => [
-     *      [
-     *          'concrete' => String|Closure|NULL,
-     *          'shared' => Object|false
-     *      ]
-     * ]]
-     */
-    /**
-     * The stack of concretions currently being built.
-     *
-     * @var array
-     */
-    protected $buildStack = [];
+    protected $resolved = [];
 
     public function __construct()
     {
         self::$instance = $this;
+        Facade::init($this);
     }
 
     protected function getStack(&$class, array &$stack = []) {
-        $constructor = (new \ReflectionClass($class))->getConstructor();
+        $constructor = (new ReflectionClass($class))->getConstructor();
         if($params = $constructor ? $constructor->getParameters() : false) {
             foreach ($params as $index => $param) {
                 $nextClass = $param->getClass();
                 if ($nextClass) {
                     $nextClassName = $nextClass->name;
                     $stack[$nextClassName] = $this->getStack($nextClassName);
-//                    $nextStack = $this->getStack($nextClassName);
-//                    if (! $nextStack) {
-//                        $stack[] = $nextClassName;
-//                    }
                 } else {
                     $stack[] = null;
                 }
@@ -56,82 +47,42 @@ class StrictBox {
 
     protected function build(&$stack, &$params) {
         foreach ($stack as $class => $nextStack) {
-            if ($nextStack) { // if we have dependency from another class
-//                $stack[$class] = $this->make($class, $this->build($nextStack, $params));
-                $stack[$class] = $this->newInstance($class, $this->build($nextStack, $params));
-            } elseif (is_string($class)) { // if item is class
-//                $stack[$class] = $this->makeRef($class, $params); // TODO: array
-                $stack[$class] = $this->newInstance($class, $params);
-
-//                $stack[$class] = $this->bindings[$class]['make']($params); // MAIN: CREATE ANY CLASS INSTANCE
-            } else { // if item is scalar
-                $stack[$class] = array_shift($params);
-            }
+            $stack[$class] = is_numeric($class) ? array_pop($params) : $this->makeInstance($class, $params);
         }
         return $stack;
     }
 
     protected function newInstance(&$concrete, &$params) {
-//        return $params ?
-//            (new \ReflectionClass($concrete))->newInstanceArgs(
-//                $this->build($this->getStack($concrete), $params)) :
-//            new $concrete;
-        if ($params) {
-            return (new \ReflectionClass($concrete))->newInstanceArgs($params);
-        } else {
-            return new $concrete;
-        }
+        return $params ?
+            (new ReflectionClass($concrete))->newInstanceArgs($this->build($this->getStack($concrete), $params)) :
+            new $concrete;
     }
 
-    protected function getNonSharedClosure(&$concrete) {
-        return function(&$params) use($concrete) {
-            $params = $this->build($this->getStack($concrete), $params);
-            return $this->newInstance($concrete, $params);
-        };
+    protected function getMakeClosure(&$abstract, &$concrete, &$shared, $callback) {
+        return $shared ?
+            function(&$params) use(&$abstract, &$concrete, &$callback) {
+                return ($shared = &$this->bindings[$abstract]['shared']) === true ?
+                    $shared = $callback($concrete, $params) : $shared;
+            } :
+            function(&$params) use(&$concrete, &$callback) {
+                return $callback($concrete, $params);
+            };
     }
 
-    protected function getSharedClosure(&$abstract, &$concrete) {
-        return function(&$params) use($abstract, $concrete) {
-            $shared = &$this->bindings[$abstract]['shared'];
-            $params = $this->build($this->getStack($concrete), $params);
-            return $shared === true ? $shared = $this->newInstance($concrete, $params) : $shared;
-//            $abstractReference = &$this->bindings[$abstract];
-//            return isset($abstractReference['shared']) ?
-//                $abstractReference['shared'] :
-//                $abstractReference['shared'] = $shared = $this->newInstance($concrete, $params);
-        };
-    }
-
-    protected function setStringBinding(&$abstract, &$concrete, &$share) {
+    protected function setStringBinding(&$abstract, &$concrete, &$shared) {
         $this->bindings[$abstract] = [
-            'make' => $share ?
-                $this->getSharedClosure($abstract, $concrete) : $this->getNonSharedClosure($concrete),
-            'shared' => $share
+            'make' => $this->getMakeClosure($abstract, $concrete, $shared, function (&$concrete, &$params) {
+                return $this->newInstance($concrete, $params);
+            }),
+            'shared' => $shared
         ];
     }
 
-    protected function setClosureBinding($abstract, $closure, $share) {
+    protected function setClosureBinding($abstract, $closure, $shared) {
         $this->bindings[$abstract] = [
-            'make' => function() use($abstract, $closure) {
-                $shared = &$this->bindings[$abstract]['shared'];
-                return $shared === true ? $shared = $closure(self::$instance) : $shared;
-            },
-            'shared' => $share
+            'make' => $this->getMakeClosure($abstract, $closure, $shared, 'call_user_func_array'),
+            'shared' => $shared
         ];
-    }
-
-    public function bind($abstract, $concrete = null, $share = false)
-    {
-        if (is_null($concrete)) {
-            $this->setStringBinding($abstract, $abstract, $share); // return new or instance abstract
-        } elseif (is_string($concrete)) {
-            $this->setStringBinding($abstract, $concrete, $share); // return new or instance concrete
-//        } elseif (is_callable($concrete)) {
-        } elseif ($concrete instanceof Closure) {
-            $this->setClosureBinding($abstract, $concrete, $share); // return new or instance closure
-        } elseif (is_object($concrete)) {
-            $this->instance($abstract, $concrete);
-        }
     }
 
     /**
@@ -143,9 +94,30 @@ class StrictBox {
      */
     public function instance($abstract, $instance) {
         $this->bindings[$abstract] = [
-            'concrete' => function() use($instance) { return $instance; },
+            'make' => function() use($instance) { return $instance; },
             'shared' => $instance
         ];
+    }
+
+    /**
+     * Register a binding with the container.
+     *
+     * @param  string|array  $abstract
+     * @param  \Closure|string|null  $concrete
+     * @param  bool  $shared
+     * @return void
+     */
+    public function bind($abstract, $concrete = null, $shared = false)
+    {
+        if (is_string($concrete)) {
+            $this->setStringBinding($abstract, $concrete, $shared); // return new or instance concrete
+        } elseif ($concrete instanceof Closure) {
+            $this->setClosureBinding($abstract, $concrete, $shared); // return new or instance closure
+        } elseif (is_null($concrete)) {
+            $this->setStringBinding($abstract, $abstract, $shared); // return new or instance abstract
+        } elseif (is_object($concrete)) {
+            $this->instance($abstract, $concrete);
+        }
     }
 
     /**
@@ -160,26 +132,32 @@ class StrictBox {
     }
 
     /**
+     * Resolve the given type from the container.
+     *
+     * @param string $abstract
+     * @param array $parameters
+     * @return mixed
+     */
+    protected function makeInstance($abstract, array &$parameters = []) {
+//        return isset($this->bindings[$abstract]) ?
+//            $this->bindings[$abstract]['make']($parameters) : $this->newInstance($abstract, $parameters);
+        if (isset($this->bindings[$abstract])) {
+            return $this->bindings[$abstract]['make']($parameters);
+        } else {
+            isset($this->resolved[$abstract]) ? ++$this->resolved[$abstract] : $this->resolved[$abstract] = 1;
+            return $this->newInstance($abstract, $parameters);
+        }
+    }
+
+    /**
+     * Wrap function under makeInstance
+     *
      * @param string $abstract
      * @param array $parameters
      * @return mixed
      */
     public function make($abstract, array $parameters = []) {
-        $abstractReference = &$this->bindings[$abstract];
-        if (! isset($abstractReference)) {
-            $this->bind($abstract);
-//            return $this->newInstance($abstract, $parameters);
-        }
-//        return $abstractReference['make']($parameters);
-        return $abstractReference['make']($parameters);
-    }
-
-    protected function makeRef($abstract, array &$parameters) {
-        $abstractReference = &$this->bindings[$abstract];
-        if (! isset($abstractReference)) {
-            $this->bind($abstract);
-        }
-        return $abstractReference['make']($parameters);
+        return $this->makeInstance($abstract, array_reverse($parameters));
     }
 
     /**
@@ -192,16 +170,11 @@ class StrictBox {
     {
         return !!$this->bindings[$abstract]['shared'];
     }
-
-    protected function test($str) {
-        echo $str;
-    }
 }
 
 /**
  * Class Box
  *
- * @method test(string $str)
  * @package True\IoC
  */
 class Box extends StrictBox
