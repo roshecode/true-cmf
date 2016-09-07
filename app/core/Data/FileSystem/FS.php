@@ -4,10 +4,9 @@ namespace Truth\Data\FileSystem;
 
 use Closure;
 use InvalidArgumentException;
-use Truth\Exceptions\FileNotFoundException;
-use Truth\Exceptions\UnreadableFileException;
+use Truth\Data\FileSystem\Exceptions\FileNotFoundException;
+use Truth\Data\FileSystem\Exceptions\UnreadableFileException;
 use UnexpectedValueException;
-use Truth\Support\Facades\Lang;
 
 class FS
 {
@@ -105,10 +104,10 @@ class FS
                 if (is_callable([get_called_class(), $getMethod])) {
                     return static::$getMethod($filePath);
                 } else {
-                    throw new UnexpectedValueException(Lang::get('exceptions.unexpected_value'));
+                    throw new UnexpectedValueException('exceptions.unexpected_value'); // TODO: Envisage
                 }
             } else {
-                throw new InvalidArgumentException(Lang::get('exceptions.invalid_argument'));
+                throw new InvalidArgumentException('exceptions.invalid_argument'); // TODO: Envisage
             }
         });
     }

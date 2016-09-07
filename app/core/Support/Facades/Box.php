@@ -4,9 +4,9 @@ namespace Truth\Support\Facades;
 
 use Truth\Support\Abstracts\Facade;
 
-class Lang extends Facade
+class Box extends Facade
 {
     protected static function getFacadeAccessor() {
-        return 'Lang';
+        return 'Box';
     }
 }

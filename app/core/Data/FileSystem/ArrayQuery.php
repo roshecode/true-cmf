@@ -46,7 +46,7 @@ class ArrayQuery
      *
      * @throws InvalidArgumentException
      */
-    public function __construct(array &$array, $separator = '.') {
+    public function __construct(array $array, $separator = '.') {
         if (is_array($array) && is_string($separator)) {
             $this->array = $array;
             $this->separator = $separator;

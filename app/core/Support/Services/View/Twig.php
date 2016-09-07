@@ -1,28 +1,27 @@
 <?php
 
-namespace Truth\Services\View;
+namespace Truth\Support\Services\View;
 
 use Twig_Environment;
 use Twig_Extension_Debug;
 use Symfony\Component\Yaml\Yaml;
+use Truth\Support\Abstracts\ServiceProvider;
 use Truth\Support\Interfaces\ViewInterface;
-use Truth\Support\ServiceProvider;
 use Truth\View\Block;
 
-class Twig implements ViewInterface, ServiceProvider
+class Twig extends ServiceProvider implements ViewInterface
 {
     protected $layout;
     protected $engine;
 
     /**
-     * @param \Truth\IoC\Box $box
      * @return void
      */
-    public static function register(&$box)
+    public static function register()
     {
-        $box->bind('Twig_LoaderInterface', 'Twig_Loader_Filesystem');
-        $box->singleton('View', 'Truth\Services\View\Twig');
-        $box->make('View', [
+        self::$box->bind('Twig_LoaderInterface', 'Twig_Loader_Filesystem');
+        self::$box->singleton('View', self::NS . '\View\Twig');
+        self::$box->make('View', [
             APP_DIR . '/core/Themes',
             [
                 'cache' => APP_DIR . '/cache/themes',
@@ -33,19 +32,8 @@ class Twig implements ViewInterface, ServiceProvider
     }
 
     public function __construct(Twig_Environment $environment, Twig_Extension_Debug $debug)
-//    public function __construct()
     {
-//        $loader = new Twig_Loader_Filesystem(APP_DIR . Config::getDirectoryPath('themes'));
-
-//        $loader = new Twig_Loader_Filesystem(APP_DIR . '/core/Themes');
-//        $this->engine = new Twig_Environment($loader, array(
-////            'cache' => Config::get('directories.cache.themes'),
-//            'cache' => APP_DIR . '/app/cache/templates',
-//            'debug' => true,
-//            'auto_reload' => true
-//        ));
         $this->engine = $environment;
-//        $this->engine->addExtension(new Twig_Extension_Debug());
         $this->engine->addExtension($debug);
     }
 

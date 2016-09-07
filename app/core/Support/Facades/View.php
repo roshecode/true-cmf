@@ -2,9 +2,11 @@
 
 namespace Truth\Support\Facades;
 
+use Truth\Support\Abstracts\Facade;
+
 class View extends Facade
 {
-    protected function getFacadeAccessor() {
+    protected static function getFacadeAccessor() {
         return 'View';
     }
 }

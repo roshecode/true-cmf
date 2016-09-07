@@ -1,36 +1,33 @@
 <?php
 
-use Truth\Routing\Router;
+ini_set('display_errors', true);
+ini_set('display_startup_errors', true);
+error_reporting(E_ALL);
 
 define('APP_DIR', (DIRECTORY_SEPARATOR == "\\" ? str_replace('\\', '/', __DIR__) : __DIR__) . '/app');
 require_once __DIR__ . '/app/vendor/autoload.php';
 require_once __DIR__ . '/app/core/System/helpers.php';
-//require_once __DIR__ . '/app/core/bootstrap.inc';
+require_once __DIR__ . '/app/core/bootstrap.inc';
 
-$whoops = new \Whoops\Run;
-$whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
-//$whoops->register();
-
-$box = new \Truth\IoC\Box();
-
-//$box->bind('hi', function($firstName, $lastName) {
-//    return 'Hello, ' . $firstName . ' ' . $lastName . '!';
-//});
-//echo $box->make('hi', ['Roman', 'Shevchenko']);
-//echo $box->make('hi', ['Andrii', 'Zholob']);
-//die;
-
+use \Truth\Support\Facades\Box;
+use \Truth\Support\Facades\Lang;
+use \Truth\Support\Facades\Config;
+use Truth\Routing\Router;
 use \Truth\Support\Facades\View;
 use \Truth\View\Block;
-\Truth\Services\View\Twig::register($box);
+
+//Box::bind('hi', function($firstName, $lastName) {
+//    return 'Hello, ' . $firstName . ' ' . $lastName . '!';
+//});
+//echo Box::make('hi', ['Roman', 'Shevchenko']);
+//echo Box::make('hi', ['Andrii', 'Zholob']);
+
 //echo View::render('Layout 1');
 //echo View::render('Layout 2');
-//dd($box);
+//dd(Box::getInstance());
 
-$static_block = new Block('logo');
-$dynamic_block = new Block('article', Block::TYPE_DYNAMIC, 'list');
-View::renderBlock($static_block);
-View::renderBlock($dynamic_block, [
+View::renderBlock(new Block('logo'));
+View::renderBlock(new Block('article', Block::TYPE_DYNAMIC, 'list'), [
     ['title' => 'My first article', 'text' => 'It will be awesome!!!'],
     ['title' => 'My second article', 'text' => 'I like what I doing.'],
 ]);

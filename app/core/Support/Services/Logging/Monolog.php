@@ -1,6 +1,6 @@
 <?php
 
-namespace Truth\Services\Logging;
+namespace Truth\Support\Services\Logging;
 
 use Truth\Support\Interfaces\LogInterface;
 

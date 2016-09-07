@@ -3,8 +3,7 @@
 namespace Truth\Data\FileSystem;
 
 use InvalidArgumentException;
-use Truth\Exceptions\InvalidFileException;
-use Truth\Support\Facades\Lang;
+use Truth\Data\FileSystem\Exceptions\InvalidFileException;
 
 class FileArrayQuery extends ArrayQuery
 {
@@ -23,7 +22,7 @@ class FileArrayQuery extends ArrayQuery
             parent::__construct(FS::insert($filePath), $separator);
         } catch (InvalidArgumentException $e) {
             if (is_string($separator)) {
-                throw new InvalidFileException(Lang::get('exceptions.invalid_file'));
+                throw new InvalidFileException('exceptions.invalid_file');  // TODO: Envisage
             } else {
                 throw new InvalidArgumentException($e->getMessage());
             }
@@ -46,7 +45,7 @@ class FileArrayQuery extends ArrayQuery
             unset($this->array);
             $this->array = $array;
         } else {
-            throw new InvalidFileException(Lang::get('exceptions.invalid_file'));
+            throw new InvalidFileException('exceptions.invalid_file'); // TODO: Envisage
         }
     }
 }

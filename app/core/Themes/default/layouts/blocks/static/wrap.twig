@@ -1,6 +1,6 @@
-<div class="block block__static block-{{ name }}">
-    {{ constant(ns ~ 'PATH_LAYOUTS') }}
+<div class="block block_static block-{{ name }}">
+    {#{{ constant(ns ~ 'PATH_LAYOUTS') }}#}
     {#{{ dump(_self) }}#}
-    {{ dump(_context) }}
+    {#{{ dump(_context) }}#}
     {% include template %}
 </div>

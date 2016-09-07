@@ -1,17 +1,18 @@
 <?php
 
+use Truth\Support\Facades\Config;
+
 require_once __DIR__ . '/System/helpers.php';
 //require_once __DIR__ . '/System/Loader.php';
 
-//use True\System\Loader;
-use Truth\Support\Facades\App;
-use Truth\Support\Facades\Config;
-use Truth\Support\Facades\View;
+// set errors handler
+$whoops = new \Whoops\Run;
+$whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+//$whoops->register();
 
-//Loader::register('True', '/core');
-//Loader::register('Logic', '/app/logic');
-
-// Init facades
-Config::load('/core/config.php');
-//App::init();
-//View::init(new \True\Services\View\Twig());
+// init container
+new \Truth\IoC\Box();
+\Truth\Support\Services\Box::register();
+\Truth\Support\Services\Multilingual\Lang::register();
+\Truth\Support\Services\Configuration\Config::register();
+\Truth\Support\Services\View\Twig::register();

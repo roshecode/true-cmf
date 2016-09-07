@@ -1,6 +1,6 @@
 <?php
 
-namespace Truth\Services\View;
+namespace Truth\Support\Services\View;
 
 use Truth\Support\Interfaces\ViewInterface;
 

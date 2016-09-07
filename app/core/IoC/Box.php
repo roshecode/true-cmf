@@ -5,7 +5,7 @@ namespace Truth\IoC;
 use Closure;
 use ReflectionClass;
 use BadMethodCallException;
-use Truth\Support\Facades\Facade;
+use Truth\Support\Abstracts\Entity;
 use Truth\Support\Facades\Lang;
 
 class StrictBox {
@@ -26,7 +26,11 @@ class StrictBox {
     public function __construct()
     {
         self::$instance = $this;
-        Facade::init($this);
+        Entity::init($this);
+    }
+
+    public function getInstance() {
+        return self::$instance;
     }
 
     protected function getStack(&$class, array &$stack = []) {
@@ -45,7 +49,7 @@ class StrictBox {
         return $stack;
     }
 
-    protected function build(&$stack, &$params) {
+    protected function build($stack, &$params) {
         foreach ($stack as $class => $nextStack) {
             $stack[$class] = is_numeric($class) ? array_pop($params) : $this->makeInstance($class, $params);
         }
@@ -60,11 +64,11 @@ class StrictBox {
 
     protected function getMakeClosure(&$abstract, &$concrete, &$shared, $callback) {
         return $shared ?
-            function(&$params) use(&$abstract, &$concrete, &$callback) {
+            function(&$params) use($abstract, $concrete, $callback) {
                 return ($shared = &$this->bindings[$abstract]['shared']) === true ?
                     $shared = $callback($concrete, $params) : $shared;
             } :
-            function(&$params) use(&$concrete, &$callback) {
+            function(&$params) use($concrete, $callback) {
                 return $callback($concrete, $params);
             };
     }
@@ -157,7 +161,9 @@ class StrictBox {
      * @return mixed
      */
     public function make($abstract, array $parameters = []) {
-        return $this->makeInstance($abstract, array_reverse($parameters));
+        $abstractVar = $abstract;
+        $reverseParameters = array_reverse($parameters);
+        return $this->makeInstance($abstractVar, $reverseParameters);
     }
 
     /**

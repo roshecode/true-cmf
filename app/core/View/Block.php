@@ -6,7 +6,7 @@ use Truth\Support\Facades\Config;
 
 class Block
 {
-    static $ns = 'True\\View\\Block::';
+    static $ns = 'Truth\\View\\Block::';
 
     const TYPE_STATIC           = 0;
     const TYPE_DYNAMIC          = 1;

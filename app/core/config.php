@@ -14,13 +14,13 @@ return [
         'timezone' => 3
     ],
     'services' => [
-        'True\\Services\\View\\Twig',
-        'True\\Services\\Logging\\Monolog'
+        'True\\Support\\Services\\View\\Twig',
+        'True\\Support\\Services\\Logging\\Monolog'
     ],
     'aliases' => [
 //        'Config' => 'True\\Support\\Facades\\Config',
 //        'Lang' => 'True\\Support\\Facades\\Lang',
-        'View' => Truth\Support\Facades\View::$class,
+        'View' => 'Truth\Support\Facades\View',
 //        'Log' => 'True\\Support\\Facades\\Log',
     ],
     'errors' => [
