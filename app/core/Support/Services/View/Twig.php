@@ -13,18 +13,19 @@ class Twig extends ServiceProvider implements ViewInterface
 {
     protected $layout;
     protected $engine;
+    protected $fileExtension;
 
     /**
-     * @return void
+     * @param \Truth\Support\Services\Locator\Box $box
      */
-    public static function register()
+    public static function register(&$box)
     {
-        self::$box->bind('Twig_LoaderInterface', 'Twig_Loader_Filesystem');
-        self::$box->singleton('View', self::NS . '\View\Twig');
-        self::$box->make('View', [
-            APP_DIR . '/core/Themes',
+        $box->bind('Twig_LoaderInterface', 'Twig_Loader_Filesystem');
+        $box->singleton('View', self::CORE_SERVICES . '\View\Twig');
+        $box->make('View', [
+            BASEDIR . '/core/Themes',
             [
-                'cache' => APP_DIR . '/cache/themes',
+                'cache' => BASEDIR . '/cache/themes',
                 'debug' => true,
                 'auto_reload' => true
             ]
@@ -33,34 +34,37 @@ class Twig extends ServiceProvider implements ViewInterface
 
     public function __construct(Twig_Environment $environment, Twig_Extension_Debug $debug)
     {
+        $this->fileExtension = 'twig';
         $this->engine = $environment;
         $this->engine->addExtension($debug);
     }
 
-    public function renderBlock(Block $block, $data = null) {
-        echo $this->engine->render($block->layout, $block->data($data));
+    public function renderBlock(Block $block, $content = null) {
+        echo $this->engine->render($block->getLayout(), $block->content($content));
     }
 
-    public function render($layout, $file_with_structure = null) {
-//        $structure = Yaml::parse(file_get_contents($file_with_structure));
-//        $data = [
-//            'logo' => [
-//                'name' => 'logo',
-//                'layout' => 'path/to/layout',
-//                'template' => 'path/to/logo',
-//                'data' => [
-//                    'name' => 'logo',
-//                    'layout' => 'path/to/layout',
-//                    'template' => 'path/to/logo',
-//                    'data' => [
-//                        ['title' => 'Hello', 'text' => 'Bie']
-//                    ]
-//                ]
-//            ],
-//        ];
-        echo $this->layout . ' | ';
-        $this->layout = $layout;
-        echo $this->layout;
+    public function createBlockData($name, $layout, $data = [], $content = []) {
+        return (new Block($name, $layout, $data, $this->fileExtension))->content($content);
+    }
+
+    public function render($layout, $data = null) {
+        $structure = Yaml::parse(file_get_contents($data));
+        $data = [
+            'logo' => $this->createBlockData('logo', 'static'),
+            'article' => $this->createBlockData('article', 'table',
+                ['page' => 1, 'columns' => 3, 'header' => 'Table header'],
+            [
+                ['title' => 'My first article', 'text' => 'It will be awesome!!!'],
+                ['title' => 'My second article', 'text' => 'I like what I doing.'],
+                ['title' => 'My third article', 'text' => 'I hate what I doing.'],
+                ['title' => 'LAST article', 'text' => 'Dog eats cat!!!'],
+                ['title' => 'LAST article', 'text' => 'Dog eats cat!!!'],
+                ['title' => 'LAST article', 'text' => 'Dog eats cat!!!'],
+                ['title' => 'LAST article', 'text' => 'Dog eats dos!!!'],
+            ])
+        ];
+        echo $this->engine->render(self::$box->make('Config')->getCurrentThemeName() . '/' .
+            $layout . '.' . $this->fileExtension, $data);
     }
 
     public function display($layout, $data)

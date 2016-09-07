@@ -1,0 +1,17 @@
+<table class="block block_dynamic block-">
+    {% if header %}
+        <thead><tr><td colspan="{{ columns }}">{{ header }}: {{ columns }} columns</td></tr></thead>
+    {% endif %}
+    <tbody>
+    {% for row in 0..(content|length / columns)|round(0, 'ceil') - 1 %}
+        <tr>
+            {% for item in content|slice(row * columns, columns) %}
+                <td>{% include template with item only %}</td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+    </tbody>
+    {% if footer %}
+        <tfoot><tr><td colspan="{{ columns }}">{{ footer }}</td></tr></tfoot>
+    {% endif %}
+</table>

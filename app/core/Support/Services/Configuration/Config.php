@@ -3,20 +3,22 @@
 namespace Truth\Support\Services\Configuration;
 
 use InvalidArgumentException;
-use Truth\Support\Abstracts\Repository;
+use Truth\Support\Abstracts\FileRepository;
+use Truth\Support\Services\FileSystem\FS;
 
-class Config extends Repository
+class Config extends FileRepository
 {
-    public static function register() {
-        self::$box->singleton('Config', self::NS . '\\Configuration\\Config');
-        $params = ['/core/config.php'];
-        self::$box->make('Config', $params);
+    public static function register(&$box) {
+        $box->singleton('Config', self::CORE_SERVICES . '\\Configuration\\Config');
+        $box->make('Config', [new FS(BASEDIR . '/core/Configuration'), '/main.php']);
     }
+
     /**
+     * @param \Truth\Support\Services\FileSystem\FS $fileSystem
      * @param string $filePath
      */
-    public function __construct($filePath) {
-        parent::__construct($filePath);
+    public function __construct($fileSystem, $filePath) {
+        parent::__construct($fileSystem, $filePath);
         $this->setLanguage($this->get('localization.language'));
         $this->setErrors($this->get('errors'));
     }
@@ -31,7 +33,9 @@ class Config extends Repository
         if (is_string($path)) {
             // TODO: directory separator to windows
 //            return str_replace('/', '\\', self::get('directories')[$path]).DIRECTORY_SEPARATOR; //WINDOWS
-            return str_replace('/', '\\', $this->get('directories')[$path]);
+//            return str_replace('/', '\\', $this->get('directories')[$path]);
+            return self::$box->make('FS')->getBasedir() . $this->get('directories')[$path];
+//            return $this->get('directories')[$path];
         } else {
             throw new InvalidArgumentException('exceptions.invalid_argument'); // TODO: Envisage
         }
@@ -44,8 +48,10 @@ class Config extends Repository
      */
     public function setLanguage($lang) {
         if (is_string($lang)) {
-//            Lang::load(self::getDirectoryPath('languages') . '/' . $lang.'.php');
-            self::$box->make('Lang', [$this->getDirectoryPath('languages') . '/' . $lang.'.php']);
+            self::$box->make('Lang', [
+                new FS($this->getDirectoryPath('languages')),
+                '/' . $lang.'.php'
+            ]); // TODO: Bad make
         } else {
             throw new InvalidArgumentException('exceptions.invalid_argument'); // TODO: Envisage
         }
@@ -70,7 +76,11 @@ class Config extends Repository
         }
     }
 
-    public function getThemePath() {
-        return $this->getDirectoryPath('themes') . '/' . $this->get('site.theme');
+    public function getCurrentThemeName() {
+        return $this->get('site')['theme'];
+    }
+
+    public function getCurrentThemePath() {
+        return $this->getDirectoryPath('themes') . '/' . $this->getCurrentThemeName();
     }
 }

@@ -3,24 +3,23 @@
 namespace Truth\Support\Services\Multilingual;
 
 use InvalidArgumentException;
-use Truth\Support\Abstracts\Repository;
+use Truth\Support\Abstracts\FileRepository;
 
-class Lang extends Repository
+class Lang extends FileRepository
 {
     const BASE_LANG = 'en-EN';
 
-    public static function register()
+    public static function register(&$box)
     {
-        self::$box->singleton('Lang', self::NS . '\\Multilingual\\Lang');
+        $box->singleton('Lang', self::CORE_SERVICES . '\\Multilingual\\Lang');
     }
 
     /**
+     * @param \Truth\Support\Services\FileSystem\FS $fileSystem
      * @param string $filePath
-     *
-     * @throws InvalidArgumentException
      */
-    public function __construct($filePath) {
-        parent::__construct($filePath);
+    public function __construct($fileSystem, $filePath) {
+        parent::__construct($fileSystem, $filePath);
 
 //        if (Config::get('localization.language') === self::BASE_LANG) {
 //

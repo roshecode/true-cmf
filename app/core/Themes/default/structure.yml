@@ -1,7 +1,5 @@
 blocks:
   logo:
-    type: 0
-    layout: wrap
+    layout: static
   article:
-    type: 1
     layout: list

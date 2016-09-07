@@ -1,20 +1,13 @@
 <?php
 
-namespace Truth\IoC;
+namespace Truth\Support\Services\Locator;
 
 use Closure;
 use ReflectionClass;
-use BadMethodCallException;
-use Truth\Support\Abstracts\Entity;
-use Truth\Support\Facades\Lang;
+use Truth\Support\Abstracts\ServiceProvider;
 
-class StrictBox {
-    /**
-     * Self reference
-     *
-     * @var StrictBox
-     */
-    protected static $instance;
+class Box extends ServiceProvider
+{
     /**
      * The container's bindings.
      *
@@ -23,14 +16,17 @@ class StrictBox {
     protected $bindings = [];
     protected $resolved = [];
 
+    public static function register(&$box) {
+        $box->instance('Box', $box);
+    }
+
     public function __construct()
     {
-        self::$instance = $this;
-        Entity::init($this);
+        ServiceProvider::register($this);
     }
 
     public function getInstance() {
-        return self::$instance;
+        return self::$box;
     }
 
     protected function getStack(&$class, array &$stack = []) {
@@ -176,58 +172,4 @@ class StrictBox {
     {
         return !!$this->bindings[$abstract]['shared'];
     }
-}
-
-/**
- * Class Box
- *
- * @package True\IoC
- */
-class Box extends StrictBox
-{
-    /**
-     * Normalize the given class name by removing leading slashes.
-     *
-     * @param mixed &$service
-     */
-    protected function fix(&$service) {
-//        $service = is_string($service) ? ltrim($service, '\\') : $service;
-        $service = ltrim($service, '\\');
-    }
-
-    public function __call($name, $arguments) {
-        $this->fix($arguments[0]);
-        if (is_callable([$parentClass = get_parent_class(), $name])) {
-            call_user_func_array($parentClass . '::' . $name, $arguments);
-        } else {
-            throw new BadMethodCallException(Lang::get('exceptions.bad_method_call'));
-        }
-    }
-
-    /**
-     * Wrap a Closure such that it is shared.
-     *
-     * @param  Closure  $closure
-     * @return Closure
-     */
-    public function share(Closure $closure)
-    {
-        return function ($container) use ($closure) {
-            // We'll simply declare a static variable within the Closures and if it has
-            // not been set we will execute the given Closures to resolve this value
-            // and return it back to these consumers of the method as an instance.
-            static $object;
-            return is_null($object) ? $object = $closure($container) : $object;
-        };
-    }
-//    public function singleton() {}
-//    public function share() {}
-//    public function tag() {}
-//    protected function extractAlias() {}
-//    public function wrap() {}
-//    public function call() {}
-//    protected function isCallableWithAtSign() {}
-//    protected function getMethodDependencies() {}
-//    protected function getCallReflector() {}
-//    protected function addDependencyForCallParameter() {}
 }

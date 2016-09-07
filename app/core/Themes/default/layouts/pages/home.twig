@@ -10,8 +10,10 @@
 <body>
 <div class="container">
     <header data-request-update=".block-logo">
-        <div data-request="logo">{% include logo.layout %}</div>
+        <div data-request="logo">{% include logo.layout with logo.data only %}</div>
+        <menu>HERE WILL BE MENU</menu>
     </header>
+    <section data-request="content">{% include article.layout with article.data only %}</section>
 </div>
 </body>
 </html>

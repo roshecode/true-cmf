@@ -3,6 +3,7 @@
 return [
     'directories' => [
         'languages' => '/core/Languages',
+        'configuration' => '/core/Configuration',
         'themes' => '/core/Themes',
         'cache' => [
             'themes' => '/cache/templates'

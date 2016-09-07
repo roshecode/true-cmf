@@ -1,20 +1,39 @@
 <?php
 
-namespace Truth\Data\FileSystem;
+namespace Truth\Support\Services\FileSystem;
 
 use Closure;
 use InvalidArgumentException;
-use Truth\Data\FileSystem\Exceptions\FileNotFoundException;
-use Truth\Data\FileSystem\Exceptions\UnreadableFileException;
+use Truth\Support\Abstracts\ServiceProvider;
+use Truth\Support\Services\FileSystem\Exceptions\FileNotFoundException;
+use Truth\Support\Services\FileSystem\Exceptions\UnreadableFileException;
 use UnexpectedValueException;
 
-class FS
+class FS extends ServiceProvider
 {
-    const ASSOC        = 'getAssoc';
-    const INSERT       = 'insert';
-    const INVOLVE      = 'involve';
-    const INSERT_ONCE  = 'insertOnce';
-    const INVOLVE_ONCE = 'involveOnce';
+//    const ASSOC        = 'getAssoc';
+//    const INSERT       = 'insert';
+//    const INVOLVE      = 'involve';
+//    const INSERT_ONCE  = 'insertOnce';
+//    const INVOLVE_ONCE = 'involveOnce';
+
+    protected $basedir;
+
+    public static function register(&$box)
+    {
+        $box->singleton('FS', self::CORE_SERVICES . '\\FileSystem\\FS');
+        $box->make('FS', [BASEDIR]);
+    }
+
+    /**
+     * FS constructor with base directory path.
+     *
+     * @param string $base
+     */
+    public function __construct($base = '')
+    {
+        $this->basedir = $base;
+    }
 
     /**
      * If file exists and readable calls callback function else throw exception.
@@ -25,8 +44,8 @@ class FS
      * @throws FileNotFoundException
      * @throws UnreadableFileException
      */
-    private static function fileExistAndReadable($filePath, $callback) {
-        if (is_file($filePath)) {
+    private function fileExistAndReadable($filePath, $callback) {
+        if (is_file($this->basedir . $filePath)) {
 //            if (is_readable($filePath)) {
                 return $callback($filePath);
 //            } else {
@@ -34,7 +53,7 @@ class FS
 //            }
         } else {
 //            throw new FileNotFoundException(Lang::get('exceptions.file_not_found'));
-            throw new FileNotFoundException('File "' . $filePath . '" you try to open is not found');
+            throw new FileNotFoundException('File "' . $filePath . '" you try to open is not found'); // TODO: Envisage
         }
     }
 
@@ -44,9 +63,9 @@ class FS
      * @param string $filePath
      * @return mixed
      */
-    public static function insert($filePath) {
+    public function insert($filePath) {
         return self::fileExistAndReadable($filePath, function($filePath) {
-            return include $filePath;
+            return include $this->basedir . $filePath;
         });
     }
 
@@ -56,9 +75,9 @@ class FS
      * @param string $filePath
      * @return mixed
      */
-    public static function insertOnce($filePath) {
+    public function insertOnce($filePath) {
         return self::fileExistAndReadable($filePath, function($filePath) {
-            return include_once $filePath;
+            return include_once $this->basedir . $filePath;
         });
     }
 
@@ -68,9 +87,9 @@ class FS
      * @param string $filePath
      * @return mixed
      */
-    public static function involve($filePath) {
+    public function involve($filePath) {
         return self::fileExistAndReadable($filePath, function($filePath) {
-            return require $filePath;
+            return require $this->basedir . $filePath;
         });
     }
 
@@ -80,9 +99,9 @@ class FS
      * @param string $filePath
      * @return mixed
      */
-    public static function involveOnce($filePath) {
+    public function involveOnce($filePath) {
         return self::fileExistAndReadable($filePath, function($filePath) {
-            return require_once $filePath;
+            return require_once $this->basedir . $filePath;
         });
     }
 
@@ -97,12 +116,12 @@ class FS
      * @throws InvalidArgumentException
      * @throws UnexpectedValueException
      */
-    public static function get($filePath, $getMethod) {
+    public function get($filePath, $getMethod) {
         return self::fileExistAndReadable($filePath, function() use($filePath, $getMethod) {
             if (is_string($getMethod)) {
 //                if (method_exists(get_called_class(), $getMethod)) {
                 if (is_callable([get_called_class(), $getMethod])) {
-                    return static::$getMethod($filePath);
+                    return $this->$getMethod($filePath);
                 } else {
                     throw new UnexpectedValueException('exceptions.unexpected_value'); // TODO: Envisage
                 }
@@ -116,7 +135,11 @@ class FS
      * @param string $filePath
      * @return FileArrayQuery
      */
-    public static function getAssoc($filePath) {
-        return new FileArrayQuery($filePath);
+    public function getAssoc($filePath) {
+        return new FileArrayQuery($this, $filePath);
+    }
+
+    public function getBasedir() {
+        return $this->basedir;
     }
 }

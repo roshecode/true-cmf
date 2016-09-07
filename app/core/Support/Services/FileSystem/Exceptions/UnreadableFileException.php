@@ -1,6 +1,6 @@
 <?php
 
-namespace Truth\Data\FileSystem\Exceptions;
+namespace Truth\Support\Services\FileSystem\Exceptions;
 
 class UnreadableFileException extends FileException
 {

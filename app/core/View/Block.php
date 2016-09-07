@@ -19,28 +19,33 @@ class Block
     const PATH_LAYOUTS = '/layouts/blocks';
     const PATH_TEMPLATES = '/blocks';
 
+    private $data;
     private $name;
-    private $type;
-    public $layout;
+    private $layout;
     private $template;
-    private $extension;
 
-    public function __construct($name, $type = self::TYPE_STATIC, $layout = 'wrap', $extension = 'twig')
+    public function __construct($name, $layout = 'static', $data = [], $extension = 'twig')
     {
         $this->name = $name;
-        $this->type = $type;
-        $this->extension = $extension;
-        $theme = Config::get('site.theme');
-        $this->layout = $theme . self::PATH_LAYOUTS . '/' .
-            ($type == self::TYPE_DYNAMIC ? 'dynamic' : 'static') . '/' . $layout . '.' . $extension;
+        $theme = Config::getCurrentThemeName();
+        $this->layout = $theme . self::PATH_LAYOUTS . '/' . $layout . '.' . $extension;
         $this->template = $theme . self::PATH_TEMPLATES . '/' . $name . '.' . $extension;
+        $this->data = $data;
     }
 
-    public function data($data) {
-        $vars = get_object_vars($this);
-        unset($vars['layout']);
-        $vars['ns'] = &self::$ns;
-        $vars['data'] = $data;
-        return $vars;
+    public function getLayout() {
+        return $this->layout;
+    }
+
+    public function content($content) {
+//        $vars = get_object_vars($this);
+        $data = $this->data;
+        $data['name'] = $this->name;
+        $data['template'] = $this->template;
+        $data['content'] = $content;
+        return [
+            'layout' => $this->layout,
+            'data' => $data
+        ];
     }
 }

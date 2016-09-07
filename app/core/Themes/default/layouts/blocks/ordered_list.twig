@@ -1,0 +1,6 @@
+<h3>Page: {{ page }}</h3>
+<ol class="block block_dynamic block-{{ name }}">
+    {% for item in content %}
+        <li>{% include template with item only %}</li>
+    {% endfor %}
+</ol>

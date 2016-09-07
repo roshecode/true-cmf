@@ -1,25 +1,28 @@
 <?php
 
-namespace Truth\Data\FileSystem;
+namespace Truth\Support\Services\FileSystem;
 
 use InvalidArgumentException;
-use Truth\Data\FileSystem\Exceptions\InvalidFileException;
+use Truth\Support\Services\FileSystem\Exceptions\InvalidFileException;
 
 class FileArrayQuery extends ArrayQuery
 {
+    protected $fileSystem;
     /**
      * FileArray constructor.
      *
+     * @param FS $fileSystem
      * @param string $filePath
      * @param string $separator
      *
      * @throws InvalidFileException
      * @throws InvalidArgumentException
      */
-    public function __construct($filePath, $separator = '.')
+    public function __construct(&$fileSystem, $filePath, $separator = '.')
     {
+        $this->fileSystem = $fileSystem;
         try {
-            parent::__construct(FS::insert($filePath), $separator);
+            parent::__construct($fileSystem->insert($filePath), $separator);
         } catch (InvalidArgumentException $e) {
             if (is_string($separator)) {
                 throw new InvalidFileException('exceptions.invalid_file');  // TODO: Envisage
@@ -40,7 +43,7 @@ class FileArrayQuery extends ArrayQuery
         // Envisage::notArray($array)->serve();
         // Envisage::notArray($array)->serve([]);
         // Envisage::notArray($array, 'InvalidFile');
-        $array = FS::insert($filePath);
+        $array = $this->fileSystem->insert($filePath);
         if (is_array($array)) {
             unset($this->array);
             $this->array = $array;

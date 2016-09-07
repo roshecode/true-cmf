@@ -11,8 +11,9 @@ $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
 //$whoops->register();
 
 // init container
-new \Truth\IoC\Box();
-\Truth\Support\Services\Box::register();
-\Truth\Support\Services\Multilingual\Lang::register();
-\Truth\Support\Services\Configuration\Config::register();
-\Truth\Support\Services\View\Twig::register();
+$box = new \Truth\Support\Services\Locator\Box();
+\Truth\Support\Services\Locator\Box::register($box);
+\Truth\Support\Services\FileSystem\FS::register($box);
+\Truth\Support\Services\Multilingual\Lang::register($box);
+\Truth\Support\Services\Configuration\Config::register($box);
+\Truth\Support\Services\View\Twig::register($box);

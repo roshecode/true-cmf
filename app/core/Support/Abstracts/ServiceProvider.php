@@ -2,13 +2,20 @@
 
 namespace Truth\Support\Abstracts;
 
-abstract class ServiceProvider extends Entity
+abstract class ServiceProvider
 {
-    const NS = "Truth\\Support\\Services";
     /**
-     * @return void
+     * @var \Truth\Support\Services\Locator\Box $box
      */
-    public static function register() {
-        self::$box->bind(get_called_class());
+    protected static $box;
+
+    const CORE_SERVICES = "Truth\\Support\\Services";
+    const USER_SERVICES = "Truth\\Support\\Services";
+
+    /**
+     * @param \Truth\Support\Services\Locator\Box $box
+     */
+    public static function register(&$box) {
+        self::$box = $box;
     }
 }

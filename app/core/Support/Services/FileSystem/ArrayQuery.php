@@ -1,9 +1,8 @@
 <?php
 
-namespace Truth\Data\FileSystem;
+namespace Truth\Support\Services\FileSystem;
 
 use InvalidArgumentException;
-use Truth\Support\Facades\Lang;
 
 class ArrayQuery
 {
@@ -51,7 +50,7 @@ class ArrayQuery
             $this->array = $array;
             $this->separator = $separator;
         } else {
-            throw new InvalidArgumentException(Lang::get('exceptions.invalid_argument'));
+            throw new InvalidArgumentException('exceptions.invalid_argument'); // TODO: Envisage
         }
     }
 
@@ -102,12 +101,12 @@ class ArrayQuery
                 $this->path = explode($this->separator, $query);
             }
         } else {
-            throw new InvalidArgumentException(Lang::get('exceptions.invalid_argument'));
+            throw new InvalidArgumentException('exceptions.invalid_argument'); // TODO: Envisage
         }
         if (is_numeric($offset)) {
             return $this->sample = self::getValue($this->array, $offset);
         } else {
-            throw new InvalidArgumentException(Lang::get('exceptions.invalid_argument'));
+            throw new InvalidArgumentException('exceptions.invalid_argument'); // TODO: Envisage
         }
     }
 

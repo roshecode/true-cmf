@@ -2,7 +2,7 @@
 
 namespace Truth\Support\Abstracts;
 
-abstract class Facade extends Entity
+abstract class Facade extends ServiceProvider
 {
     protected static function getFacadeAccessor() {
         return 'undefined';
