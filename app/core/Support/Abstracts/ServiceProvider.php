@@ -9,9 +9,6 @@ abstract class ServiceProvider
      */
     protected static $box;
 
-    const CORE_SERVICES = "Truth\\Support\\Services";
-    const USER_SERVICES = "Truth\\Support\\Services";
-
     /**
      * @param \Truth\Support\Services\Locator\Box $box
      */

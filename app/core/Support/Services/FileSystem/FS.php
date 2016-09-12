@@ -28,7 +28,7 @@ class FS
      */
     public function __construct($base = '')
     {
-        $this->basedir = $base;
+        $this->basedir = $base . '/';
     }
 
     /**

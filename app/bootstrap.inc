@@ -1,9 +1,9 @@
 <?php
 
-use Truth\Support\Facades\Config;
-
-require_once __DIR__ . '/System/helpers.php';
-//require_once __DIR__ . '/System/Loader.php';
+require_once __DIR__ . '/core/System/helpers.php';
+define('BASEDIR', __DIR__);
+define('COREDIR', BASEDIR . '/core/');
+define('CORE_SERVICES', 'Truth\\Support\\Services\\');
 
 // set errors handler
 $whoops = new \Whoops\Run;

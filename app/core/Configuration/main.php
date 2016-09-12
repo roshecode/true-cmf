@@ -3,7 +3,6 @@
 return [
     'directories' => [
         'languages' => '/core/Languages',
-        'base_language' => 'en-EN',
         'configuration' => '/core/Configuration',
         'themes' => '/core/Themes',
         'cache' => [
@@ -11,6 +10,7 @@ return [
         ],
     ],
     'localization' => [
+        'base_language' => 'en-EN',
         'language' => 'en-EN',
 //        'language' => 'ru-RU',
         'timezone' => 3

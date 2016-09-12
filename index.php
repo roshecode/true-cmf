@@ -4,10 +4,8 @@ ini_set('display_errors', true);
 ini_set('display_startup_errors', true);
 error_reporting(E_ALL);
 
-define('BASEDIR', (DIRECTORY_SEPARATOR == "\\" ? str_replace('\\', '/', __DIR__) : __DIR__) . '/app');
 require_once __DIR__ . '/app/vendor/autoload.php';
-require_once __DIR__ . '/app/core/System/helpers.php';
-require_once __DIR__ . '/app/core/bootstrap.inc';
+require_once __DIR__ . '/app/bootstrap.inc';
 
 use \Truth\Support\Facades\Box;
 use \Truth\Support\Facades\Lang;
@@ -22,7 +20,7 @@ use \Truth\View\Block;
 //echo Box::make('hi', ['Roman', 'Shevchenko']);
 //echo Box::make('hi', ['Andrii', 'Zholob']);
 
-View::render('layouts/pages/home', BASEDIR . '/core/Themes/default/structure.yml');
+View::render('layouts/pages/home', __DIR__ . '/app/core/Themes/default/structure.yml');
 
 //Router::start();
 //Router::get('home/page', function($data) {

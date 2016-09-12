@@ -2,25 +2,31 @@
 
 namespace Truth\Support\Services\Registry;
 
-use Truth\Support\Abstracts\ServiceProvider;
+use Truth\Support\Services\FileSystem\FS;
+use Truth\Support\Services\Locator\Box;
+use Truth\Support\Services\Repository\FileRepository;
 
-class Register
+class Register extends FileRepository
 {
     /**
      * Register constructor.
-     * @param \Truth\Support\Services\Locator\Box $box
+     * @param Box $box
      */
-    public function __construct($box)
+    public function __construct(Box $box)
     {
+        $fs = new FS(BASEDIR . '/core/Configuration/');
+        parent::__construct($fs, 'services.php');
+
         $box->instance('Box', $box);
 
-        $box->singleton('FS', ServiceProvider::CORE_SERVICES . '\\FileSystem\\FS'); $box->make('FS', [BASEDIR]);
-        $box->singleton('Lang', ServiceProvider::CORE_SERVICES . '\\Multilingual\\Lang');
-        $box->singleton('Config', ServiceProvider::CORE_SERVICES . '\\Configuration\\Config');
-        $box->make('Config', [BASEDIR . '/core/Configuration', '/main.php']);
-        $box->bind('Twig_LoaderInterface', 'Twig_Loader_Filesystem');
-        $box->singleton('View', ServiceProvider::CORE_SERVICES . '\View\Twig');
-        $box->make('View', [BASEDIR . '/core/Themes',
-            ['cache' => BASEDIR . '/cache/themes', 'debug' => true, 'auto_reload' => true]]);
+        foreach ($this->data['interfaces'] as $abstract => $concrete) {
+            $box->bind($abstract, $concrete);
+        }
+        foreach ($this->data['singletons'] as $abstract => $concrete) {
+            $box->singleton($abstract, $concrete);
+        }
+        foreach ($this->data['settings'] as $abstract => $settings) {
+            $box->make($abstract, $settings);
+        }
     }
 }
