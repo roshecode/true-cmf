@@ -4,9 +4,10 @@ namespace Truth\Support\Services\Locator;
 
 use Closure;
 use ReflectionClass;
+use SplFixedArray;
 use Truth\Support\Abstracts\ServiceProvider;
 
-class Box extends ServiceProvider
+class Box
 {
     /**
      * The container's bindings.
@@ -22,9 +23,16 @@ class Box extends ServiceProvider
     }
 
     public function getInstance() {
-        return self::$box;
+        return $this;
     }
 
+    /**
+     * Get stack of classes and parameters for automatic building
+     *
+     * @param string $class
+     * @param array $stack
+     * @return array
+     */
     protected function getStack(&$class, array &$stack = []) {
         $constructor = (new ReflectionClass($class))->getConstructor();
         if($params = $constructor ? $constructor->getParameters() : false) {
@@ -36,10 +44,17 @@ class Box extends ServiceProvider
         return $stack;
     }
 
-    protected function build($stack, &$params) {
+    /**
+     * Build and inject all dependencies with parameters
+     *
+     * @param array $stack
+     * @param array $params
+     * @return SplFixedArray
+     */
+    protected function build(array &$stack, array &$params) {
         $index = 0;
         $length = count($stack);
-        $built = new \SplFixedArray($length);
+        $built = new SplFixedArray($length);
         while ($index < $length) {
             $item = &$stack[$index]->name;
             $built[$length - ++$index] = $item ? $this->makeInstance($item, $params) : array_pop($params);
@@ -47,11 +62,18 @@ class Box extends ServiceProvider
         return $built;
     }
 
-    protected function newInstance(&$concrete, $stack, &$params) {
+    /**
+     * Create new instance of concrete class
+     *
+     * @param string $concrete
+     * @param array $stack
+     * @param array $params
+     * @return object
+     *
+     * @throws \Exception
+     */
+    protected function newInstance(&$concrete, array $stack, array &$params) {
         if (class_exists($concrete)) {
-            if ($params) {
-
-            }
             return $params ?
                 (new ReflectionClass($concrete))->
                     newInstanceArgs($this->build($stack, $params)->toArray()) :
@@ -61,26 +83,44 @@ class Box extends ServiceProvider
         }
     }
 
+    /**
+     * Get closure for building bind class
+     *
+     * @param string $abstract
+     * @param string $concrete
+     * @param bool $shared
+     * @param bool $mutable
+     * @param Closure|string $callback
+     * @return Closure
+     */
     protected function getMakeClosure(&$abstract, &$concrete, &$shared, &$mutable, $callback) {
         return $shared ?
             $mutable ?
-                function(&$params) use($abstract, $concrete, $callback) {
+                function(&$params) use(&$abstract, &$concrete, &$callback) {
                     $binding = &$this->bindings[$abstract];
                     $shared = &$binding['shared'];
                     $stack = &$binding['stack'];
                     return $shared = ($shared === true ? $callback($concrete, $stack = $this->getStack($concrete), $params) :
                         ($params ? $callback($concrete, $stack, $params) : $shared));
                 } :
-                function(&$params) use($abstract, $concrete, $callback) {
+                function(&$params) use(&$abstract, &$concrete, &$callback) {
                     return ($shared = &$this->bindings[$abstract]['shared']) === true ?
                         $shared = $callback($concrete, $this->getStack($concrete), $params) : $shared;
                 } :
-            function(&$params) use($abstract, $concrete, $callback) {
+            function(&$params) use(&$abstract, &$concrete, &$callback) {
                 $stack = &$this->bindings[$abstract]['stack'];
                 return $callback($concrete, $stack = $stack ? $stack : $this->getStack($concrete), $params);
             };
     }
 
+    /**
+     * Set closure for building from string
+     *
+     * @param string $abstract
+     * @param string $concrete
+     * @param bool $shared
+     * @param bool $mutable
+     */
     protected function setStringBinding(&$abstract, &$concrete, &$shared, &$mutable) {
         $this->bindings[$abstract] = [
             'make' => $this->getMakeClosure($abstract, $concrete, $shared, $mutable, function (&$concrete, $stack, &$params) {
@@ -90,7 +130,15 @@ class Box extends ServiceProvider
         ];
     }
 
-    protected function setClosureBinding($abstract, $closure, $shared, $mutable) {
+    /**
+     * Set closure for building from closure
+     *
+     * @param string $abstract
+     * @param string $closure
+     * @param bool $shared
+     * @param bool $mutable
+     */
+    protected function setClosureBinding(&$abstract, &$closure, &$shared, &$mutable) {
         $this->bindings[$abstract] = [
             'make' => $this->getMakeClosure($abstract, $closure, $shared, $mutable, 'call_user_func_array'),
             'shared' => $shared
@@ -100,12 +148,12 @@ class Box extends ServiceProvider
     /**
      * Register an existing instance as shared in the container.
      *
-     * @param  string  $abstract
-     * @param  mixed   $instance
+     * @param string $abstract
+     * @param mixed $instance
      */
     public function instance($abstract, $instance) {
         $this->bindings[$abstract] = [
-            'make' => function() use($instance) { return $instance; },
+            'make' => function() use(&$instance) { return $instance; },
             'shared' => $instance
         ];
     }
@@ -113,7 +161,7 @@ class Box extends ServiceProvider
     /**
      * Register a binding with the container.
      *
-     * @param string|array $abstract
+     * @param string|array $abstract // TODO: bind from array
      * @param mixed $concrete
      * @param bool $shared
      * @param bool $mutable
@@ -134,8 +182,8 @@ class Box extends ServiceProvider
     /**
      * Register a shared binding in the container.
      *
-     * @param  string|array $abstract
-     * @param  mixed $concrete
+     * @param string|array $abstract
+     * @param mixed $concrete
      */
     public function singleton($abstract, $concrete) {
         $this->bind($abstract, $concrete, true);
@@ -158,7 +206,7 @@ class Box extends ServiceProvider
      * @param array $params
      * @return mixed
      */
-    protected function makeInstance($abstract, array &$params = []) {
+    protected function makeInstance(&$abstract, array &$params = []) {
 //        return isset($this->bindings[$abstract]) ?
 //            $this->bindings[$abstract]['make']($parameters) : $this->newInstance($abstract, $parameters);
         if (isset($this->bindings[$abstract])) {
@@ -177,16 +225,13 @@ class Box extends ServiceProvider
      * @return mixed
      */
     public function make($abstract, array $params = []) {
-//        $adaptParameters = ($params ? array_reverse($params) : $params);
-        $adaptParameters = $params;
-//        $adaptParameters = array_reverse($params);
         return $this->makeInstance($abstract, $params);
     }
 
     /**
      * Determine if a given type is shared.
      *
-     * @param  string  $abstract
+     * @param string $abstract
      * @return bool
      */
     public function isShared($abstract)
