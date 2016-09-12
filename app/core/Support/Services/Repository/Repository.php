@@ -1,17 +1,18 @@
 <?php
 
-namespace Truth\Support\Services\FileSystem;
+namespace Truth\Support\Services\Repository;
 
 use InvalidArgumentException;
+use Truth\Support\Abstracts\ServiceProvider;
 
-class ArrayQuery
+class Repository extends ServiceProvider
 {
     /**
      * Some array
      *
      * @var array
      */
-    protected $array;
+    protected $data;
     /**
      * Query string separator
      *
@@ -47,7 +48,7 @@ class ArrayQuery
      */
     public function __construct(array $array, $separator = '.') {
         if (is_array($array) && is_string($separator)) {
-            $this->array = $array;
+            $this->data = $array;
             $this->separator = $separator;
         } else {
             throw new InvalidArgumentException('exceptions.invalid_argument'); // TODO: Envisage
@@ -73,7 +74,7 @@ class ArrayQuery
     protected function getValue($array, $offset) {
         if ($offset !== count($this->path)) {
             if (array_key_exists($this->path[$offset], $array)) {
-                    return $this->getValue($array[$this->path[$offset]], ++$offset);
+                return $this->getValue($array[$this->path[$offset]], ++$offset);
             } else {
 //            trigger_error(Lang['backend']->get('notices.key_does_not_exist'));
                 trigger_error('notices.key_does_not_exist');
@@ -104,7 +105,7 @@ class ArrayQuery
             throw new InvalidArgumentException('exceptions.invalid_argument'); // TODO: Envisage
         }
         if (is_numeric($offset)) {
-            return $this->sample = self::getValue($this->array, $offset);
+            return $this->sample = self::getValue($this->data, $offset);
         } else {
             throw new InvalidArgumentException('exceptions.invalid_argument'); // TODO: Envisage
         }
@@ -118,6 +119,6 @@ class ArrayQuery
      */
     public function set($query, $value) {
         // TODO: Setting with separator
-        $this->array[$query] = $value;
+        $this->data[$query] = $value;
     }
 }

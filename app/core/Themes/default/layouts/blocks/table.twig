@@ -5,8 +5,8 @@
     <tbody>
     {% for row in 0..(content|length / columns)|round(0, 'ceil') - 1 %}
         <tr>
-            {% for item in content|slice(row * columns, columns) %}
-                <td>{% include template with item only %}</td>
+            {% for content_item in content|slice(row * columns, columns) %}
+                <td>{% include template with content_item only %}</td>
             {% endfor %}
         </tr>
     {% endfor %}

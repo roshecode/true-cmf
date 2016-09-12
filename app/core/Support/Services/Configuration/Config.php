@@ -3,8 +3,8 @@
 namespace Truth\Support\Services\Configuration;
 
 use InvalidArgumentException;
-use Truth\Support\Abstracts\FileRepository;
 use Truth\Support\Services\FileSystem\FS;
+use Truth\Support\Services\Repository\FileRepository;
 
 class Config extends FileRepository
 {

@@ -21,6 +21,7 @@ class Block
 
     private $data;
     private $name;
+    private $path;
     private $layout;
     private $template;
 
@@ -28,6 +29,7 @@ class Block
     {
         $this->name = $name;
         $theme = Config::getCurrentThemeName();
+        $this->path = $theme . self::PATH_LAYOUTS . '/' . dirname($layout) . '/';
         $this->layout = $theme . self::PATH_LAYOUTS . '/' . $layout . '.' . $extension;
         $this->template = $theme . self::PATH_TEMPLATES . '/' . $name . '.' . $extension;
         $this->data = $data;
@@ -41,6 +43,7 @@ class Block
 //        $vars = get_object_vars($this);
         $data = $this->data;
         $data['name'] = $this->name;
+        $data['path'] = $this->path;
         $data['template'] = $this->template;
         $data['content'] = $content;
         return [

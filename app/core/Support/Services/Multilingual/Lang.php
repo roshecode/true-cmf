@@ -2,8 +2,7 @@
 
 namespace Truth\Support\Services\Multilingual;
 
-use InvalidArgumentException;
-use Truth\Support\Abstracts\FileRepository;
+use Truth\Support\Services\Repository\FileRepository;
 
 class Lang extends FileRepository
 {

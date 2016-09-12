@@ -11,11 +11,13 @@ use UnexpectedValueException;
 
 class FS extends ServiceProvider
 {
-//    const ASSOC        = 'getAssoc';
-//    const INSERT       = 'insert';
-//    const INVOLVE      = 'involve';
-//    const INSERT_ONCE  = 'insertOnce';
-//    const INVOLVE_ONCE = 'involveOnce';
+    const TAKE         = 'take';
+    const READ         = 'read';
+    const ASSOC        = 'getAssoc';
+    const INSERT       = 'insert';
+    const INVOLVE      = 'involve';
+    const INSERT_ONCE  = 'insertOnce';
+    const INVOLVE_ONCE = 'involveOnce';
 
     protected $basedir;
 
@@ -116,8 +118,8 @@ class FS extends ServiceProvider
      * @throws InvalidArgumentException
      * @throws UnexpectedValueException
      */
-    public function get($filePath, $getMethod) {
-        return self::fileExistAndReadable($filePath, function() use($filePath, $getMethod) {
+    public function apply($filePath, $getMethod) {
+        return self::fileExistAndReadable($filePath, function($filePath) use($getMethod) {
             if (is_string($getMethod)) {
 //                if (method_exists(get_called_class(), $getMethod)) {
                 if (is_callable([get_called_class(), $getMethod])) {
@@ -128,6 +130,30 @@ class FS extends ServiceProvider
             } else {
                 throw new InvalidArgumentException('exceptions.invalid_argument'); // TODO: Envisage
             }
+        });
+    }
+
+    /**
+     * If file exists and readable get content as string without parsing else throw exception.
+     *
+     * @param string $filePath
+     * @return mixed
+     */
+    public function take($filePath) {
+        return self::fileExistAndReadable($filePath, function ($filePath) {
+            return file_get_contents($filePath);
+        });
+    }
+
+    /**
+     * If file exists and readable execute content without parsing else throw exception.
+     *
+     * @param string $filePath
+     * @return mixed
+     */
+    public function read($filePath) {
+        return self::fileExistAndReadable($filePath, function ($filePath) {
+            return readfile($filePath);
         });
     }
 
