@@ -34,7 +34,7 @@ class Twig extends ServiceProvider implements ViewInterface
         $structure = Yaml::parse(file_get_contents($data));
         $data = [
             'logo' => $this->createBlockData('logo', 'static'),
-            'article' => $this->createBlockData('article', 'slider/slider',
+            'article' => $this->createBlockData('article', 'table',
                 ['page' => 1, 'columns' => 3, 'header' => 'Table header'],
             [
                 ['title' => 'My first article', 'text' => 'It will be awesome!!!'],

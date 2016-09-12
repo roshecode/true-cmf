@@ -12,7 +12,7 @@ class Config extends FileRepository
      * @param FS $fileSystem
      * @param string $filePath
      */
-    public function __construct(FS $fileSystem, $filePath) {
+    public function __construct(FS &$fileSystem, $filePath) {
         parent::__construct($fileSystem, $filePath);
         $this->setLanguage($this->get('localization.language'));
         $this->setErrors($this->get('errors'));
@@ -27,10 +27,7 @@ class Config extends FileRepository
     public function getDirectoryPath($path) {
         if (is_string($path)) {
             // TODO: directory separator to windows
-//            return str_replace('/', '\\', self::get('directories')[$path]).DIRECTORY_SEPARATOR; //WINDOWS
-//            return str_replace('/', '\\', $this->get('directories')[$path]);
-            return $this->get('directories')[$path];
-//            return $this->get('directories')[$path];
+            return $this->get('directories')[$path] . '/';
         } else {
             throw new InvalidArgumentException('exceptions.invalid_argument'); // TODO: Envisage
         }
@@ -43,7 +40,7 @@ class Config extends FileRepository
      */
     public function setLanguage($lang) {
         if (is_string($lang)) {
-            self::$box->make('Lang', [BASEDIR . $this->getDirectoryPath('languages'), '/' . $lang.'.php']); // TODO: Bad make
+            self::$box->make('Lang', [BASEDIR . $this->getDirectoryPath('languages'), $lang.'.php']); // TODO: Bad make
         } else {
             throw new InvalidArgumentException('exceptions.invalid_argument'); // TODO: Envisage
         }

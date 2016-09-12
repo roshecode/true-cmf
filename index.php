@@ -16,11 +16,14 @@ use \Truth\View\Block;
 
 //Box::bind('hi', function($firstName, $lastName) {
 //    return 'Hello, ' . $firstName . ' ' . $lastName . '!';
-//});
+//}, true, true);
 //echo Box::make('hi', ['Roman', 'Shevchenko']);
+//echo Box::make('hi');
 //echo Box::make('hi', ['Andrii', 'Zholob']);
-
+//echo Box::make('hi');
+//die;
 View::render('layouts/pages/home', __DIR__ . '/app/core/Themes/default/structure.yml');
+dd(Box::getInstance());
 
 //Router::start();
 //Router::get('home/page', function($data) {

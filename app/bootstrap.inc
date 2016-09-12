@@ -1,8 +1,8 @@
 <?php
 
 require_once __DIR__ . '/core/System/helpers.php';
-define('BASEDIR', __DIR__);
-define('COREDIR', BASEDIR . '/core/');
+define('BASEDIR', __DIR__ . '/');
+define('COREDIR', BASEDIR . 'core/');
 define('CORE_SERVICES', 'Truth\\Support\\Services\\');
 
 // set errors handler

@@ -13,7 +13,7 @@ class Lang extends FileRepository
      * @param FS $fileSystem
      * @param string $filePath
      */
-    public function __construct(FS $fileSystem, $filePath) {
+    public function __construct(FS &$fileSystem, $filePath) {
         parent::__construct($fileSystem, $filePath);
 
 //        if (Config::get('localization.language') === self::BASE_LANG) {

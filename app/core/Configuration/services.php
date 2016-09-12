@@ -6,9 +6,11 @@ return [
     ],
     'singletons' => [
         'FS'        => CORE_SERVICES . 'FileSystem\FS',
-        'Lang'      => CORE_SERVICES . 'Multilingual\Lang',
         'Config'    => CORE_SERVICES . 'Configuration\Config',
         'View'      => CORE_SERVICES . 'View\Twig',
+    ],
+    'mutables' => [
+        'Lang'      => CORE_SERVICES . 'Multilingual\Lang',
     ],
     'settings' => [
         'Config' => [
@@ -17,7 +19,7 @@ return [
         ],
         'View' => [
             COREDIR . 'Themes', // Loader interface basedir
-            ['cache' => BASEDIR . '/cache/themes', 'debug' => true, 'auto_reload' => true] // Environment settings
+            ['cache' => BASEDIR . 'cache/themes', 'debug' => true, 'auto_reload' => true] // Environment settings
         ]
     ]
 ];
