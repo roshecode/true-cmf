@@ -15,23 +15,6 @@ class Twig extends ServiceProvider implements ViewInterface
     protected $engine;
     protected $fileExtension;
 
-    /**
-     * @param \Truth\Support\Services\Locator\Box $box
-     */
-    public static function register(&$box)
-    {
-        $box->bind('Twig_LoaderInterface', 'Twig_Loader_Filesystem');
-        $box->singleton('View', self::CORE_SERVICES . '\View\Twig');
-        $box->make('View', [
-            BASEDIR . '/core/Themes',
-            [
-                'cache' => BASEDIR . '/cache/themes',
-                'debug' => true,
-                'auto_reload' => true
-            ]
-        ]);
-    }
-
     public function __construct(Twig_Environment $environment, Twig_Extension_Debug $debug)
     {
         $this->fileExtension = 'twig';

@@ -16,10 +16,6 @@ class Box extends ServiceProvider
     protected $bindings = [];
     protected $resolved = [];
 
-    public static function register(&$box) {
-        $box->instance('Box', $box);
-    }
-
     public function __construct()
     {
         ServiceProvider::register($this);

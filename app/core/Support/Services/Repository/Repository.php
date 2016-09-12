@@ -105,7 +105,7 @@ class Repository extends ServiceProvider
             throw new InvalidArgumentException('exceptions.invalid_argument'); // TODO: Envisage
         }
         if (is_numeric($offset)) {
-            return $this->sample = self::getValue($this->data, $offset);
+            return $this->sample = $this->getValue($this->data, $offset);
         } else {
             throw new InvalidArgumentException('exceptions.invalid_argument'); // TODO: Envisage
         }

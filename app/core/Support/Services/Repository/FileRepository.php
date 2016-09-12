@@ -2,6 +2,8 @@
 
 namespace Truth\Support\Services\Repository;
 
+use Truth\Support\Services\FileSystem\FS;
+
 class FileRepository extends Repository
 {
     /**
@@ -12,11 +14,11 @@ class FileRepository extends Repository
     /**
      * FileRepository constructor.
      *
-     * @param \Truth\Support\Services\FileSystem\FS $fileSystem
+     * @param FS $fileSystem
      * @param string $filePath
      * @param string $separator
      */
-    public function __construct(&$fileSystem, $filePath, $separator = '.') {
+    public function __construct(FS &$fileSystem, $filePath, $separator = '.') {
         $this->fileSystem = $fileSystem;
         parent::__construct($fileSystem->insert($filePath), $separator);
     }

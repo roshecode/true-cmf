@@ -4,12 +4,12 @@ namespace Truth\Support\Services\FileSystem;
 
 use Closure;
 use InvalidArgumentException;
-use Truth\Support\Abstracts\ServiceProvider;
+use UnexpectedValueException;
+use Truth\Support\Services\Repository\FileRepository;
 use Truth\Support\Services\FileSystem\Exceptions\FileNotFoundException;
 use Truth\Support\Services\FileSystem\Exceptions\UnreadableFileException;
-use UnexpectedValueException;
 
-class FS extends ServiceProvider
+class FS
 {
     const TAKE         = 'take';
     const READ         = 'read';
@@ -20,12 +20,6 @@ class FS extends ServiceProvider
     const INVOLVE_ONCE = 'involveOnce';
 
     protected $basedir;
-
-    public static function register(&$box)
-    {
-        $box->singleton('FS', self::CORE_SERVICES . '\\FileSystem\\FS');
-        $box->make('FS', [BASEDIR]);
-    }
 
     /**
      * FS constructor with base directory path.
@@ -159,12 +153,17 @@ class FS extends ServiceProvider
 
     /**
      * @param string $filePath
-     * @return FileArrayQuery
+     * @return FileRepository
      */
     public function getAssoc($filePath) {
-        return new FileArrayQuery($this, $filePath);
+        return new FileRepository($this, $filePath);
     }
 
+    /**
+     * Get basedir for all paths
+     *
+     * @return string
+     */
     public function getBasedir() {
         return $this->basedir;
     }

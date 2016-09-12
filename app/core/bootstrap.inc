@@ -10,10 +10,6 @@ $whoops = new \Whoops\Run;
 $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
 //$whoops->register();
 
-// init container
+// init container and register
 $box = new \Truth\Support\Services\Locator\Box();
-\Truth\Support\Services\Locator\Box::register($box);
-\Truth\Support\Services\FileSystem\FS::register($box);
-\Truth\Support\Services\Multilingual\Lang::register($box);
-\Truth\Support\Services\Configuration\Config::register($box);
-\Truth\Support\Services\View\Twig::register($box);
+$register = new \Truth\Support\Services\Registry\Register($box);
