@@ -30,34 +30,38 @@ class Box
      * Get stack of classes and parameters for automatic building
      *
      * @param string $class
-     * @param array $stack
-     * @return array
+     * @return SplFixedArray|null
      */
-    protected function getStack(&$class, array &$stack = []) {
+    protected function getStack(&$class) {
+
         $constructor = (new ReflectionClass($class))->getConstructor();
-        if($params = $constructor ? $constructor->getParameters() : false) {
-            $index = count($params);
-            while ($index) {
-                $stack[] = $params[--$index]->getClass();
+        if($constructor) {
+            $params = $constructor->getParameters();
+            $index = -1;
+            $length = count($params);
+            $stack = new SplFixedArray($length);
+            while ($length) {
+                $stack[++$index] = $params[--$length]->getClass();
             }
+            return $stack;
         };
-        return $stack;
+        return null;
     }
 
     /**
      * Build and inject all dependencies with parameters
      *
-     * @param array $stack
+     * @param SplFixedArray|null $stack
      * @param array $params
      * @return SplFixedArray
      */
-    protected function build(array &$stack, array &$params) {
+    protected function build($stack, array &$params) {
         $index = 0;
         $length = count($stack);
         $built = new SplFixedArray($length);
         while ($index < $length) {
-            $item = &$stack[$index]->name;
-            $built[$length - ++$index] = $item ? $this->makeInstance($item, $params) : array_pop($params);
+            $item = $stack[$index];
+            $built[$length - ++$index] = $item ? $this->makeInstance($item->name, $params) : array_pop($params);
         }
         return $built;
     }
@@ -66,18 +70,18 @@ class Box
      * Create new instance of concrete class
      *
      * @param string $concrete
-     * @param array $stack
+     * @param SplFixedArray|null $stack
      * @param array $params
      * @return object
      *
      * @throws \Exception
      */
-    protected function newInstance(&$concrete, array $stack, array &$params) {
+    protected function newInstance(&$concrete, $stack, array &$params) {
         if (class_exists($concrete)) {
-            return $params ?
-                (new ReflectionClass($concrete))->
-                    newInstanceArgs($this->build($stack, $params)->toArray()) :
-                new $concrete;
+                // TODO: use commented line for PHP >=5.4 && < 5.6 version
+//            return $stack ? (new ReflectionClass($concrete))->newInstanceArgs($this->build($stack, $params)->toArray()) :
+//                 : new $concrete;
+            return $stack ? new $concrete(...$this->build($stack, $params)->toArray()) : new $concrete;
         } else {
             throw new \Exception('Class ' . $concrete . ' does not exist!!!'); // TODO: more pretty
         }
@@ -123,10 +127,11 @@ class Box
      */
     protected function setStringBinding(&$abstract, &$concrete, &$shared, &$mutable) {
         $this->bindings[$abstract] = [
-            'make' => $this->getMakeClosure($abstract, $concrete, $shared, $mutable, function (&$concrete, $stack, &$params) {
+            'make' => $this->getMakeClosure($abstract, $concrete, $shared, $mutable,
+                function (&$concrete, $stack, &$params) {
                 return $this->newInstance($concrete, $stack, $params);
             }),
-            'shared' => $shared
+            'shared' => &$shared
         ];
     }
 
@@ -134,14 +139,27 @@ class Box
      * Set closure for building from closure
      *
      * @param string $abstract
-     * @param string $closure
+     * @param string $concrete
      * @param bool $shared
      * @param bool $mutable
      */
-    protected function setClosureBinding(&$abstract, &$closure, &$shared, &$mutable) {
+    protected function setClosureBinding(&$abstract, &$concrete, &$shared, &$mutable) {
         $this->bindings[$abstract] = [
-            'make' => $this->getMakeClosure($abstract, $closure, $shared, $mutable, 'call_user_func_array'),
-            'shared' => $shared
+            'make' => $shared ?
+                $mutable ?
+                    function(&$params) use(&$abstract, &$concrete) {
+                        $shared = &$this->bindings[$abstract]['shared'];
+                        return $shared = ($shared === true ? call_user_func_array($concrete, $params) :
+                            $params ? call_user_func_array($concrete, $params) : $shared);
+                    } :
+                    function(&$params) use(&$abstract, &$concrete) {
+                        return ($shared = &$this->bindings[$abstract]['shared']) === true ?
+                            $shared = call_user_func_array($concrete, $params) : $shared;
+                    } :
+                function(&$params) use(&$concrete) {
+                    return call_user_func_array($concrete, $params);
+                },
+            'shared' => &$shared
         ];
     }
 
@@ -175,7 +193,7 @@ class Box
         } elseif (is_null($concrete)) {
             $this->setStringBinding($abstract, $abstract, $shared, $mutable); // return new or instance abstract
         } elseif (is_object($concrete)) {
-            $this->instance($abstract, $concrete);
+            $this->instance($abstract, $concrete); // return instance
         }
     }
 
