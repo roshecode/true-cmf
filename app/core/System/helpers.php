@@ -14,6 +14,10 @@ function last(&$array) {
     return $array[key($array)];
 }
 
+function base_path() {
+
+}
+
 function d($v1, $v2 = null) {
     $v = ($v2 === null ? $v1 : $v2);
     $func = (is_string($v) || is_numeric($v) ? 'print_r' : 'var_dump');

@@ -7,7 +7,6 @@ use Twig_Extension_Debug;
 use Symfony\Component\Yaml\Yaml;
 use Truth\Support\Abstracts\ServiceProvider;
 use Truth\Support\Interfaces\ViewInterface;
-use Truth\View\Block;
 
 class Twig extends ServiceProvider implements ViewInterface
 {
@@ -31,7 +30,7 @@ class Twig extends ServiceProvider implements ViewInterface
     }
 
     public function render($layout, $data = null) {
-        $structure = Yaml::parse(file_get_contents($data));
+//        $structure = Yaml::parse(file_get_contents($data));
         $data = [
             'logo' => $this->createBlockData('logo', 'static'),
             'article' => $this->createBlockData('article', 'table',

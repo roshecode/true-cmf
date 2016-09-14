@@ -14,7 +14,6 @@ use \Truth\Support\Facades\Lang;
 use \Truth\Support\Facades\Config;
 use Truth\Routing\Router;
 use \Truth\Support\Facades\View;
-use \Truth\View\Block;
 //
 //$single = true;
 //Box::bind('hi', function($firstName, $lastName) {
@@ -27,8 +26,8 @@ use \Truth\View\Block;
 //echo Box::isShared('hi');
 //echo $single;
 //die;
-View::render('layouts/pages/home', __DIR__ . '/app/core/Themes/default/structure.yml');
-//dd(Box::getInstance());
+View::render('layouts/pages/home');
+dd(Box::getInstance());
 
 //Router::start();
 //Router::get('home/page', function($data) {

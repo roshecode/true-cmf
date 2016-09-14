@@ -9,9 +9,10 @@ use Truth\Support\Abstracts\Facade;
 
 class Box
 {
-    const MAKE = 0;
-    const SHARED = 1;
-    const STACK = 2;
+    const MAKE      = 0;
+    const SHARE     = 1;
+    const STACK     = 2;
+    const MUTE      = 3;
     /**
      * The container's bindings.
      *
@@ -32,23 +33,18 @@ class Box
     /**
      * Get stack of classes and parameters for automatic building
      *
-     * @param string $class
+     * @param \ReflectionMethod $constructor
      * @return SplFixedArray|null
      */
-    protected function getStack(&$class) {
-
-        $constructor = (new ReflectionClass($class))->getConstructor();
-        if($constructor) {
-            $params = $constructor->getParameters();
-            $index = -1;
-            $length = count($params);
-            $stack = new SplFixedArray($length);
-            while ($length) {
-                $stack[++$index] = $params[--$length]->getClass();
-            }
-            return $stack;
-        };
-        return null;
+    protected function getStack($constructor) {
+        $params = $constructor->getParameters();
+        $index = -1;
+        $length = count($params);
+        $stack = new SplFixedArray($length);
+        while ($length) {
+            $stack[++$index] = $params[--$length]->getClass();
+        }
+        return $stack;
     }
 
     /**
@@ -72,19 +68,24 @@ class Box
     /**
      * Create new instance of concrete class
      *
-     * @param string $concrete
+     * @param ReflectionClass $reflectionClass
      * @param SplFixedArray|null $stack
      * @param array $params
      * @return object
      *
      * @throws \Exception
      */
-    protected function newInstance(&$concrete, $stack, array &$params) {
+    protected function newInstanceArgs(&$reflectionClass, $stack, array &$params) {
+        return $reflectionClass->newInstanceArgs($this->build($stack, $params)->toArray());
+    }
+
+    protected function classExistsCallback(&$concrete, $callback, &$stack = []) {
         if (class_exists($concrete)) {
-                // TODO: use commented line for PHP >=5.4 && < 5.6 version
-//            return $stack ? (new ReflectionClass($concrete))->newInstanceArgs($this->build($stack, $params)->toArray()) :
-//                 : new $concrete;
-            return $stack ? new $concrete(...$this->build($stack, $params)->toArray()) : new $concrete;
+            $reflectionClass = new ReflectionClass($concrete);
+            $constructor = $reflectionClass->getConstructor();
+//            $stack = $constructor ? $this->getStack($constructor) : null; // TODO: no need if no dependencies
+//            return $callback($reflectionClass, $constructor, $stack);
+            return $constructor ? $callback($reflectionClass, $constructor, $stack = $this->getStack($constructor)) : new $concrete;
         } else {
             throw new \Exception('Class ' . $concrete . ' does not exist!!!'); // TODO: more pretty
         }
@@ -97,26 +98,53 @@ class Box
      * @param string $concrete
      * @param bool $shared
      * @param bool $mutable
-     * @param Closure|string $callback
      * @return Closure
      */
-    protected function getMakeClosure(&$abstract, &$concrete, &$shared, &$mutable, $callback) {
+    protected function getMakeClosure(&$abstract, &$concrete, &$shared, &$mutable) {
         return $shared ?
             $mutable ?
-                function(&$params) use(&$abstract, &$concrete, &$callback) {
+                function(&$params) use(&$abstract, &$concrete) {
                     $binding = &$this->bindings[$abstract];
-                    $shared = &$binding[self::SHARED];
-                    $stack = &$binding[self::STACK];
-                    return $shared = ($shared === true ? $callback($concrete, $stack = $this->getStack($concrete), $params) :
-                        ($params ? $callback($concrete, $stack, $params) : $shared));
+                    $shared = &$binding[self::SHARE];
+                    return $shared === true ? $shared = $this->classExistsCallback($concrete,
+                        function($reflectionClass, &$constructor, $stack) use (&$binding, &$params) {
+                            $mute = &$binding[self::MUTE];
+                            $mute = $constructor ?
+                                function(&$params) use ($reflectionClass, &$constructor, &$stack) {
+                                    return $this->newInstanceArgs($reflectionClass, $stack, $params);
+                                } :
+                                function(/*$stack*/) use (&$concrete) { return new $concrete; };
+                            return $mute($params);
+                    }) :
+                        $params ? $shared = $binding[self::MUTE]($params) : $shared;
                 } :
-                function(&$params) use(&$abstract, &$concrete, &$callback) {
-                    return ($shared = &$this->bindings[$abstract][self::SHARED]) === true ?
-                        $shared = $callback($concrete, $this->getStack($concrete), $params) : $shared;
+                function(&$params) use(&$abstract, &$concrete) {
+                    $shared = &$this->bindings[$abstract][self::SHARE];
+                    if ($shared === true) {
+                        return $shared = $this->classExistsCallback($concrete, function ($reflectionClass, &$constructor, $stack) use (&$concrete, &$params) {
+                            return $constructor ?
+                                $this->newInstanceArgs($reflectionClass, $stack, $params) :
+                                new $concrete;
+                        });
+                    } else return $shared;
                 } :
-            function(&$params) use(&$abstract, &$concrete, &$callback) {
-                $stack = &$this->bindings[$abstract][self::STACK];
-                return $callback($concrete, $stack = $stack ? $stack : $this->getStack($concrete), $params);
+            function(&$params) use(&$abstract, &$concrete) {
+                $binding = &$this->bindings[$abstract];
+                $stack = &$binding[self::STACK];
+                if ($stack) {
+                    return $binding[self::MUTE]($params);
+                } else {
+                    return $this->classExistsCallback($concrete, function ($reflectionClass, &$constructor, $stack) use (&$binding, &$params) {
+                        $mute = &$binding[self::MUTE];
+                        $mute = $constructor ?
+                            function(&$params) use ($reflectionClass, &$constructor, &$stack) {
+                                return $this->newInstanceArgs($reflectionClass, $stack, $params);
+                            } :
+                            function(&$params) use (&$concrete) { return new $concrete; };
+                        return $mute($params);
+                    }, $stack);
+
+                }
             };
     }
 
@@ -130,11 +158,8 @@ class Box
      */
     protected function setStringBinding(&$abstract, &$concrete, &$shared, &$mutable) {
         $this->bindings[$abstract] = [
-            self::MAKE => $this->getMakeClosure($abstract, $concrete, $shared, $mutable,
-                function (&$concrete, $stack, &$params) {
-                return $this->newInstance($concrete, $stack, $params);
-            }),
-            self::SHARED => &$shared
+            self::MAKE => $this->getMakeClosure($abstract, $concrete, $shared, $mutable),
+            self::SHARE => &$shared
         ];
     }
 
@@ -151,18 +176,18 @@ class Box
             self::MAKE => $shared ?
                 $mutable ?
                     function(&$params) use(&$abstract, &$concrete) {
-                        $shared = &$this->bindings[$abstract][self::SHARED];
+                        $shared = &$this->bindings[$abstract][self::SHARE];
                         return $shared = ($shared === true ? call_user_func_array($concrete, $params) :
                             $params ? call_user_func_array($concrete, $params) : $shared);
                     } :
                     function(&$params) use(&$abstract, &$concrete) {
-                        return ($shared = &$this->bindings[$abstract][self::SHARED]) === true ?
+                        return ($shared = &$this->bindings[$abstract][self::SHARE]) === true ?
                             $shared = call_user_func_array($concrete, $params) : $shared;
                     } :
                 function(&$params) use(&$concrete) {
                     return call_user_func_array($concrete, $params);
                 },
-            self::SHARED => &$shared
+            self::SHARE => &$shared
         ];
     }
 
@@ -175,7 +200,7 @@ class Box
     public function instance($abstract, $instance) {
         $this->bindings[$abstract] = [
             self::MAKE => function() use(&$instance) { return $instance; },
-            self::SHARED => $instance
+            self::SHARE => $instance
         ];
     }
 
@@ -234,7 +259,15 @@ class Box
             return $this->bindings[$abstract][self::MAKE]($params);
         } else {
             isset($this->resolved[$abstract]) ? ++$this->resolved[$abstract] : $this->resolved[$abstract] = 1;
-            return $this->newInstance($abstract, $this->getStack($abstract), $params);
+
+            $reflectionClass = new ReflectionClass($abstract);
+            $constructor = $reflectionClass->getConstructor();
+            $stack = $constructor ? $this->getStack($constructor) : null;
+            return $constructor ?
+                $this->newInstanceArgs($reflectionClass, $stack, $params) :
+                new $abstract;
+
+//            return $this->newInstance($abstract, $this->getStack($abstract), $params);
         }
     }
 
@@ -256,8 +289,6 @@ class Box
         $this->singleton($abstract, $service[$abstract]);
         $configs = $this->make($abstract, [$pack['directory'], $pack['files']]);
         $this->instance('Box', $this);
-
-        $this->bind('Truth\Support\Services\FileSystem\FS'); // TODO: register service
 
         foreach ($configs['services']['interfaces'] as $abstract => $concrete) {
             $this->bind($abstract, $concrete);
@@ -281,6 +312,6 @@ class Box
      */
     public function isShared($abstract)
     {
-        return !!$this->bindings[$abstract][self::SHARED];
+        return !!$this->bindings[$abstract][self::SHARE];
     }
 }
