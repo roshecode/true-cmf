@@ -46,7 +46,7 @@ class Twig extends ServiceProvider implements ViewInterface
                 ['title' => 'LAST article', 'text' => 'Dog eats dos!!!'],
             ])
         ];
-        echo $this->engine->render(self::$box->make('Config')->getCurrentThemeName() . '/' .
+        echo $this->engine->render($this->box->make('Config')->getCurrentThemeName() . '/' .
             $layout . '.' . $this->fileExtension, $data);
     }
 

@@ -135,7 +135,7 @@ class FS
      */
     public function take($filePath) {
         return self::fileExistAndReadable($filePath, function ($filePath) {
-            return file_get_contents($filePath);
+            return file_get_contents($this->basedir . $filePath);
         });
     }
 
@@ -147,7 +147,7 @@ class FS
      */
     public function read($filePath) {
         return self::fileExistAndReadable($filePath, function ($filePath) {
-            return readfile($filePath);
+            return readfile($this->basedir . $filePath);
         });
     }
 
@@ -156,7 +156,7 @@ class FS
      * @return FileRepository
      */
     public function getAssoc($filePath) {
-        return new FileRepository($this, $filePath);
+        return new FileRepository($this, $this->basedir . $filePath);
     }
 
     /**

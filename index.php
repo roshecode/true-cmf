@@ -36,5 +36,5 @@ View::render('layouts/pages/home', __DIR__ . '/app/core/Themes/default/structure
 //});
 
 $endTime = microtime(true);
-$elapsed = $endTime - $startTime;
-echo "Execution time : $elapsed seconds";
+$elapsed = ($endTime - $startTime) * 1000;
+echo "Execution time : $elapsed ms";

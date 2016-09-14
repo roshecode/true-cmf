@@ -2,17 +2,23 @@
 
 namespace Truth\Support\Abstracts;
 
+use Truth\Support\Services\Locator\Box;
+
 abstract class ServiceProvider
 {
     /**
-     * @var \Truth\Support\Services\Locator\Box $box
+     * @var Box $box
      */
-    protected static $box;
+    protected $box;
 
     /**
-     * @param \Truth\Support\Services\Locator\Box $box
+     * @param Box $box
+     * @return ServiceProvider
      */
-    public static function register(&$box) {
-        self::$box = $box;
+    public function __register(Box &$box) {
+        $this->box = $box;
+        return $this;
     }
+
+    public function boot() {}
 }

@@ -4,18 +4,23 @@ namespace Truth\Support\Services\Configuration;
 
 use InvalidArgumentException;
 use Truth\Support\Services\FileSystem\FS;
-use Truth\Support\Services\Repository\FileRepository;
+use Truth\Support\Services\Repository\MultiFileRepository;
 
-class Config extends FileRepository
+class Config extends MultiFileRepository
 {
     /**
      * @param FS $fileSystem
-     * @param string $filePath
+     * @param string $filePaths
      */
-    public function __construct(FS &$fileSystem, $filePath) {
-        parent::__construct($fileSystem, $filePath);
-        $this->setLanguage($this->get('localization.language'));
-        $this->setErrors($this->get('errors'));
+    public function __construct(FS &$fileSystem, $filePaths) {
+        parent::__construct($fileSystem, $filePaths);
+    }
+
+    public function boot() {
+//        $this->setLanguage($this->get('localization.language'));
+        $this->setLanguage($this->data['main']['localization']['language']);
+//        $this->setErrors($this->get('errors'));
+        $this->setErrors($this->data['main']['errors']);
     }
 
     /**
@@ -27,7 +32,7 @@ class Config extends FileRepository
     public function getDirectoryPath($path) {
         if (is_string($path)) {
             // TODO: directory separator to windows
-            return $this->get('directories')[$path] . '/';
+            return $this->data['main']['directories'][$path] . '/';
         } else {
             throw new InvalidArgumentException('exceptions.invalid_argument'); // TODO: Envisage
         }
@@ -40,7 +45,7 @@ class Config extends FileRepository
      */
     public function setLanguage($lang) {
         if (is_string($lang)) {
-            self::$box->make('Lang', [BASEDIR . $this->getDirectoryPath('languages'), $lang.'.php']); // TODO: Bad make
+            $this->box->make('Lang', [BASEDIR . $this->getDirectoryPath('languages'), $lang.'.php']); // TODO: Bad make
         } else {
             throw new InvalidArgumentException('exceptions.invalid_argument'); // TODO: Envisage
         }
@@ -66,7 +71,7 @@ class Config extends FileRepository
     }
 
     public function getCurrentThemeName() {
-        return $this->get('site')['theme'];
+        return $this->data['main']['site']['theme'];
     }
 
     public function getCurrentThemePath() {

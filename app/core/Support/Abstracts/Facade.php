@@ -2,10 +2,21 @@
 
 namespace Truth\Support\Abstracts;
 
-abstract class Facade extends ServiceProvider
+use Truth\Support\Services\Locator\Box;
+
+abstract class Facade
 {
+    /**
+     * @var Box $box
+     */
+    protected static $box;
+
+    final public static function __register(Box &$box) {
+        self::$box = $box;
+    }
+
     protected static function getFacadeAccessor() {
-        return 'undefined';
+        return null;
     }
 
     final public static function __callStatic($name, $arguments)

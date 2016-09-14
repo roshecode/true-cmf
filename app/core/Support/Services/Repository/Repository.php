@@ -2,39 +2,46 @@
 
 namespace Truth\Support\Services\Repository;
 
+use ArrayAccess;
 use InvalidArgumentException;
 use Truth\Support\Abstracts\ServiceProvider;
 
-class Repository extends ServiceProvider
+class Repository extends ServiceProvider implements ArrayAccess
 {
     /**
      * Some array
      *
-     * @var array
+     * @var array $data
      */
     protected $data;
     /**
      * Query string separator
      *
-     * @var string
+     * @var string $separator
      */
     protected $separator;
     /**
      * Last used query string
      *
-     * @var string
+     * @var string $query
      */
     protected $query;
     /**
      * Array of path to value
      *
-     * @var array
+     * @var array $path
      */
     protected $path;
     /**
+     * Path length subtract one
+     *
+     * @var integer $length
+     */
+    protected $end;
+    /**
      * Last got value
      *
-     * @var string
+     * @var string $sample
      */
     protected $sample;
 
@@ -47,12 +54,8 @@ class Repository extends ServiceProvider
      * @throws InvalidArgumentException
      */
     public function __construct(array $array, $separator = '.') {
-        if (is_array($array) && is_string($separator)) {
-            $this->data = $array;
-            $this->separator = $separator;
-        } else {
-            throw new InvalidArgumentException('exceptions.invalid_argument'); // TODO: Envisage
-        }
+        $this->data = $array;
+        $this->separator = $separator;
     }
 
     /**
@@ -69,19 +72,11 @@ class Repository extends ServiceProvider
      *
      * @param array $array
      * @param integer $offset
-     * @return mixed|null
+     * @return mixed
      */
-    protected function getValue($array, $offset) {
-        if ($offset !== count($this->path)) {
-            if (array_key_exists($this->path[$offset], $array)) {
-                return $this->getValue($array[$this->path[$offset]], ++$offset);
-            } else {
-//            trigger_error(Lang['backend']->get('notices.key_does_not_exist'));
-                trigger_error('notices.key_does_not_exist');
-                return null;
-            }
-        }
-        return $array;
+    protected function getValue(array $array, $offset) {
+        return $offset < $this->end ? $this->getValue($array[$this->path[$offset]], ++$offset) :
+            $array[$this->path[$offset]];
     }
 
     /**
@@ -89,26 +84,17 @@ class Repository extends ServiceProvider
      *
      * @param $query
      * @param int $offset
-     * @return mixed|null|string
-     *
-     * @throws InvalidArgumentException
+     * @return mixed
      */
     public function get($query, $offset = 0) {
-        if (is_string($query)) {
-            if ($this->query === $query) {
-                return $this->sample;
-            } else {
-                $this->query = $query;
-                $this->path = explode($this->separator, $query);
-            }
-        } else {
-            throw new InvalidArgumentException('exceptions.invalid_argument'); // TODO: Envisage
-        }
-        if (is_numeric($offset)) {
-            return $this->sample = $this->getValue($this->data, $offset);
-        } else {
-            throw new InvalidArgumentException('exceptions.invalid_argument'); // TODO: Envisage
-        }
+//        if ($this->query === $query) {
+//            return $this->sample;
+//        } else {
+            $this->query = $query;
+            $this->path = explode($this->separator, $query);
+            $this->end = count($this->path) - 1;
+//        }
+        return $this->sample = $this->getValue($this->data, $offset);
     }
 
     /**
@@ -120,5 +106,48 @@ class Repository extends ServiceProvider
     public function set($query, $value) {
         // TODO: Setting with separator
         $this->data[$query] = $value;
+    }
+
+    /**
+     * Whether a offset exists
+     *
+     * @param mixed $offset
+     * @return boolean
+     */
+    public function offsetExists($offset)
+    {
+        return isset($this->data[$offset]);
+    }
+
+    /**
+     * Offset to retrieve
+     *
+     * @param mixed $offset
+     * @return mixed
+     */
+    public function offsetGet($offset)
+    {
+        return isset($this->data[$offset]) ? $this->data[$offset] : null;
+    }
+
+    /**
+     * Offset to set
+     *
+     * @param mixed $offset
+     * @param mixed $value
+     */
+    public function offsetSet($offset, $value)
+    {
+        is_null($offset) ? $this->data[] = $value : $this->data[$offset] = $value;
+    }
+
+    /**
+     * Offset to unset
+     *
+     * @param mixed $offset
+     */
+    public function offsetUnset($offset)
+    {
+        unset($this->data[$offset]);
     }
 }

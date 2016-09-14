@@ -5,10 +5,13 @@ namespace Truth\Support\Services\Locator;
 use Closure;
 use ReflectionClass;
 use SplFixedArray;
-use Truth\Support\Abstracts\ServiceProvider;
+use Truth\Support\Abstracts\Facade;
 
 class Box
 {
+    const MAKE = 0;
+    const SHARED = 1;
+    const STACK = 2;
     /**
      * The container's bindings.
      *
@@ -19,7 +22,7 @@ class Box
 
     public function __construct()
     {
-        ServiceProvider::register($this);
+        Facade::__register($this);
     }
 
     public function getInstance() {
@@ -102,17 +105,17 @@ class Box
             $mutable ?
                 function(&$params) use(&$abstract, &$concrete, &$callback) {
                     $binding = &$this->bindings[$abstract];
-                    $shared = &$binding['shared'];
-                    $stack = &$binding['stack'];
+                    $shared = &$binding[self::SHARED];
+                    $stack = &$binding[self::STACK];
                     return $shared = ($shared === true ? $callback($concrete, $stack = $this->getStack($concrete), $params) :
                         ($params ? $callback($concrete, $stack, $params) : $shared));
                 } :
                 function(&$params) use(&$abstract, &$concrete, &$callback) {
-                    return ($shared = &$this->bindings[$abstract]['shared']) === true ?
+                    return ($shared = &$this->bindings[$abstract][self::SHARED]) === true ?
                         $shared = $callback($concrete, $this->getStack($concrete), $params) : $shared;
                 } :
             function(&$params) use(&$abstract, &$concrete, &$callback) {
-                $stack = &$this->bindings[$abstract]['stack'];
+                $stack = &$this->bindings[$abstract][self::STACK];
                 return $callback($concrete, $stack = $stack ? $stack : $this->getStack($concrete), $params);
             };
     }
@@ -127,11 +130,11 @@ class Box
      */
     protected function setStringBinding(&$abstract, &$concrete, &$shared, &$mutable) {
         $this->bindings[$abstract] = [
-            'make' => $this->getMakeClosure($abstract, $concrete, $shared, $mutable,
+            self::MAKE => $this->getMakeClosure($abstract, $concrete, $shared, $mutable,
                 function (&$concrete, $stack, &$params) {
                 return $this->newInstance($concrete, $stack, $params);
             }),
-            'shared' => &$shared
+            self::SHARED => &$shared
         ];
     }
 
@@ -145,21 +148,21 @@ class Box
      */
     protected function setClosureBinding(&$abstract, &$concrete, &$shared, &$mutable) {
         $this->bindings[$abstract] = [
-            'make' => $shared ?
+            self::MAKE => $shared ?
                 $mutable ?
                     function(&$params) use(&$abstract, &$concrete) {
-                        $shared = &$this->bindings[$abstract]['shared'];
+                        $shared = &$this->bindings[$abstract][self::SHARED];
                         return $shared = ($shared === true ? call_user_func_array($concrete, $params) :
                             $params ? call_user_func_array($concrete, $params) : $shared);
                     } :
                     function(&$params) use(&$abstract, &$concrete) {
-                        return ($shared = &$this->bindings[$abstract]['shared']) === true ?
+                        return ($shared = &$this->bindings[$abstract][self::SHARED]) === true ?
                             $shared = call_user_func_array($concrete, $params) : $shared;
                     } :
                 function(&$params) use(&$concrete) {
                     return call_user_func_array($concrete, $params);
                 },
-            'shared' => &$shared
+            self::SHARED => &$shared
         ];
     }
 
@@ -171,8 +174,8 @@ class Box
      */
     public function instance($abstract, $instance) {
         $this->bindings[$abstract] = [
-            'make' => function() use(&$instance) { return $instance; },
-            'shared' => $instance
+            self::MAKE => function() use(&$instance) { return $instance; },
+            self::SHARED => $instance
         ];
     }
 
@@ -186,14 +189,14 @@ class Box
      */
     public function bind($abstract, $concrete = null, $shared = false, $mutable = false)
     {
-        if (is_string($concrete)) {
-            $this->setStringBinding($abstract, $concrete, $shared, $mutable); // return new or instance concrete
+        if (is_null($concrete)) {
+            $this->setStringBinding($abstract, $abstract, $shared, $mutable);
+        } elseif (is_string($concrete)) {
+            $this->setStringBinding($abstract, $concrete, $shared, $mutable);
         } elseif ($concrete instanceof Closure) {
-            $this->setClosureBinding($abstract, $concrete, $shared, $mutable); // return new or instance closure
-        } elseif (is_null($concrete)) {
-            $this->setStringBinding($abstract, $abstract, $shared, $mutable); // return new or instance abstract
+            $this->setClosureBinding($abstract, $concrete, $shared, $mutable);
         } elseif (is_object($concrete)) {
-            $this->instance($abstract, $concrete); // return instance
+            $this->instance($abstract, $concrete);
         }
     }
 
@@ -228,7 +231,7 @@ class Box
 //        return isset($this->bindings[$abstract]) ?
 //            $this->bindings[$abstract]['make']($parameters) : $this->newInstance($abstract, $parameters);
         if (isset($this->bindings[$abstract])) {
-            return $this->bindings[$abstract]['make']($params);
+            return $this->bindings[$abstract][self::MAKE]($params);
         } else {
             isset($this->resolved[$abstract]) ? ++$this->resolved[$abstract] : $this->resolved[$abstract] = 1;
             return $this->newInstance($abstract, $this->getStack($abstract), $params);
@@ -246,6 +249,30 @@ class Box
         return $this->makeInstance($abstract, $params);
     }
 
+    public function pack($filePath) {
+        $pack = include $filePath;
+        $service = $pack['service'];
+        $abstract = array_keys($service)[0];
+        $this->singleton($abstract, $service[$abstract]);
+        $configs = $this->make($abstract, [$pack['directory'], $pack['files']]);
+        $this->instance('Box', $this);
+
+        $this->bind('Truth\Support\Services\FileSystem\FS'); // TODO: register service
+
+        foreach ($configs['services']['interfaces'] as $abstract => $concrete) {
+            $this->bind($abstract, $concrete);
+        }
+        foreach ($configs['services']['singletons'] as $abstract => $concrete) {
+            $this->singleton($abstract, $concrete);
+        }
+        foreach ($configs['services']['mutables'] as $abstract => $concrete) {
+            $this->mutable($abstract, $concrete);
+        }
+        foreach ($configs['settings'] as $abstract => $settings) {
+            $this->make($abstract, $settings)->__register($this)->boot();
+        }
+    }
+
     /**
      * Determine if a given type is shared.
      *
@@ -254,6 +281,6 @@ class Box
      */
     public function isShared($abstract)
     {
-        return !!$this->bindings[$abstract]['shared'];
+        return !!$this->bindings[$abstract][self::SHARED];
     }
 }
