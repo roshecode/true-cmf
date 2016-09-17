@@ -10,47 +10,39 @@ class Repository extends ServiceProvider implements ArrayAccess
 {
     /**
      * Some array
-     *
      * @var array $data
      */
     protected $data;
     /**
      * Query string separator
-     *
      * @var string $separator
      */
     protected $separator;
     /**
      * Last used query string
-     *
      * @var string $query
      */
     protected $query;
     /**
      * Array of path to value
-     *
      * @var array $path
      */
     protected $path;
     /**
      * Path length subtract one
-     *
      * @var integer $length
      */
     protected $end;
     /**
      * Last got value
-     *
      * @var string $sample
      */
     protected $sample;
 
     /**
      * ArraySeparatorQuery constructor.
-     *
      * @param $array
      * @param string $separator
-     *
      * @throws InvalidArgumentException
      */
     public function __construct(array $array, $separator = '.') {
@@ -58,9 +50,12 @@ class Repository extends ServiceProvider implements ArrayAccess
         $this->separator = $separator;
     }
 
+    public function getData(){
+        return $this->data;
+    }
+
     /**
      * Return query string
-     *
      * @return string
      */
     public function getLastQuery() {
@@ -69,19 +64,17 @@ class Repository extends ServiceProvider implements ArrayAccess
 
     /**
      * Recursively getting value from array by query
-     *
      * @param array $array
      * @param integer $offset
      * @return mixed
      */
-    protected function getValue(array $array, $offset) {
-        return $offset < $this->end ? $this->getValue($array[$this->path[$offset]], ++$offset) :
-            $array[$this->path[$offset]];
+    protected function getValue(array &$array, &$offset) {
+        $next = &$array[$this->path[$offset]];
+        return $offset < $this->end && isset($next) ? $this->getValue($next, ++$offset) : $next;
     }
 
     /**
      * Select value by query
-     *
      * @param $query
      * @param int $offset
      * @return mixed
@@ -98,19 +91,38 @@ class Repository extends ServiceProvider implements ArrayAccess
     }
 
     /**
+     * Recursively getting array item reference by query
+     * @param array $array
+     * @param integer $offset
+     * @return mixed
+     */
+    protected function &setValue(array &$array, &$offset) {
+        $next = &$array[$this->path[$offset]];
+//        return ($offset < $this->end) ?
+//            $this->setValue(isset($next) ? $next : $next = [], ++$offset) : $next;
+        if ($offset < $this->end) {
+            return $this->setValue(isset($next) ? $next : $next = [], ++$offset);
+        } else {
+            return $next;
+        }
+    }
+
+    /**
      * Set value by query
-     *
      * @param $query
      * @param $value
+     * @param integer $offset
      */
-    public function set($query, $value) {
-        // TODO: Setting with separator
-        $this->data[$query] = $value;
+    public function set($query, $value, $offset = 0) {
+        $this->query = $query;
+        $this->path = explode($this->separator, $query);
+        $this->end = count($this->path) - 1;
+        $placeholder = &$this->setValue($this->data, $offset);
+        $placeholder = $value;
     }
 
     /**
      * Whether a offset exists
-     *
      * @param mixed $offset
      * @return boolean
      */
@@ -121,7 +133,6 @@ class Repository extends ServiceProvider implements ArrayAccess
 
     /**
      * Offset to retrieve
-     *
      * @param mixed $offset
      * @return mixed
      */
@@ -132,7 +143,6 @@ class Repository extends ServiceProvider implements ArrayAccess
 
     /**
      * Offset to set
-     *
      * @param mixed $offset
      * @param mixed $value
      */
@@ -143,7 +153,6 @@ class Repository extends ServiceProvider implements ArrayAccess
 
     /**
      * Offset to unset
-     *
      * @param mixed $offset
      */
     public function offsetUnset($offset)

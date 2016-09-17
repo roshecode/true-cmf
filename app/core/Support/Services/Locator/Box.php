@@ -12,7 +12,6 @@ class Box
     const MAKE      = 0;
     const SHARE     = 1;
     const STACK     = 2;
-    const MUTE      = 3;
     /**
      * The container's bindings.
      *
@@ -20,9 +19,11 @@ class Box
      */
     protected $bindings = [];
     protected $resolved = [];
+    protected $startTime;
 
     public function __construct()
     {
+        $this->startTime = microtime(true);
         Facade::__register($this);
     }
 
@@ -33,11 +34,10 @@ class Box
     /**
      * Get stack of classes and parameters for automatic building
      *
-     * @param \ReflectionMethod $constructor
+     * @param array $params
      * @return SplFixedArray|null
      */
-    protected function getStack($constructor) {
-        $params = $constructor->getParameters();
+    protected function getStack(array $params) {
         $index = -1;
         $length = count($params);
         $stack = new SplFixedArray($length);
@@ -50,11 +50,11 @@ class Box
     /**
      * Build and inject all dependencies with parameters
      *
-     * @param SplFixedArray|null $stack
+     * @param SplFixedArray $stack
      * @param array $params
      * @return SplFixedArray
      */
-    protected function build($stack, array &$params) {
+    protected function build(SplFixedArray $stack, array &$params) {
         $index = 0;
         $length = count($stack);
         $built = new SplFixedArray($length);
@@ -66,86 +66,45 @@ class Box
     }
 
     /**
-     * Create new instance of concrete class
+     * Create new instance of concrete class with stack closure
      *
-     * @param ReflectionClass $reflectionClass
-     * @param SplFixedArray|null $stack
+     * @param string $concrete
      * @param array $params
      * @return object
      *
      * @throws \Exception
      */
-    protected function newInstanceArgs(&$reflectionClass, $stack, array &$params) {
-        return $reflectionClass->newInstanceArgs($this->build($stack, $params)->toArray());
-    }
-
-    protected function classExistsCallback(&$concrete, $callback, &$stack = []) {
+    public function newInstanceWithStackClosure(&$concrete, &$params, $closure) {
         if (class_exists($concrete)) {
             $reflectionClass = new ReflectionClass($concrete);
             $constructor = $reflectionClass->getConstructor();
-//            $stack = $constructor ? $this->getStack($constructor) : null; // TODO: no need if no dependencies
-//            return $callback($reflectionClass, $constructor, $stack);
-            return $constructor ? $callback($reflectionClass, $constructor, $stack = $this->getStack($constructor)) : new $concrete;
+            return ($constructor && $cParams = $constructor->getParameters()) ?
+                $reflectionClass->newInstanceArgs($this->build($closure($cParams), $params)->toArray()) : new $concrete;
         } else {
             throw new \Exception('Class ' . $concrete . ' does not exist!!!'); // TODO: more pretty
         }
     }
 
     /**
-     * Get closure for building bind class
+     * Create new instance of concrete class
      *
-     * @param string $abstract
      * @param string $concrete
-     * @param bool $shared
-     * @param bool $mutable
-     * @return Closure
+     * @param array $params
+     * @return object
+     *
+     * @throws \Exception
      */
-    protected function getMakeClosure(&$abstract, &$concrete, &$shared, &$mutable) {
-        return $shared ?
-            $mutable ?
-                function(&$params) use(&$abstract, &$concrete) {
-                    $binding = &$this->bindings[$abstract];
-                    $shared = &$binding[self::SHARE];
-                    return $shared === true ? $shared = $this->classExistsCallback($concrete,
-                        function($reflectionClass, &$constructor, $stack) use (&$binding, &$params) {
-                            $mute = &$binding[self::MUTE];
-                            $mute = $constructor ?
-                                function(&$params) use ($reflectionClass, &$constructor, &$stack) {
-                                    return $this->newInstanceArgs($reflectionClass, $stack, $params);
-                                } :
-                                function(/*$stack*/) use (&$concrete) { return new $concrete; };
-                            return $mute($params);
-                    }) :
-                        $params ? $shared = $binding[self::MUTE]($params) : $shared;
-                } :
-                function(&$params) use(&$abstract, &$concrete) {
-                    $shared = &$this->bindings[$abstract][self::SHARE];
-                    if ($shared === true) {
-                        return $shared = $this->classExistsCallback($concrete, function ($reflectionClass, &$constructor, $stack) use (&$concrete, &$params) {
-                            return $constructor ?
-                                $this->newInstanceArgs($reflectionClass, $stack, $params) :
-                                new $concrete;
-                        });
-                    } else return $shared;
-                } :
-            function(&$params) use(&$abstract, &$concrete) {
-                $binding = &$this->bindings[$abstract];
-                $stack = &$binding[self::STACK];
-                if ($stack) {
-                    return $binding[self::MUTE]($params);
-                } else {
-                    return $this->classExistsCallback($concrete, function ($reflectionClass, &$constructor, $stack) use (&$binding, &$params) {
-                        $mute = &$binding[self::MUTE];
-                        $mute = $constructor ?
-                            function(&$params) use ($reflectionClass, &$constructor, &$stack) {
-                                return $this->newInstanceArgs($reflectionClass, $stack, $params);
-                            } :
-                            function(&$params) use (&$concrete) { return new $concrete; };
-                        return $mute($params);
-                    }, $stack);
+    protected function newInstance(&$concrete, &$params) {
+        return $this->newInstanceWithStackClosure($concrete, $params, function(&$cParams) {
+            return $this->getStack($cParams);
+        });
+    }
 
-                }
-            };
+    protected function newInstanceCached(&$abstract, &$concrete, &$params) {
+        return $this->newInstanceWithStackClosure($concrete, $params, function(&$cParams) use(&$abstract) {
+            $stack = &$this->bindings[$abstract][self::STACK];
+            return $stack ? $stack : $stack = $this->getStack($cParams);
+        });
     }
 
     /**
@@ -158,7 +117,21 @@ class Box
      */
     protected function setStringBinding(&$abstract, &$concrete, &$shared, &$mutable) {
         $this->bindings[$abstract] = [
-            self::MAKE => $this->getMakeClosure($abstract, $concrete, $shared, $mutable),
+            self::MAKE => $shared ?
+                $mutable ?
+                    function(&$params) use(&$abstract, &$concrete) {
+                        $binding = &$this->bindings[$abstract];
+                        $shared = &$binding[self::SHARE];
+                        return $shared === true ? $shared = $this->newInstanceCached($abstract, $concrete, $params) :
+                            $params ? $shared = $this->newInstanceCached($abstract, $concrete, $params) : $shared;
+                    } :
+                    function(&$params) use(&$abstract, &$concrete) {
+                        $shared = &$this->bindings[$abstract][self::SHARE];
+                        return $shared === true ? $shared = $this->newInstance($concrete, $params) : $shared;
+                    } :
+                function(&$params) use(&$abstract, &$concrete) {
+                    return $this->newInstanceCached($abstract, $concrete, $params);
+                },
             self::SHARE => &$shared
         ];
     }
@@ -245,6 +218,10 @@ class Box
         $this->bind($abstract, $concrete, true, true);
     }
 
+    public function alias($alias, $abstract) {
+        $this->bindings[$alias] = &$this->bindings[$abstract];
+    }
+
     /**
      * Resolve the given type from the container.
      *
@@ -259,15 +236,9 @@ class Box
             return $this->bindings[$abstract][self::MAKE]($params);
         } else {
             isset($this->resolved[$abstract]) ? ++$this->resolved[$abstract] : $this->resolved[$abstract] = 1;
-
-            $reflectionClass = new ReflectionClass($abstract);
-            $constructor = $reflectionClass->getConstructor();
-            $stack = $constructor ? $this->getStack($constructor) : null;
-            return $constructor ?
-                $this->newInstanceArgs($reflectionClass, $stack, $params) :
-                new $abstract;
-
-//            return $this->newInstance($abstract, $this->getStack($abstract), $params);
+            $this->bind($abstract);
+            return $this->make($abstract, $params);
+//            return $this->newInstance($abstract, $params);
         }
     }
 
@@ -299,6 +270,9 @@ class Box
         foreach ($configs['services']['mutables'] as $abstract => $concrete) {
             $this->mutable($abstract, $concrete);
         }
+        foreach ($configs['services']['aliases'] as $alias => $abstract) {
+            $this->alias($alias, $abstract);
+        }
         foreach ($configs['settings'] as $abstract => $settings) {
             $this->make($abstract, $settings)->__register($this)->boot();
         }
@@ -313,5 +287,11 @@ class Box
     public function isShared($abstract)
     {
         return !!$this->bindings[$abstract][self::SHARE];
+    }
+
+    public function __destruct()
+    {
+        $elapsed = (microtime(true) - $this->startTime) * 1000;
+        echo "Execution time : $elapsed ms";
     }
 }

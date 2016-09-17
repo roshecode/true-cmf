@@ -31,6 +31,18 @@ class FS
         $this->basedir = $base . '/';
     }
 
+    public function isFile($filePath) {
+        return is_file($this->basedir . $filePath);
+    }
+
+    public function isDir($filePath) {
+        return is_dir($this->basedir . $filePath);
+    }
+
+    public function exists($filePath) {
+        return file_exists($this->basedir . $filePath);
+    }
+
     /**
      * If file exists and readable calls callback function else throw exception.
      *
@@ -38,17 +50,11 @@ class FS
      * @param Closure $callback
      *
      * @throws FileNotFoundException
-     * @throws UnreadableFileException
      */
-    private function fileExistAndReadable($filePath, $callback) {
-        if (is_file($this->basedir . $filePath)) {
-//            if (is_readable($filePath)) {
-                return $callback($filePath);
-//            } else {
-//                throw new UnreadableFileException(Lang::get('exceptions.file_is_unreadable'));
-//            }
+    private function isFileCallback($filePath, $callback) {
+        if ($this->isFile($filePath)) {
+            return $callback($filePath);
         } else {
-//            throw new FileNotFoundException(Lang::get('exceptions.file_not_found'));
             throw new FileNotFoundException('File "' . $filePath . '" you try to open is not found'); // TODO: Envisage
         }
     }
@@ -60,7 +66,7 @@ class FS
      * @return mixed
      */
     public function insert($filePath) {
-        return self::fileExistAndReadable($filePath, function($filePath) {
+        return self::isFileCallback($filePath, function($filePath) {
             return include $this->basedir . $filePath;
         });
     }
@@ -72,7 +78,7 @@ class FS
      * @return mixed
      */
     public function insertOnce($filePath) {
-        return self::fileExistAndReadable($filePath, function($filePath) {
+        return self::isFileCallback($filePath, function($filePath) {
             return include_once $this->basedir . $filePath;
         });
     }
@@ -84,7 +90,7 @@ class FS
      * @return mixed
      */
     public function involve($filePath) {
-        return self::fileExistAndReadable($filePath, function($filePath) {
+        return self::isFileCallback($filePath, function($filePath) {
             return require $this->basedir . $filePath;
         });
     }
@@ -96,7 +102,7 @@ class FS
      * @return mixed
      */
     public function involveOnce($filePath) {
-        return self::fileExistAndReadable($filePath, function($filePath) {
+        return self::isFileCallback($filePath, function($filePath) {
             return require_once $this->basedir . $filePath;
         });
     }
@@ -106,16 +112,15 @@ class FS
      * it (once / more) else throw exception.
      *
      * @param string $filePath
-     * @param Closure $getMethod
+     * @param string $getMethod
      * @return mixed
      *
      * @throws InvalidArgumentException
      * @throws UnexpectedValueException
      */
-    public function apply($filePath, $getMethod) {
-        return self::fileExistAndReadable($filePath, function($filePath) use($getMethod) {
+    public function apply(/*string*/ $filePath, /*string*/ $getMethod) {
+        return self::isFileCallback($filePath, function($filePath) use($getMethod) {
             if (is_string($getMethod)) {
-//                if (method_exists(get_called_class(), $getMethod)) {
                 if (is_callable([get_called_class(), $getMethod])) {
                     return $this->$getMethod($filePath);
                 } else {
@@ -134,7 +139,7 @@ class FS
      * @return mixed
      */
     public function take($filePath) {
-        return self::fileExistAndReadable($filePath, function ($filePath) {
+        return self::isFileCallback($filePath, function ($filePath) {
             return file_get_contents($this->basedir . $filePath);
         });
     }
@@ -146,7 +151,7 @@ class FS
      * @return mixed
      */
     public function read($filePath) {
-        return self::fileExistAndReadable($filePath, function ($filePath) {
+        return self::isFileCallback($filePath, function ($filePath) {
             return readfile($this->basedir . $filePath);
         });
     }
@@ -166,5 +171,15 @@ class FS
      */
     public function getBasedir() {
         return $this->basedir;
+    }
+
+    public function clear($filePath, $size = 0) {
+        $handle = fopen($filePath, 'r+');
+        ftruncate($handle, $size);
+        fclose($handle);
+    }
+
+    public function parse($filePath, $type = File::PHP) {
+        return new File($filePath);
     }
 }
