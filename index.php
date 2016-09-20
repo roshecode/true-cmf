@@ -29,13 +29,13 @@ use \Truth\Support\Facades\View;
 //dd(parse_ini_file(COREDIR . 'Configuration/settings.ini', true));
 
 //Box::make();
-$router = new Router();
+$router = new Router('true');
 $router->match('GET', '/', function() {
     echo 'hello';
 });
 
-$router->match('GET', '/name', function($name) {
-    echo 'My name is ' . $name;
+$router->match('GET', '/:name:^\d+$/:surname|letters/profile', function($name, $surname) {
+    echo 'My name is ' . $name . ' ' . $surname;
 });
 //View::render('layouts/pages/home');
 //dd(Box::getInstance());
