@@ -31,3 +31,11 @@ function dd($v) {
     d($v);
     exit;
 }
+
+function pr($v1, $v2 = null) {
+    $v = ($v2 === null ? $v1 : $v2);
+    ?><pre><?php
+    if ($v2 !== null) echo $v1;
+    print_r($v);
+    ?></pre><hr /><?php
+}

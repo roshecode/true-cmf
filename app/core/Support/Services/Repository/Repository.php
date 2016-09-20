@@ -39,13 +39,15 @@ class Repository extends ServiceProvider implements ArrayAccess
      */
     protected $sample;
 
+    protected $placeholders;
+
     /**
      * ArraySeparatorQuery constructor.
      * @param $array
      * @param string $separator
      * @throws InvalidArgumentException
      */
-    public function __construct(array $array, $separator = '.') {
+    public function __construct(array $array = [], $separator = '.') {
         $this->data = $array;
         $this->separator = $separator;
     }

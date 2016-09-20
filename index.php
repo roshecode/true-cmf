@@ -28,9 +28,14 @@ use \Truth\Support\Facades\View;
 //$test = \Truth\Support\Facades\FS::take('core/Configuration/services.ini');
 //dd(parse_ini_file(COREDIR . 'Configuration/settings.ini', true));
 
+//Box::make();
 $router = new Router();
 $router->match('GET', '/', function() {
     echo 'hello';
+});
+
+$router->match('GET', '/name', function($name) {
+    echo 'My name is ' . $name;
 });
 //View::render('layouts/pages/home');
 //dd(Box::getInstance());
