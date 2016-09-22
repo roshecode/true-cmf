@@ -292,6 +292,6 @@ class Box
     public function __destruct()
     {
         $elapsed = (microtime(true) - $this->startTime) * 1000;
-        echo "Execution time : $elapsed ms";
+        echo "<br /><br /><hr />Execution time : $elapsed ms";
     }
 }

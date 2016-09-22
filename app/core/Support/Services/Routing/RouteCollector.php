@@ -2,7 +2,7 @@
 
 namespace Truth\Support\Services\Routing;
 
-class RouteRepository
+class RouteCollector
 {
     const POST      = 'POST';
     const GET       = 'GET';
@@ -69,7 +69,7 @@ class RouteRepository
                 $placeholder = &$this->pointer[':'][$parts_preg[1]];
                 $placeholder = [
                     self::KEY_REGEX => $this->config[self::CONFIG_REGEX_WRAPPER] .
-                             $regex .  $this->config[self::CONFIG_REGEX_WRAPPER]
+                        $regex .  $this->config[self::CONFIG_REGEX_WRAPPER]
                 ];
                 $this->pointer = &$placeholder[self::KEY_NEXT];
             } else {

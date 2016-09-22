@@ -34,8 +34,8 @@ $router->match('GET', '/', function() {
     echo 'hello';
 });
 
-$router->match('GET', '/:name:^\d+$/:surname|letters/profile', function($name, $surname) {
-    echo 'My name is ' . $name . ' ' . $surname;
+$router->match('GET', '/:name|letters/:age|uint', function($name, $surname = 'text') {
+    echo 'My name is ' . $name . '. I ' . $surname . ' years old.';
 });
 //View::render('layouts/pages/home');
 //dd(Box::getInstance());
