@@ -1,6 +1,6 @@
 <?php
 
-namespace Truth\Support\Services\Routing;
+namespace Truth\Support\Services\Routing\ArrayRouter;
 
 class RouteRepository
 {
