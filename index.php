@@ -5,7 +5,7 @@ ini_set('display_startup_errors', true);
 error_reporting(E_ALL);
 
 require_once __DIR__ . '/app/vendor/autoload.php';
-//require_once __DIR__ . '/app/bootstrap.inc';
+require_once __DIR__ . '/app/bootstrap.inc';
 
 use \Truth\Support\Facades\Box;
 use \Truth\Support\Facades\Lang;
@@ -29,15 +29,13 @@ use \Truth\Support\Facades\View;
 //dd(parse_ini_file(COREDIR . 'Configuration/settings.ini', true));
 //Box::make();
 
-class Test
-{
-    public function __get($name) {
-        $this->$name = 'Hello';
-    }
-}
-$test = new Test;
-echo '1: ' . $test->value;
-echo '2: ' . $test->value;
+$start = microtime(true);
+$router = new \Truth\Support\Services\Routing\TrueRouter\Router('true');
+$router->match([], '/:site|c/users/:user|^c+s0$/:name:\w{3}', function() {});
+$router->match([], '/:site/users/:user|s/profile', function() {});
+$router->match([], '/:site/blog', function() {});
+$router->match([], '/', function() {});
+print_r((microtime(true) - $start) * 1000 . 'ms');
 die;
 
 $start = microtime(true);
