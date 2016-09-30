@@ -15,7 +15,7 @@ abstract class ServiceProvider
      * @param Box $box
      * @return ServiceProvider
      */
-    public function __register(Box &$box) {
+    public function __register(Box $box) {
         $this->box = $box;
         return $this;
     }

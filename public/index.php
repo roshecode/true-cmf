@@ -4,8 +4,8 @@ ini_set('display_errors', true);
 ini_set('display_startup_errors', true);
 error_reporting(E_ALL);
 
-require_once __DIR__ . '/app/vendor/autoload.php';
-require_once __DIR__ . '/app/bootstrap.inc';
+require_once __DIR__ . '/../app/vendor/autoload.php';
+require_once __DIR__ . '/../app/bootstrap.inc';
 
 $router = new \Truth\Support\Services\Routing\RegexRouter\RegexRouter();
 print_r($router->match([], 'true/:str:[a-z-]+/:int', 'handler0'));

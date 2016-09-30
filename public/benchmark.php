@@ -1,12 +1,13 @@
 <?php
 error_reporting(E_ALL);
-require __DIR__ . '/../../../../../vendor/nikic/fast-route/src/bootstrap.php';
+require __DIR__ . '/../app/vendor/nikic/fast-route/src/bootstrap.php';
 //spl_autoload_register(function ($class) {
 //    require __DIR__ . '/Pux/src/' . strtr($class, '\\', '/') . '.php';
 //});
-require __DIR__ . '/Router.php';
-require __DIR__ . '/../RegexRouter/RegexRouter.php';
-require __DIR__ . '/../../Http/Response.php';
+$DIR = __DIR__ . '/../app/core/Support/Services/Routing';
+require $DIR . '/TrueRouter/Router.php';
+require $DIR . '/RegexRouter/RegexRouter.php';
+require $DIR . '/../Http/Response.php';
 function callback() {}
 /*$options = [
     'dataGenerator' => 'FastRoute\\OldDataGenerator',
