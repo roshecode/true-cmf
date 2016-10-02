@@ -6,7 +6,7 @@ require __DIR__ . '/../app/vendor/nikic/fast-route/src/bootstrap.php';
 //});
 $DIR = __DIR__ . '/../app/core/Support/Services/Routing';
 require $DIR . '/TrueRouter/Router.php';
-require $DIR . '/RegexRouter/RegexRouter.php';
+require $DIR . '/Router.php';
 require $DIR . '/../Http/Response.php';
 function callback() {}
 /*$options = [
@@ -14,13 +14,13 @@ function callback() {}
     'dispatcher' => 'FastRoute\\OldDispatcher',
 ];*/
 $options = [];
-$nRoutes = 100;
+$nRoutes = 200;
 $nMatches = 30000;
 
 // MY ROUTER ----------------------------------------------------------
 
 //$router = new \Truth\Support\Services\Routing\TrueRouter\Router('');
-$router = new \Truth\Support\Services\Routing\RegexRouter\RegexRouter();
+$router = new \Truth\Support\Services\Routing\Router();
     for ($i = 0, $str = 'a'; $i < $nRoutes; $i++, $str++) {
         $router->match('GET', '' . $str . '/:arg', 'handler' . $i);
         $lastStr = $str;
@@ -28,7 +28,7 @@ $router = new \Truth\Support\Services\Routing\RegexRouter\RegexRouter();
 // first route
 $startTime = microtime(true);
 for ($i = 0; $i < $nMatches; $i++) {
-    $res = $router->make('a/foo');
+    $res = $router->make('GET', 'a/foo');
 }
 printf("TrueRoute first route: %f\n", microtime(true) - $startTime);
 //var_dump($res);
@@ -36,7 +36,7 @@ printf("TrueRoute first route: %f\n", microtime(true) - $startTime);
 // last route
 $startTime = microtime(true);
 for ($i = 0; $i < $nMatches; $i++) {
-    $res = $router->make('' . $lastStr . '/foo');
+    $res = $router->make('GET', '' . $lastStr . '/foo');
 }
 printf("TrueRoute last route: %f\n", microtime(true) - $startTime);
 //var_dump($res);
@@ -44,7 +44,7 @@ printf("TrueRoute last route: %f\n", microtime(true) - $startTime);
 // unknown route
 $startTime = microtime(true);
 for ($i = 0; $i < $nMatches; $i++) {
-    $res = $router->make('foobar/bar');
+    $res = $router->make('GET', 'foobar/bar');
 }
 printf("TrueRoute unknown route: %f\n", microtime(true) - $startTime);
 //var_dump($res);
@@ -91,13 +91,13 @@ echo '<br /><br />';
 
 // MY ROUTER ------------------------------------------------------------------
 
-$nRoutes = 100;
+$nRoutes = 200;
 $nArgs = 9;
 $nMatches = 20000;
 $args = implode('/', array_map(function($i) { return ':arg' . $i; }, range(1, $nArgs)));
 
 //$router = new \Truth\Support\Services\Routing\TrueRouter\Router('');
-$router = new \Truth\Support\Services\Routing\RegexRouter\RegexRouter();
+$router = new \Truth\Support\Services\Routing\Router();
     for ($i = 0, $str = 'a'; $i < $nRoutes; $i++, $str++) {
         $router->match('GET', '' . $str . '/' . $args, 'handler' . $i);
         $lastStr = $str;
@@ -105,21 +105,21 @@ $router = new \Truth\Support\Services\Routing\RegexRouter\RegexRouter();
 // first route
 $startTime = microtime(true);
 for ($i = 0; $i < $nMatches; $i++) {
-    $res = $router->make('a/' . $args);
+    $res = $router->make('GET', 'a/' . $args);
 }
 printf("TrueRoute first route: %f\n", microtime(true) - $startTime);
 //var_dump($res);
 // last route
 $startTime = microtime(true);
 for ($i = 0; $i < $nMatches; $i++) {
-    $res = $router->make('' . $lastStr . '/' . $args);
+    $res = $router->make('GET', '' . $lastStr . '/' . $args);
 }
 printf("TrueRoute last route: %f\n", microtime(true) - $startTime);
 //var_dump($res);
 // unknown route
 $startTime = microtime(true);
 for ($i = 0; $i < $nMatches; $i++) {
-    $res = $router->make('foobar/' . $args);
+    $res = $router->make('GET', 'foobar/' . $args);
 }
 printf("TrueRoute unknown route: %f\n", microtime(true) - $startTime);
 //var_dump($res);

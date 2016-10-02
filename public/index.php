@@ -7,22 +7,16 @@ error_reporting(E_ALL);
 require_once __DIR__ . '/../app/vendor/autoload.php';
 require_once __DIR__ . '/../app/bootstrap.inc';
 
-$router = new \Truth\Support\Services\Routing\RegexRouter\RegexRouter();
-print_r($router->match([], 'true/:str:[a-z-]+/:int', 'handler0'));
-print_r($router->make('true/poka-rf/134'));
-//$router->dispatch('1|true/2|privet/3|23');
-// 'true/:str:[a-z-]+/name'
-// 'true/:int:[\d]+'
-// '@[^\s/]+/(?|([a-z-]+)|([\d]+))/[^\s/]+@i'
-die;
-
-
-
 use \Truth\Support\Facades\Box;
 use \Truth\Support\Facades\Lang;
 use \Truth\Support\Facades\Config;
-use Truth\Support\Services\Routing\Router;
+use Truth\Support\Facades\Route;
 use \Truth\Support\Facades\View;
+
+Route::match('GET', 'true/:str:[a-z]+-([a-z]+)/::\d+', function ($str, $sub, $int) {
+    echo 'STR: ' . $str . ' SUB: ' . $sub . ' INT: ' . $int;
+});
+die;
 
 $str = 'true/\/how\//gfgfg\/gf/:rere g/grg+\/gffr\\/\/\gfgf/\/\\///gf/\//\\\//';
 $i = 0;

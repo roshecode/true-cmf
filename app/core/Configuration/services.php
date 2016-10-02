@@ -6,6 +6,7 @@ return [
     ],
     'singletons' => [
         CORE_SERVICES.'FileSystem\FS'        => CORE_SERVICES.'FileSystem\FS', // TODO: FS interface
+        'Truth\Support\Services\Routing\Router' => 'Truth\Support\Services\Routing\Router',
         'Truth\Support\Interfaces\ViewInterface'      => CORE_SERVICES . 'View\Twig',
     ],
     'mutables' => [
@@ -14,6 +15,7 @@ return [
     'aliases' => [
         'FS' => CORE_SERVICES.'FileSystem\FS',
         'Lang' => CORE_SERVICES . 'Multilingual\Lang',
-        'View' => 'Truth\Support\Interfaces\ViewInterface'
+        'View' => 'Truth\Support\Interfaces\ViewInterface',
+        'Route' => 'Truth\Support\Services\Routing\Router',
     ]
 ];

@@ -184,6 +184,7 @@ class Box
      * @param mixed $concrete
      * @param bool $shared
      * @param bool $mutable
+     * @throws \Exception
      */
     public function bind($abstract, $concrete = null, $shared = false, $mutable = false)
     {
@@ -195,7 +196,7 @@ class Box
             $this->setClosureBinding($abstract, $concrete, $shared, $mutable);
         } elseif (is_object($concrete)) {
             $this->instance($abstract, $concrete);
-        }
+        } else throw new \Exception('ContextualBindingException');
     }
 
     /**

@@ -3,5 +3,6 @@ node_modules
 build
 tmp
 /app/cache
+/app/logs
 /app/vendor
 /app/core/External
