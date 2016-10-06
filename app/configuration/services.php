@@ -2,24 +2,23 @@
 
 return [
     'interfaces' => [
-        'Twig_LoaderInterface' => 'Twig_Loader_Filesystem',
-//        'Truth\Support\Services\FileSystem\FS'          => CORE_SERVICES . 'FileSystem\FS', // TODO: FS interface
+        'Twig_LoaderInterface'                          => Twig_Loader_Filesystem::class,
+    ], 'mutables' => [
+        'Truth\Support\Services\Multilingual\Lang'      => Truth\Support\Services\Multilingual\Lang::class,
+    ], 'singletons' => [
+        'Truth\Support\Services\Configuration\Config'   => Truth\Support\Services\Configuration\Config::class,
+        'Truth\Support\Services\Routing\Router'         => Truth\Support\Services\Routing\Router::class,
+        'Truth\Support\Interfaces\ViewInterface'        => Truth\Support\Services\View\Twig::class,
+        'FS'                                            => Truth\Support\Services\FileSystem\FS::class,
     ],
-    'singletons' => [
-        'FS'        => 'Truth\Support\Services\FileSystem\FS',
-        'Truth\Support\Services\Configuration\Config'   => CORE_SERVICES . 'Configuration\Config',
-        'Truth\Support\Services\Routing\Router'         => CORE_SERVICES . 'Routing\Router',
-        'Truth\Support\Interfaces\ViewInterface'        => CORE_SERVICES . 'View\Twig',
-    ],
-    'mutables' => [
-        'Truth\Support\Services\Multilingual\Lang'      => CORE_SERVICES . 'Multilingual\Lang', // TODO: Lang interface
-    ],
+
     'aliases' => [
-        'Config'    => 'Truth\Support\Services\Configuration\Config',
-        'Lang'      => 'Truth\Support\Services\Multilingual\Lang',
-        'Route'     => 'Truth\Support\Services\Routing\Router',
-        'View'      => 'Truth\Support\Interfaces\ViewInterface',
+        'Config'    => Truth\Support\Services\Configuration\Config::class,
+        'Lang'      => Truth\Support\Services\Multilingual\Lang::class,
+        'Route'     => Truth\Support\Services\Routing\Router::class,
+        'View'      => Truth\Support\Interfaces\ViewInterface::class,
     ],
+
     'settings' => [
         'FS'        => [BASEDIR],
         'Lang'      => [BASEDIR . 'core/Languages', 'en-EN.php'],

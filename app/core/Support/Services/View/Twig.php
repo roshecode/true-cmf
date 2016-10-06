@@ -6,9 +6,9 @@ use Twig_Environment;
 use Twig_Extension_Debug;
 use Symfony\Component\Yaml\Yaml;
 use Truth\Support\Abstracts\ServiceProvider;
-use Truth\Support\Interfaces\View;
+use Truth\Support\Interfaces\ViewInterface;
 
-class Twig extends ServiceProvider implements View
+class Twig extends ServiceProvider implements ViewInterface
 {
     protected $layout;
     protected $engine;
