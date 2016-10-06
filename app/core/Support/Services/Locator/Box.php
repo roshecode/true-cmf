@@ -6,6 +6,7 @@ use Closure;
 use ReflectionClass;
 use SplFixedArray;
 use Truth\Support\Abstracts\Facade;
+use Truth\Support\Services\FileSystem\Exceptions\FileNotFoundException;
 
 class Box
 {
@@ -255,22 +256,24 @@ class Box
 
     public function pack($filePath) {
         $this->instance('Box', $this);
-        $services = include $filePath;
-        foreach ($services['interfaces'] as $abstract => $concrete) {
-            $this->bind($abstract, $concrete);
-        }
-        foreach ($services['singletons'] as $abstract => $concrete) {
-            $this->singleton($abstract, $concrete);
-        }
-        foreach ($services['mutables'] as $abstract => $concrete) {
-            $this->mutable($abstract, $concrete);
-        }
-        foreach ($services['aliases'] as $alias => $abstract) {
-            $this->alias($alias, $abstract);
-        }
-        foreach ($services['settings'] as $abstract => $settings) {
-            $this->make($abstract, $settings)->__register($this)->boot();
-        }
+        if (is_file($filePath)) {
+            $services = include $filePath;
+            foreach ($services['interfaces'] as $abstract => $concrete) {
+                $this->bind($abstract, $concrete);
+            }
+            foreach ($services['singletons'] as $abstract => $concrete) {
+                $this->singleton($abstract, $concrete);
+            }
+            foreach ($services['mutables'] as $abstract => $concrete) {
+                $this->mutable($abstract, $concrete);
+            }
+            foreach ($services['aliases'] as $alias => $abstract) {
+                $this->alias($alias, $abstract);
+            }
+            foreach ($services['settings'] as $abstract => $settings) {
+                $this->make($abstract, $settings)->__register($this)->boot();
+            }
+        } else throw new FileNotFoundException('File to pack not found');
     }
 
     /**

@@ -4,12 +4,13 @@ namespace Truth\Support\Services\FileSystem;
 
 use Closure;
 use InvalidArgumentException;
+use Truth\Support\Abstracts\ServiceProvider;
 use UnexpectedValueException;
 use Truth\Support\Services\Repository\FileRepository;
 use Truth\Support\Services\FileSystem\Exceptions\FileNotFoundException;
 use Truth\Support\Services\FileSystem\Exceptions\UnreadableFileException;
 
-class FS
+class FS extends ServiceProvider
 {
     const TAKE         = 'take';
     const READ         = 'read';

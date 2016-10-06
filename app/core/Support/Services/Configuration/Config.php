@@ -45,7 +45,7 @@ class Config extends MultiFileRepository
      */
     public function setLanguage($lang) {
         if (is_string($lang)) {
-            $this->box->make('Lang', [BASEDIR . $this->getDirectoryPath('languages'), $lang.'.php']); // TODO: Bad make
+            $this->box->make('Lang', [$this->box->make('Lang')->getBasedir(), $lang.'.php']); // TODO: Bad make
         } else {
             throw new InvalidArgumentException('exceptions.invalid_argument'); // TODO: Envisage
         }

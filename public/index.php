@@ -13,6 +13,31 @@ use \Truth\Support\Facades\Config;
 use Truth\Support\Facades\Route;
 use \Truth\Support\Facades\View;
 
+//class TestProxy extends \Truth\Support\Abstracts\ProxyClosure
+//{
+//    public function load()
+//    {
+//        echo 'LOAD first!!!<br />';
+//    }
+//
+//    public function make()
+//    {
+////        echo 'Then use created object =)<br />';
+//        echo '+';
+//    }
+//}
+//
+//$test = new TestProxy;
+//for ($i = 0; $i < 10000; ++$i) {
+//    $test->invoke();
+//    $test->invoke();
+//    $test->invoke();
+//    $test->invoke();
+//    $test->invoke();
+//}
+
+//die;
+
 Route::match('GET', 'true/:str:[a-z]+-([a-z]+)/::\d+', function ($str, $sub, $int) {
     echo 'STR: ' . $str . ' SUB: ' . $sub . ' INT: ' . $int;
 });
