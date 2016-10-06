@@ -120,10 +120,9 @@ class Box
             self::MAKE => $shared ?
                 $mutable ?
                     function(&$params) use(&$abstract, &$concrete) {
-                        $binding = &$this->bindings[$abstract];
-                        $shared = &$binding[self::SHARE];
-                        return $shared === true ? $shared = $this->newInstanceCached($abstract, $concrete, $params) :
-                            $params ? $shared = $this->newInstanceCached($abstract, $concrete, $params) : $shared;
+                        $shared = &$this->bindings[$abstract][self::SHARE];
+                        return $shared === true || $params ?
+                            $shared = $this->newInstanceCached($abstract, $concrete, $params) : $shared;
                     } :
                     function(&$params) use(&$abstract, &$concrete) {
                         $shared = &$this->bindings[$abstract][self::SHARE];
@@ -255,26 +254,21 @@ class Box
     }
 
     public function pack($filePath) {
-        $pack = include $filePath;
-        $service = $pack['service'];
-        $abstract = array_keys($service)[0];
-        $this->singleton($abstract, $service[$abstract]);
-        $configs = $this->make($abstract, [$pack['directory'], $pack['files']]);
         $this->instance('Box', $this);
-
-        foreach ($configs['services']['interfaces'] as $abstract => $concrete) {
+        $services = include $filePath;
+        foreach ($services['interfaces'] as $abstract => $concrete) {
             $this->bind($abstract, $concrete);
         }
-        foreach ($configs['services']['singletons'] as $abstract => $concrete) {
+        foreach ($services['singletons'] as $abstract => $concrete) {
             $this->singleton($abstract, $concrete);
         }
-        foreach ($configs['services']['mutables'] as $abstract => $concrete) {
+        foreach ($services['mutables'] as $abstract => $concrete) {
             $this->mutable($abstract, $concrete);
         }
-        foreach ($configs['services']['aliases'] as $alias => $abstract) {
+        foreach ($services['aliases'] as $alias => $abstract) {
             $this->alias($alias, $abstract);
         }
-        foreach ($configs['settings'] as $abstract => $settings) {
+        foreach ($services['settings'] as $abstract => $settings) {
             $this->make($abstract, $settings)->__register($this)->boot();
         }
     }
