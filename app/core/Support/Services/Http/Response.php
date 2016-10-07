@@ -1,6 +1,6 @@
 <?php
 
-namespace Truth\Support\Services\Http;
+namespace T\Support\Services\Http;
 
 class HttpStatus
 {

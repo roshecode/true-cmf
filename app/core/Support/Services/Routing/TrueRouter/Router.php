@@ -1,9 +1,9 @@
 <?php
 
-namespace Truth\Support\Services\Routing\TrueRouter;
+namespace T\Support\Services\Routing\TrueRouter;
 
-use Truth\Support\Services\Http\HttpStatus;
-use Truth\Support\Services\Http\Response;
+use T\Support\Services\Http\HttpStatus;
+use T\Support\Services\Http\Response;
 
 class Router
 {

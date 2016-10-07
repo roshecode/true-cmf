@@ -1,9 +1,9 @@
 <?php
 
-namespace Truth\Support\Facades;
+namespace T\Support\Facades;
 
-use Truth\Support\Abstracts\Facade;
-use Truth\Support\Services\FileSystem\FS as _FS;
+use T\Support\Abstracts\Facade;
+use T\Support\Services\FileSystem\FS as _FS;
 
 class FS extends Facade
 {

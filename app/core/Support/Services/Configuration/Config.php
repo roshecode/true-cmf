@@ -1,12 +1,13 @@
 <?php
 
-namespace Truth\Support\Services\Configuration;
+namespace T\Support\Services\Configuration;
 
 use InvalidArgumentException;
-use Truth\Support\Services\FileSystem\FS;
-use Truth\Support\Services\Repository\MultiFileRepository;
+use T\Support\Interfaces\ConfigurationInterface;
+use T\Support\Services\FileSystem\FS;
+use T\Support\Services\Repository\MultiFileRepository;
 
-class Config extends MultiFileRepository
+class Config extends MultiFileRepository implements ConfigurationInterface
 {
     /**
      * @param FS $fileSystem
@@ -17,9 +18,7 @@ class Config extends MultiFileRepository
     }
 
     public function boot() {
-//        $this->setLanguage($this->get('localization.language'));
-        $this->setLanguage($this->data['main']['localization']['language']);
-//        $this->setErrors($this->get('errors'));
+//        $this->setLanguage($this->data['main']['localization']['language']);
         $this->setErrors($this->data['main']['errors']);
     }
 
@@ -45,7 +44,7 @@ class Config extends MultiFileRepository
      */
     public function setLanguage($lang) {
         if (is_string($lang)) {
-            $this->box->make('Lang', [$this->box->make('Lang')->getBasedir(), $lang.'.php']); // TODO: Bad make
+            $this->box->make('Lang', [$this->box->make('Lang')->getBasedir(), $lang . '.php']); // TODO: Bad make
         } else {
             throw new InvalidArgumentException('exceptions.invalid_argument'); // TODO: Envisage
         }

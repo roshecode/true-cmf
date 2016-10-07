@@ -1,6 +1,6 @@
 <?php
 
-namespace Truth\Support\Interfaces;
+namespace T\Support\Interfaces;
 
 interface ContainerInterface
 {

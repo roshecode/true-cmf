@@ -1,8 +1,8 @@
 <?php
 
-namespace Truth\Support\Services\View;
+namespace T\Support\Services\View;
 
-use Truth\Support\Facades\Config;
+use T\Support\Facades\Config;
 
 class Block
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Truth;
+namespace T;
 
 class UserRepository {
     protected $something;

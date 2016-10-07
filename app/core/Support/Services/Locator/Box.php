@@ -1,12 +1,12 @@
 <?php
 
-namespace Truth\Support\Services\Locator;
+namespace T\Support\Services\Locator;
 
 use Closure;
 use ReflectionClass;
 use SplFixedArray;
-use Truth\Support\Abstracts\Facade;
-use Truth\Support\Services\FileSystem\Exceptions\FileNotFoundException;
+use T\Support\Abstracts\Facade;
+use T\Support\Services\FileSystem\Exceptions\FileNotFoundException;
 
 class Box
 {

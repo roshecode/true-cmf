@@ -1,8 +1,8 @@
 <?php
 
-namespace Truth\Support\Facades;
+namespace T\Support\Facades;
 
-use Truth\Support\Abstracts\Facade;
+use T\Support\Abstracts\Facade;
 
 class Box extends Facade
 {

@@ -1,20 +1,33 @@
 <?php
 
-namespace Truth\Support\Services\Routing;
+namespace T\Support\Services\Routing;
 
-class Router
+use T\Support\Abstracts\ServiceProvider;
+use T\Support\Interfaces\RouterInterface;
+
+class Router extends ServiceProvider implements RouterInterface
 {
     const ROUTES_GROUP_COUNT = 100;
     const ROUTES_SPLIT_REGEX = '/(?:(?>\\\)\/|[^\/\s])+/i';
+
+    protected $domain;
 
     protected $routes = [];
     protected $count  = -1;
     protected $tail   = '/';
 
-    public function __construct()
+    public function __construct($domain)
     {
+        $this->domain = $domain;
         $this->tail .= str_repeat('-', self::ROUTES_GROUP_COUNT - 1);
     }
+
+    public function get    ($route, $handler) { $this->add('GET'    , $route, $handler); }
+    public function post   ($route, $handler) { $this->add('POST'   , $route, $handler); }
+    public function put    ($route, $handler) { $this->add('PUT'    , $route, $handler); }
+    public function patch  ($route, $handler) { $this->add('PATCH'  , $route, $handler); }
+    public function delete ($route, $handler) { $this->add('DELETE' , $route, $handler); }
+    public function options($route, $handler) { $this->add('OPTIONS', $route, $handler); }
 
     protected function add($method, $route, $handler) {
         $rest = ++$this->count % self::ROUTES_GROUP_COUNT;
@@ -38,13 +51,6 @@ class Router
                 $this->add(strtoupper($method), $route, $handler);
         else $this->add(strtoupper($methods), $route, $handler);
     }
-
-    public function get    ($route, $handler) { $this->add('GET'    , $route, $handler); }
-    public function post   ($route, $handler) { $this->add('POST'   , $route, $handler); }
-    public function put    ($route, $handler) { $this->add('PUT'    , $route, $handler); }
-    public function patch  ($route, $handler) { $this->add('PATCH'  , $route, $handler); }
-    public function delete ($route, $handler) { $this->add('DELETE' , $route, $handler); }
-    public function options($route, $handler) { $this->add('OPTIONS', $route, $handler); }
 
     public function make($method, $uri) {
 //        print_r(serialize($this->routes)); die;

@@ -1,14 +1,14 @@
 <?php
 
-namespace Truth\Support\Services\FileSystem;
+namespace T\Support\Services\FileSystem;
 
 use Closure;
 use InvalidArgumentException;
-use Truth\Support\Abstracts\ServiceProvider;
+use T\Support\Abstracts\ServiceProvider;
 use UnexpectedValueException;
-use Truth\Support\Services\Repository\FileRepository;
-use Truth\Support\Services\FileSystem\Exceptions\FileNotFoundException;
-use Truth\Support\Services\FileSystem\Exceptions\UnreadableFileException;
+use T\Support\Services\Repository\FileRepository;
+use T\Support\Services\FileSystem\Exceptions\FileNotFoundException;
+use T\Support\Services\FileSystem\Exceptions\UnreadableFileException;
 
 class FS extends ServiceProvider
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Truth\Support\Services\FileSystem\Exceptions;
+namespace T\Support\Services\FileSystem\Exceptions;
 
 class FileException extends \Exception
 {

@@ -11,5 +11,5 @@ $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
 //$whoops->register();
 
 // init container and register
-$box = new \Truth\Support\Services\Locator\Box();
+$box = new \T\Support\Services\Locator\Box();
 $box->pack(BASEDIR . 'configuration/services.php');

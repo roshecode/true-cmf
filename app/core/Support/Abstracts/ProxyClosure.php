@@ -1,6 +1,6 @@
 <?php
 
-namespace Truth\Support\Abstracts;
+namespace T\Support\Abstracts;
 
 class ProxyMake
 {

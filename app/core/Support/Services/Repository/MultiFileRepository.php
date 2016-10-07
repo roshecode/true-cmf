@@ -1,8 +1,8 @@
 <?php
 
-namespace Truth\Support\Services\Repository;
+namespace T\Support\Services\Repository;
 
-use Truth\Support\Services\FileSystem\FS;
+use T\Support\Services\FileSystem\FS;
 
 class MultiFileRepository extends FileRepository
 {

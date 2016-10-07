@@ -1,6 +1,6 @@
 <?php
 
-namespace Truth\Exceptions\Manage;
+namespace T\Exceptions\Manage;
 
 class EnvisageChecker
 {

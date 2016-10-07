@@ -20,7 +20,7 @@ $nMatches = 30000;
 // MY ROUTER ----------------------------------------------------------
 
 //$router = new \Truth\Support\Services\Routing\TrueRouter\Router('');
-$router = new \Truth\Support\Services\Routing\Router();
+$router = new \T\Support\Services\Routing\Router();
     for ($i = 0, $str = 'a'; $i < $nRoutes; $i++, $str++) {
         $router->match('GET', '' . $str . '/:arg', 'handler' . $i);
         $lastStr = $str;
@@ -97,7 +97,7 @@ $nMatches = 20000;
 $args = implode('/', array_map(function($i) { return ':arg' . $i; }, range(1, $nArgs)));
 
 //$router = new \Truth\Support\Services\Routing\TrueRouter\Router('');
-$router = new \Truth\Support\Services\Routing\Router();
+$router = new \T\Support\Services\Routing\Router();
     for ($i = 0, $str = 'a'; $i < $nRoutes; $i++, $str++) {
         $router->match('GET', '' . $str . '/' . $args, 'handler' . $i);
         $lastStr = $str;

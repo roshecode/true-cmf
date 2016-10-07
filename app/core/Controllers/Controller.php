@@ -6,9 +6,9 @@
  * Time: 13:28
  */
 
-namespace Truth\Controllers;
+namespace T\Controllers;
 
-use Truth\Routing\Route;
+use T\Routing\Route;
 
 abstract class Controller {
     public function index() {

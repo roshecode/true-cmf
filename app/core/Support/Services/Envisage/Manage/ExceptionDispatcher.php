@@ -1,8 +1,8 @@
 <?php
 
-namespace Truth\Exceptions\Manage;
+namespace T\Exceptions\Manage;
 
-use Truth\Exceptions\EnvisageError;
+use T\Exceptions\EnvisageError;
 
 class ExceptionDispatcher
 {

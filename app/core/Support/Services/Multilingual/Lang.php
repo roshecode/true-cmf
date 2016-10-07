@@ -1,11 +1,12 @@
 <?php
 
-namespace Truth\Support\Services\Multilingual;
+namespace T\Support\Services\Multilingual;
 
-use Truth\Support\Services\FileSystem\FS;
-use Truth\Support\Services\Repository\FileRepository;
+use T\Support\Interfaces\LanguageInterface;
+use T\Support\Services\FileSystem\FS;
+use T\Support\Services\Repository\FileRepository;
 
-class Lang extends FileRepository
+class Lang extends FileRepository implements LanguageInterface
 {
     protected $baseLang = 'en-EN';
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace Truth\Support\Services\View;
+namespace T\Support\Services\View;
 
-use Truth\Support\Interfaces\ViewInterface;
+use T\Support\Interfaces\ViewInterface;
 
 class Blade implements ViewInterface
 {

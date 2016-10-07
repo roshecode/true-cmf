@@ -1,8 +1,8 @@
 <?php
 
-namespace Truth\Support\Abstracts;
+namespace T\Support\Abstracts;
 
-use Truth\Support\Services\Locator\Box;
+use T\Support\Services\Locator\Box;
 
 abstract class ServiceProvider
 {

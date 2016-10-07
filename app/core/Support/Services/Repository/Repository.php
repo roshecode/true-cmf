@@ -1,10 +1,10 @@
 <?php
 
-namespace Truth\Support\Services\Repository;
+namespace T\Support\Services\Repository;
 
 use ArrayAccess;
 use InvalidArgumentException;
-use Truth\Support\Abstracts\ServiceProvider;
+use T\Support\Abstracts\ServiceProvider;
 
 class Repository extends ServiceProvider implements ArrayAccess
 {

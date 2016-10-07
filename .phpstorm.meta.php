@@ -3,12 +3,12 @@
 namespace PHPSTORM_META {
 
     $STATIC_METHOD_TYPES = [
-        \Truth\Support\Services\Locator\Box::make('') => [
-            'Config' instanceof \Truth\Support\Facades\Config
+        \T\Support\Services\Locator\Box::make('') => [
+            'Config' instanceof \T\Support\Facades\Config
         ],
-        \Truth\Support\Facades\Config::getCurrentThemeName() => [ '' ],
-        new \Truth\Support\Services\Locator\Box() => [
-            'UserRepository' instanceof \Truth\UserRepository
+        \T\Support\Facades\Config::getCurrentThemeName() => [ '' ],
+        new \T\Support\Services\Locator\Box() => [
+            'UserRepository' instanceof \T\UserRepository
         ],
     ];
 }

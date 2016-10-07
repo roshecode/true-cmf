@@ -1,6 +1,6 @@
 <?php
 
-namespace Truth\Exceptions;
+namespace T\Exceptions;
 
 class EnvisageException extends \Exception
 {

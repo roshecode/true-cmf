@@ -1,6 +1,6 @@
 <?php
 
-namespace Truth\Support\Services\Routing\TrueRouter;
+namespace T\Support\Services\Routing\TrueRouter;
 
 class SteadyRoutes implements \ArrayAccess
 {

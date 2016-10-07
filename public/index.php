@@ -7,11 +7,11 @@ error_reporting(E_ALL);
 require_once __DIR__ . '/../app/vendor/autoload.php';
 require_once __DIR__ . '/../app/bootstrap.inc';
 
-use \Truth\Support\Facades\Box;
-use \Truth\Support\Facades\Lang;
-use \Truth\Support\Facades\Config;
-use Truth\Support\Facades\Route;
-use \Truth\Support\Facades\View;
+use \T\Support\Facades\Box;
+use \T\Support\Facades\Lang;
+use \T\Support\Facades\Config;
+use T\Support\Facades\Route;
+use \T\Support\Facades\View;
 
 //class TestProxy extends \Truth\Support\Abstracts\ProxyClosure
 //{
@@ -37,6 +37,7 @@ use \Truth\Support\Facades\View;
 //}
 
 //die;
+Config::setLanguage('ru-RU');
 
 Route::match('GET', 'true/:str:[a-z]+-([a-z]+)/::\d+', function ($str, $sub, $int) {
     echo 'STR: ' . $str . ' SUB: ' . $sub . ' INT: ' . $int;
@@ -97,7 +98,7 @@ die;
 $start = microtime(true);
 //$router = new Router('true');
 //$router = new Truth\Support\Services\Routing\ArrayRouter\Router('true');
-$router = new \Truth\Support\Services\Routing\TrueRouter\Router('true');
+$router = new \T\Support\Services\Routing\TrueRouter\Router('true');
 //for ($i = 0; $i < 1000; ++$i) {
     $router->match('GET', '/', function () {
         echo 'hello';
