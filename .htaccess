@@ -1,3 +1,11 @@
 AddDefaultCharset utf-8
-RewriteEngine On
-RewriteRule ^(.*)$ /public/$1
+
+<ifModule mod_rewrite.c>
+    <ifModule mod_negotiation.c>
+        Options -MultiViews
+    </ifModule>
+
+    RewriteEngine On
+
+    RewriteRule ^(.*)$ /public/$1
+</ifModule>

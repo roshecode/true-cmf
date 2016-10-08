@@ -19,7 +19,7 @@ class Router extends ServiceProvider implements RouterInterface
     public function __construct($domain)
     {
         $this->domain = $domain;
-        $this->tail .= str_repeat('-', self::ROUTES_GROUP_COUNT - 1);
+        $this->tail .= str_repeat(' ', self::ROUTES_GROUP_COUNT - 1);
     }
 
     public function get    ($route, $handler) { $this->add('GET'    , $route, $handler); }
@@ -38,7 +38,7 @@ class Router extends ServiceProvider implements RouterInterface
                     return '(' . (isset($parts_regexp[2]) ? $parts_regexp[2] : '[^/]+') . ')';
                 }
                 return $node;
-            }, $route) . ')/(-{' . $rest . '})';
+            }, $route) . ')/( {' . ($rest + 1) . '})';
         $route = &$this->routes[$method][($this->count - $rest) / self::ROUTES_GROUP_COUNT];
         $rest ? $route[0] = $regex . '|' . $route[0] :
             $route = \SplFixedArray::fromArray([$regex, new \SplFixedArray(self::ROUTES_GROUP_COUNT)]);
@@ -60,7 +60,7 @@ class Router extends ServiceProvider implements RouterInterface
         for ($i = count($routes) - 1; $i >= 0; --$i) {
             if (preg_match('~^(?|' . $routes[$i][0] . ')~i', $uri, $matches)) {
                 unset($matches[0]);
-                return [$routes[$i][1][strlen(array_pop($matches))], &$matches];
+                return [$routes[$i][1][strlen(array_pop($matches)) - 1], &$matches];
             }
         }
         return 404;
@@ -75,6 +75,8 @@ class Router extends ServiceProvider implements RouterInterface
 
     public function __destruct()
     {
+        $_SERVER['REQUEST_URI'] = 'true/hi';
+        $_SERVER['REQUEST_METHOD'] = 'GET';
         $this->run();
     }
 }
