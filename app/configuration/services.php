@@ -23,7 +23,7 @@ return [
 
     'settings' => [
         'FS'        => [BASEDIR],
-        'Lang'      => [BASEDIR . 'core/Languages', 'en-EN.php'],
+        'Lang'      => [BASEDIR . 'languages/en-EN', ['debug.php', 'status.php']],
         'Config'    => [BASEDIR . 'configuration', ['main.php']],
         'Route'     => ['true'],
         'View'      => [BASEDIR . 'themes', // Loader interface basedir

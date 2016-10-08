@@ -8,7 +8,7 @@ class Rm extends Command
 {
     protected function rm($settingsKey, $instanceName, $params) {
         $className = ucfirst($params[0]);
-        $directory = $this->settings[$settingsKey]['directory'];
+        $directory = $this->getDirectory($settingsKey);
         $file = $directory . '/' . ucfirst($className) . '.' . Make::CLASS_FILE_EXTENSION;
         if (file_exists($file)) {
             if (@unlink($file)) {

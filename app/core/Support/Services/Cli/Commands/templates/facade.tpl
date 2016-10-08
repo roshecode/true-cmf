@@ -2,7 +2,7 @@
 
 namespace _namespace_;
 
-use _use_;
+use _extend_;
 
 class _class_name_ extends _abstract_class_name_
 {

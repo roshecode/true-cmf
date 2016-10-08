@@ -12,14 +12,15 @@ class Make extends Command
     protected function make($settingsKey, $instanceName, $params) {
 //        $instanceName = ucfirst($instanceName);
         $className = ucfirst($params[0]);
-        $directory = $this->settings[$settingsKey]['directory'];
+        $directory = $this->getDirectory($settingsKey);
         $template = __DIR__ . '/templates/' . $instanceName . '.' . self::TEMPLATE_EXTENSION;
         $settings = $this->settings[$settingsKey];
-        $file = $settings['directory'] . '/' . $className . '.' . self::CLASS_FILE_EXTENSION;
+        $file = $directory . '/' . $className . '.' . self::CLASS_FILE_EXTENSION;
         if (! file_exists($file)) {
-            if (file_put_contents($file, $this->parse($template, array_merge($settings, [
+            if (file_put_contents($file, $this->render($template, array_merge($settings, [
                 'class_name' => $className,
-                'abstract_class_name' => empty($settings['use']) ?: (new \ReflectionClass($settings['use']))->getShortName()
+                'abstract_class_name' => empty($settings['extend']) ?:
+                    (new \ReflectionClass($settings['extend']))->getShortName()
             ])))) {
                 echo "{$instanceName} {$className} was successfully created in '{$directory}'";
             } else echo 'Something went wrong when was trying to write the file';

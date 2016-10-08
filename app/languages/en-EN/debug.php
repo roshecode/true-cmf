@@ -14,6 +14,6 @@ return [
         'Range' => "Value {{ 0 }} must be less then {{ 1 }} and more than {{ 2 }}"
     ],
     'notices' => [
-        'key_does_not_exist' => 'Array key {{ 0 }} does not exist.',
+        'KeyDoesNotExists' => 'Array key {{ 0 }} does not exist.',
     ]
 ];
