@@ -1,6 +1,5 @@
-<h3>Page: {{ page }}</h3>
-<ol class="block block_dynamic block-{{ name }}">
+<ul class="block block_dynamic block-{{ name }}">
     {% for content_item in content %}
         <li>{% include template with content_item only %}</li>
     {% endfor %}
-</ol>
+</ul>

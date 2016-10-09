@@ -10,9 +10,13 @@ use T\Support\Interfaces\ViewInterface;
 
 class Twig extends ServiceProvider implements ViewInterface
 {
-    protected $layout;
+    const PATH_WRAPPERS = 'wrappers';
+    const PATH_BLOCKS   = 'blocks';
+
+    protected $structure;
     protected $engine;
     protected $fileExtension;
+    protected $currentThemeName = 'default';
 
     public function __construct(Twig_Environment $environment, Twig_Extension_Debug $debug)
     {
@@ -21,32 +25,46 @@ class Twig extends ServiceProvider implements ViewInterface
         $this->engine->addExtension($debug);
     }
 
-    public function renderBlock(Block $block, $content = null) {
-        echo $this->engine->render($block->getLayout(), $block->content($content));
+    public function addLayout($path, $blocks) {
+        $data = [];
+        foreach ($blocks as $blockName => &$blockWrapper) {
+            $data[$blockName] = [
+                'layout' => self::PATH_WRAPPERS . '/' . $blockWrapper,
+                'data' => [
+                    'name' => $blockName,
+                    'path' => self::PATH_WRAPPERS . '/' . $blockWrapper,
+                    'template' => self::PATH_BLOCKS . '/' . $blockName
+                ]
+            ];
+        }
+        $this->structure[$path] = $data;
     }
 
-    public function createBlockData($name, $layout, $data = [], $content = []) {
-        return (new Block($name, $layout, $data, $this->fileExtension))->content($content);
+    protected function associateBlockWithTheme($block, $data = []) {
+        $block['layout'] = $this->currentThemeName . '/' . $block['layout'] . '.' . $this->fileExtension;
+        $blockData = &$block['data'];
+        $blockData['template'] = $this->currentThemeName . '/' . $blockData['template'] . '.' . $this->fileExtension;
+        $blockData = array_merge($blockData, $data);
+        $blockData['path'] = $this->currentThemeName . '/' . $blockData['path'] . '/';
+        return $block;
+    }
+
+    public function create($layout, $blocksData = null) {
+        $createdBlocks = [];
+        if (isset($this->structure[$layout])) {
+            foreach ($this->structure[$layout] as $blockName => $block) {
+                $createdBlocks[$blockName] = $this->associateBlockWithTheme($block, isset($blocksData[$blockName]) ?
+                    $blocksData[$blockName] : []);
+            }
+        }
+        return $createdBlocks;
     }
 
     public function render($layout, $data = null) {
 //        $structure = Yaml::parse(file_get_contents($data));
-        $data = [
-            'logo' => $this->createBlockData('logo', 'static'),
-            'article' => $this->createBlockData('article', 'table',
-                ['page' => 1, 'columns' => 3, 'header' => 'Table header'],
-            [
-                ['title' => 'My first article', 'text' => 'It will be awesome!!!'],
-                ['title' => 'My second article', 'text' => 'I like what I doing.'],
-                ['title' => 'My third article', 'text' => 'I hate what I doing.'],
-                ['title' => 'LAST article', 'text' => 'Dog eats cat!!!'],
-                ['title' => 'LAST article', 'text' => 'Dog eats cat!!!'],
-                ['title' => 'LAST article', 'text' => 'Dog eats cat!!!'],
-                ['title' => 'LAST article', 'text' => 'Dog eats dos!!!'],
-            ])
-        ];
-        echo $this->engine->render($this->box->make('Config')->getCurrentThemeName() . '/' .
-            $layout . '.' . $this->fileExtension, $data);
+        $this->currentThemeName = $this->box->make('Config')->getCurrentThemeName();
+        echo $this->engine->render($this->currentThemeName . '/' .
+            $layout . '.' . $this->fileExtension, $this->create($layout, $data));
     }
 
     public function display($layout, $data)

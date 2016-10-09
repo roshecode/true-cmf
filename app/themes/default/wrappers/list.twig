@@ -1,0 +1,5 @@
+<div class="block block-{{ name }}">
+    {% for content_item in content %}
+        {% include template with content_item only %}
+    {% endfor %}
+</div>

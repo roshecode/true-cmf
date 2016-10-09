@@ -1,0 +1,9 @@
+<style>{% include path ~ 'slider.css' %}</style>
+<ul class="block block_dynamic block-{{ name }}">
+    {% for content_item in content %}
+        <li>{% include template with content_item only %}</li>
+    {% endfor %}
+</ul>
+<script>
+    {#$('.block-{{ name }}').trueSlider({{ settings }});#}
+</script>

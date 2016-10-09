@@ -3,6 +3,7 @@
 namespace T\Support\Services\Routing;
 
 use T\Support\Abstracts\ServiceProvider;
+use T\Support\Interfaces\RequestInterface;
 use T\Support\Interfaces\RouterInterface;
 
 class Router extends ServiceProvider implements RouterInterface
@@ -16,7 +17,7 @@ class Router extends ServiceProvider implements RouterInterface
     protected $count  = -1;
     protected $tail   = '/';
 
-    public function __construct($domain)
+    public function __construct($domain = '')
     {
         $this->domain = $domain;
         $this->tail .= str_repeat(' ', self::ROUTES_GROUP_COUNT - 1);
@@ -30,6 +31,7 @@ class Router extends ServiceProvider implements RouterInterface
     public function options($route, $handler) { $this->add('OPTIONS', $route, $handler); }
 
     protected function add($method, $route, $handler) {
+        $route = $route[0] == '/' ? $route : '/' . $route;
         $rest = ++$this->count % self::ROUTES_GROUP_COUNT;
         $regex = '(?:' . preg_replace_callback(self::ROUTES_SPLIT_REGEX, function ($matches) {
                 $node = &$matches[0];
@@ -39,7 +41,7 @@ class Router extends ServiceProvider implements RouterInterface
                 }
                 return $node;
             }, $route) . ')/( {' . ($rest + 1) . '})';
-        $route = &$this->routes[$method][($this->count - $rest) / self::ROUTES_GROUP_COUNT];
+        $route = &$this->routes[$this->domain][$method][($this->count - $rest) / self::ROUTES_GROUP_COUNT];
         $rest ? $route[0] = $regex . '|' . $route[0] :
             $route = \SplFixedArray::fromArray([$regex, new \SplFixedArray(self::ROUTES_GROUP_COUNT)]);
         $route[1][$rest] = $handler;
@@ -52,11 +54,15 @@ class Router extends ServiceProvider implements RouterInterface
         else $this->add(strtoupper($methods), $route, $handler);
     }
 
+    public function domain($domain) {
+        $this->domain = $domain;
+        return $this;
+    }
+
     public function make($method, $uri) {
-//        print_r(serialize($this->routes)); die;
         $uri .= $this->tail;
         $matches = [];
-        $routes = &$this->routes[strtoupper($method)];
+        $routes = &$this->routes[$this->domain][strtoupper($method)];
         for ($i = count($routes) - 1; $i >= 0; --$i) {
             if (preg_match('~^(?|' . $routes[$i][0] . ')~i', $uri, $matches)) {
                 unset($matches[0]);
@@ -66,17 +72,7 @@ class Router extends ServiceProvider implements RouterInterface
         return 404;
     }
 
-    public function run() {
-        $parse_uri = parse_url($_SERVER['REQUEST_URI']);
-        $make = $parse_uri ? $this->make($_SERVER['REQUEST_METHOD'], $_SERVER['HTTP_HOST'] . $parse_uri['path']) : 404;
-//        $make = $this->make('GET', 'true/stroka-sub/1235');
-        call_user_func_array($make[0], $make[1]);
-    }
-
-    public function __destruct()
-    {
-        $_SERVER['REQUEST_URI'] = 'true/hi';
-        $_SERVER['REQUEST_METHOD'] = 'GET';
-        $this->run();
+    public function makeFromRequest(RequestInterface $request) {
+        return $this->domain($request->domain())->make($request->method(), $request->path());
     }
 }

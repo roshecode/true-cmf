@@ -9,13 +9,11 @@
 </head>
 <body>
 <div class="container">
-    <header>
-        {% include logo.layout with logo.data only %}
+    <header data-request-update=".block-logo">
+        {% block logo %}{% endblock %}
         <menu>HERE WILL BE MENU</menu>
     </header>
-    <div class="content">
-        {% include article.layout with article.data only %}
-    </div>
+    {% block article %}{% endblock %}
 </div>
 </body>
 </html>
