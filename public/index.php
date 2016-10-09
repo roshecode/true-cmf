@@ -6,19 +6,19 @@ error_reporting(E_ALL);
 
 $start = microtime(true);
 
-require_once __DIR__ . '/../app/vendor/autoload.php';
-require_once __DIR__ . '/../app/bootstrap.inc';
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../bootstrap.php';
 
-use \T\Support\Facades\Box;
-use \T\Support\Facades\Lang;
-use \T\Support\Facades\Config;
-use T\Support\Facades\Route;
-use \T\Support\Facades\View;
+use T\Facades\Box;
+use T\Facades\Lang;
+use T\Facades\Config;
+use T\Facades\Route;
+use T\Facades\View;
 
-View::addLayout('layouts/pages/home', ['logo' => 'static', 'article' => 'table']);
+View::addLayout('layouts/home', ['logo' => 'static', 'article' => 'table']);
 
 Route::get('/', function() {
-    View::render('layouts/pages/home', [
+    View::render('layouts/home', [
         'article' => [
             'content' => [
                 ['title' => 'My first article', 'text' => 'It will be awesome!!!'],
@@ -42,7 +42,7 @@ Route::put('put', function() {
 });
 
 ?>
-    <form action="/put" method="put">
+    <form action="/put" method="PUT">
         <input type="submit" />
     </form>
     <form action="/delete" method="DELETE">

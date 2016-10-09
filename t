@@ -1,7 +1,7 @@
 <?php
 
-require_once __DIR__ . '/app/vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
-$settings = parse_ini_file(__DIR__ . '/app/configuration/app.ini', true);
+$settings = parse_ini_file(__DIR__ . '/config/app.ini', true);
 
-(new \T\Support\Services\Cli\Terminal($settings))->terminate($argv);
+(new \T\Services\Cli\Terminal($settings))->terminate($argv);
