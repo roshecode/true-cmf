@@ -1,8 +1,8 @@
 .idea
+/app/External
 node_modules
+vendor
 build
-tmp
 cache
 logs
-vendor
-/app/External
+tmp

@@ -1,5 +1,4 @@
 <?php
-
 namespace T\Facades;
 
 use T\Abstracts\Facade;

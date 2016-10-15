@@ -1,295 +1,250 @@
 <?php
-
 namespace T\Services\Container;
 
-use Closure;
 use ReflectionClass;
 use SplFixedArray;
 use T\Abstracts\Facade;
+use T\Interfaces\ContainerInterface;
 use T\Exceptions\FileNotFoundException;
 
-class Box
+class Box implements ContainerInterface
 {
-    const MAKE      = 0;
-    const SHARE     = 1;
-    const STACK     = 2;
+    const MAKE  = 0;
+    const SHARE = 1;
+    const STACK = 2;
     /**
      * The container's bindings.
      *
      * @var array
      */
-    protected $bindings = [];
-    protected $resolved = [];
+    protected $bindings;
+    protected $resolved;
     protected $startTime;
-
-    public function __construct()
-    {
+    
+    /**
+     * Box constructor.
+     */
+    public function __construct() {
         $this->startTime = microtime(true);
         Facade::__register($this);
     }
-
+    
     public function getInstance() {
         return $this;
     }
-
+    
+    protected function error() {
+        throw new \Exception('ContextualBindingException');
+    }
+    
     /**
-     * Get stack of classes and parameters for automatic building
-     *
-     * @param array $params
-     * @return SplFixedArray|null
+     * {@inheritdoc}
      */
-    protected function getStack(array $params) {
-        $index = -1;
-        $length = count($params);
-        $stack = new SplFixedArray($length);
-        while ($length) {
-            $stack[++$index] = $params[--$length]->getClass();
-        }
-        return $stack;
+    public function bind($abstract, $concrete = null, $shared = false, $mutable = false) {
+        (is_null($concrete) && class_exists($abstract)
+            ? $this->setStringBinding($abstract, $abstract, $shared, $mutable)
+            : (is_string($concrete) && class_exists($concrete) && !is_callable($concrete)
+                ? $this->setStringBinding($abstract, $concrete, $shared, $mutable)
+                : (is_callable($concrete)
+                    ? $this->setClosureBinding($abstract, $concrete, $shared, $mutable)
+                    : (is_string($abstract)
+                        ? $this->instance($abstract, $concrete)
+                        : $this->error()
+                    ))));
     }
-
+    
     /**
-     * Build and inject all dependencies with parameters
-     *
-     * @param SplFixedArray $stack
-     * @param array $params
-     * @return SplFixedArray
+     * {@inheritdoc}
      */
-    protected function build(SplFixedArray $stack, array &$params) {
-        $index = 0;
-        $length = count($stack);
-        $built = new SplFixedArray($length);
-        while ($index < $length) {
-            $item = $stack[$index];
-            $built[$length - ++$index] = $item ? $this->makeInstance($item->name, $params) : array_pop($params);
-        }
-        return $built;
+    public function singleton($abstract, $concrete) {
+        $this->bind($abstract, $concrete, true);
     }
-
+    
     /**
-     * Create new instance of concrete class with stack closure
-     *
-     * @param string $concrete
-     * @param array $params
-     * @return object
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    public function newInstanceWithStackClosure(&$concrete, &$params, $closure) {
-        if (class_exists($concrete)) {
-            $reflectionClass = new ReflectionClass($concrete);
-            $constructor = $reflectionClass->getConstructor();
-            return ($constructor && $cParams = $constructor->getParameters()) ?
-                $reflectionClass->newInstanceArgs($this->build($closure($cParams), $params)->toArray()) : new $concrete;
-        } else {
-            throw new \Exception('Class ' . $concrete . ' does not exist!!!'); // TODO: more pretty
-        }
+    public function mutable($abstract, $concrete) {
+        $this->bind($abstract, $concrete, true, true);
     }
-
+    
     /**
-     * Create new instance of concrete class
-     *
-     * @param string $concrete
-     * @param array $params
-     * @return object
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    protected function newInstance(&$concrete, &$params) {
-        return $this->newInstanceWithStackClosure($concrete, $params, function(&$cParams) {
-            return $this->getStack($cParams);
-        });
+    public function instance($abstract, $instance) {
+        $placeholder             = &$this->bindings[$abstract];
+        $placeholder             = new SplFixedArray(1);
+        $placeholder[self::MAKE] = function () use ($instance) { return $instance; };
     }
-
-    protected function newInstanceCached(&$abstract, &$concrete, &$params) {
-        return $this->newInstanceWithStackClosure($concrete, $params, function(&$cParams) use(&$abstract) {
-            $stack = &$this->bindings[$abstract][self::STACK];
-            return $stack ? $stack : $stack = $this->getStack($cParams);
-        });
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function alias($alias, $abstract) {
+        $this->bindings[$alias] = &$this->bindings[$abstract];
     }
-
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function make($abstract, array $params = []) {
+        return $this->makeInstance($abstract, $params);
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function create($abstract, array $params = []) {
+        isset($this->resolved[$abstract]) ? ++$this->resolved[$abstract] : $this->resolved[$abstract] = 1; // statistic
+        $this->bind($abstract);
+        return $this->make($abstract, $params);
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function isShared($abstract) {
+        return !!$this->bindings[$abstract][self::SHARE];
+    }
+    
     /**
      * Set closure for building from string
      *
      * @param string $abstract
      * @param string $concrete
-     * @param bool $shared
-     * @param bool $mutable
+     * @param bool   $shared
+     * @param bool   $mutable
      */
     protected function setStringBinding(&$abstract, &$concrete, &$shared, &$mutable) {
-        $this->bindings[$abstract] = [
-            self::MAKE => $shared ?
-                $mutable ?
-                    function(&$params) use(&$abstract, &$concrete) {
-                        $shared = &$this->bindings[$abstract][self::SHARE];
-                        return $shared === true || $params ?
-                            $shared = $this->newInstanceCached($abstract, $concrete, $params) : $shared;
-                    } :
-                    function(&$params) use(&$abstract, &$concrete) {
-                        $shared = &$this->bindings[$abstract][self::SHARE];
-                        return $shared === true ? $shared = $this->newInstance($concrete, $params) : $shared;
-                    } :
-                function(&$params) use(&$abstract, &$concrete) {
-                    return $this->newInstanceCached($abstract, $concrete, $params);
+        $placeholder = &$this->bindings[$abstract];
+        $placeholder = [
+            self::MAKE  => $shared
+                ? $mutable
+                    ? function (&$params) use (&$placeholder, &$abstract, &$concrete) {
+                        $shared = &$placeholder[self::SHARE];
+                        return $shared && !$params ? $shared
+                            : $shared = $this->newInstance($concrete, $params, $placeholder[self::STACK]);
+                    }
+                    : function (&$params) use (&$placeholder, &$abstract, &$concrete) {
+                        return $placeholder[self::SHARE]
+                            ?: $placeholder[self::SHARE] = $this->newInstance($concrete, $params);
+                    }
+                : function (&$params) use (&$placeholder, &$concrete) {
+                    return $this->newInstance($concrete, $params, $placeholder[self::STACK]);
                 },
-            self::SHARE => &$shared
-        ];
+            self::SHARE => false];
     }
-
+    
     /**
      * Set closure for building from closure
      *
      * @param string $abstract
      * @param string $concrete
-     * @param bool $shared
-     * @param bool $mutable
+     * @param bool   $shared
+     * @param bool   $mutable
      */
     protected function setClosureBinding(&$abstract, &$concrete, &$shared, &$mutable) {
-        $this->bindings[$abstract] = [
-            self::MAKE => $shared ?
-                $mutable ?
-                    function(&$params) use(&$abstract, &$concrete) {
-                        $shared = &$this->bindings[$abstract][self::SHARE];
-                        return $shared = ($shared === true ? call_user_func_array($concrete, $params) :
-                            $params ? call_user_func_array($concrete, $params) : $shared);
-                    } :
-                    function(&$params) use(&$abstract, &$concrete) {
-                        return ($shared = &$this->bindings[$abstract][self::SHARE]) === true ?
-                            $shared = call_user_func_array($concrete, $params) : $shared;
-                    } :
-                function(&$params) use(&$concrete) {
+        $placeholder = &$this->bindings[$abstract];
+        $placeholder = [
+            self::MAKE  => $shared
+                ? $mutable
+                    ? function (&$params) use (&$placeholder, &$abstract, &$concrete) {
+                        $placeholder = &$placeholder[self::SHARE];
+                        return $placeholder && !$params ? $placeholder
+                            : $placeholder = call_user_func_array($concrete, $params);
+                    }
+                    : function (&$params) use (&$placeholder, &$abstract, &$concrete) {
+                        return $placeholder[self::SHARE]
+                            ?: $placeholder[self::SHARE] = call_user_func_array($concrete, $params);
+                    }
+                : function (&$params) use (&$concrete) {
                     return call_user_func_array($concrete, $params);
                 },
-            self::SHARE => &$shared
-        ];
+            self::SHARE => false];
     }
-
+    
     /**
-     * Register an existing instance as shared in the container.
+     * Create new instance of concrete class
      *
-     * @param string $abstract
-     * @param mixed $instance
-     */
-    public function instance($abstract, $instance) {
-        $this->bindings[$abstract] = [
-            self::MAKE => function() use(&$instance) { return $instance; },
-            self::SHARE => $instance
-        ];
-    }
-
-    /**
-     * Register a binding with the container.
+     * @param string     $concrete
+     * @param array      $params
+     * @param array|null $stack
      *
-     * @param string|array $abstract // TODO: bind from array
-     * @param mixed $concrete
-     * @param bool $shared
-     * @param bool $mutable
+     * @return object
      * @throws \Exception
      */
-    public function bind($abstract, $concrete = null, $shared = false, $mutable = false)
-    {
-        if (is_null($concrete)) {
-            $this->setStringBinding($abstract, $abstract, $shared, $mutable);
-        } elseif (is_string($concrete)) {
-            $this->setStringBinding($abstract, $concrete, $shared, $mutable);
-        } elseif ($concrete instanceof Closure) {
-            $this->setClosureBinding($abstract, $concrete, $shared, $mutable);
-        } elseif (is_object($concrete)) {
-            $this->instance($abstract, $concrete);
-        } else throw new \Exception('ContextualBindingException');
+    protected function newInstance(&$concrete, &$params, &$stack = null) {
+        $reflectionClass = new ReflectionClass($concrete);
+        $constructor     = $reflectionClass->getConstructor();
+        return ($constructor && $reflectionParams = $constructor->getParameters())
+            ? $reflectionClass->newInstanceArgs($this->build($stack
+                ?: $stack = $this->getStack($reflectionParams), $params)->toArray())
+            : new $concrete;
     }
-
+    
     /**
-     * Register a shared binding in the container.
+     * Get stack of classes and parameters for automatic building
      *
-     * @param string|array $abstract
-     * @param mixed $concrete
+     * @param array $params
+     *
+     * @return SplFixedArray|null $stack
      */
-    public function singleton($abstract, $concrete) {
-        $this->bind($abstract, $concrete, true);
+    protected function getStack(array $params) {
+        $index  = -1;
+        $length = count($params);
+        $stack  = new SplFixedArray($length);
+        while ($length) $stack[++$index] = $params[--$length]->getClass() ?: $params[$length];
+        return $stack;
     }
-
+    
     /**
-     * Register a mutable singleton in the container
+     * Build and inject all dependencies with parameters
      *
-     * @param string|array $abstract
-     * @param mixed $concrete
+     * @param SplFixedArray $stack
+     * @param array         $params
+     *
+     * @return SplFixedArray $building
      */
-    public function mutable($abstract, $concrete) {
-        $this->bind($abstract, $concrete, true, true);
+    protected function build(SplFixedArray $stack, array &$params) {
+        $index    = 0;
+        $length   = count($stack);
+        $building = new SplFixedArray($length);
+        while ($index < $length) {
+            $item                         = $stack[$index];
+            $building[$length - ++$index] = $item instanceof \ReflectionParameter ? array_pop($params)
+                : $this->makeInstance($item->name, $params);
+        }
+        return $building;
     }
-
-    public function alias($alias, $abstract) {
-        $this->bindings[$alias] = &$this->bindings[$abstract];
-    }
-
+    
     /**
      * Resolve the given type from the container.
      *
      * @param string $abstract
-     * @param array $params
+     * @param array  $params
+     *
      * @return mixed
      */
     protected function makeInstance(&$abstract, array &$params = []) {
-//        return isset($this->bindings[$abstract]) ?
-//            $this->bindings[$abstract]['make']($parameters) : $this->newInstance($abstract, $parameters);
-        if (isset($this->bindings[$abstract])) {
-            return $this->bindings[$abstract][self::MAKE]($params);
-        } else {
-            isset($this->resolved[$abstract]) ? ++$this->resolved[$abstract] : $this->resolved[$abstract] = 1;
-            $this->bind($abstract);
-            return $this->make($abstract, $params);
-//            return $this->newInstance($abstract, $params);
-        }
+        return isset($this->bindings[$abstract])
+            ? $this->bindings[$abstract][self::MAKE]($params)
+            : $this->create($abstract, $params);
     }
-
-    /**
-     * Wrap function under makeInstance
-     *
-     * @param string $abstract
-     * @param array $params
-     * @return mixed
-     */
-    public function make($abstract, array $params = []) {
-        return $this->makeInstance($abstract, $params);
-    }
-
+    
     public function pack($filePath) {
         $this->instance('Box', $this);
-        if (is_file($filePath)) {
-            $services = include $filePath;
-            foreach ($services['interfaces'] as $abstract => $concrete) {
-                $this->bind($abstract, $concrete);
-            }
-            foreach ($services['singletons'] as $abstract => $concrete) {
-                $this->singleton($abstract, $concrete);
-            }
-            foreach ($services['mutables'] as $abstract => $concrete) {
-                $this->mutable($abstract, $concrete);
-            }
-            foreach ($services['aliases'] as $alias => $abstract) {
-                $this->alias($alias, $abstract);
-            }
-            foreach ($services['settings'] as $abstract => $settings) {
-                $this->make($abstract, $settings)->__register($this)->boot();
-            }
+        if (file_exists($filePath)) {
+            $config = include $filePath;
+            foreach ($config['interfaces'/**/] as $abstract => $concrete) $this->bind($abstract, $concrete);
+            foreach ($config['singletons'/**/] as $abstract => $concrete) $this->singleton($abstract, $concrete);
+            foreach ($config['mutable'/*   */] as $abstract => $concrete) $this->mutable($abstract, $concrete);
+            foreach ($config['aliases'/*   */] as $abstract => $concrete) $this->alias($abstract, $concrete);
+            foreach ($config['settings'/*  */] as $abstract => $settings) $this->make($abstract, $settings)
+                                                                               ->__register($this)->boot();
         } else throw new FileNotFoundException('File to pack not found');
     }
-
-    /**
-     * Determine if a given type is shared.
-     *
-     * @param string $abstract
-     * @return bool
-     */
-    public function isShared($abstract)
-    {
-        return !!$this->bindings[$abstract][self::SHARE];
-    }
-
-    public function __destruct()
-    {
-//        $elapsed = (microtime(true) - $this->startTime) * 1000;
-//        echo "<br /><br /><hr />Execution time : $elapsed ms";
+    
+    public function __destruct() {
+        $elapsed = (microtime(true) - $this->startTime) * 1000;
+        echo "<br /><br /><hr />Container execution time : $elapsed ms";
     }
 }

@@ -4,7 +4,7 @@ return [
     'interfaces' => [
         Twig_LoaderInterface::class                         => Twig_Loader_Filesystem::class,
     ],
-    'mutables' => [
+    'mutable' => [
         T\Interfaces\LangInterface::class       => T\Services\Multilingual\Lang::class,
     ],
     'singletons' => [

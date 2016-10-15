@@ -16,22 +16,24 @@ use T\Facades\Route;
 use T\Facades\View;
 
 View::addLayout('layouts/home', ['logo' => 'static', 'article' => 'table']);
+View::addLayout('blocks/logo', ['logo' => 'static']);
 
 Route::get('/', function() {
-    View::render('layouts/home', [
-        'article' => [
-            'content' => [
-                ['title' => 'My first article', 'text' => 'It will be awesome!!!'],
-                ['title' => 'My second article', 'text' => 'I like what I doing.'],
-                ['title' => 'My third article', 'text' => 'I hate what I doing.'],
-                ['title' => 'LAST article', 'text' => 'Dog eats cat!!!'],
-                ['title' => 'LAST article', 'text' => 'Dog eats cat!!!'],
-                ['title' => 'LAST article', 'text' => 'Dog eats cat!!!'],
-                ['title' => 'LAST article', 'text' => 'Dog eats dos!!!'],
-            ],
-            'info' => ['page' => 1, 'columns' => 3]
-        ]
-    ]);
+//    View::render('layouts/home', [
+//        'article' => [
+//            'content' => [
+//                ['title' => 'My first article', 'text' => 'It will be awesome!!!'],
+//                ['title' => 'My second article', 'text' => 'I like what I doing.'],
+//                ['title' => 'My third article', 'text' => 'I hate what I doing.'],
+//                ['title' => 'LAST article', 'text' => 'Dog eats cat!!!'],
+//                ['title' => 'LAST article', 'text' => 'Dog eats cat!!!'],
+//                ['title' => 'LAST article', 'text' => 'Dog eats cat!!!'],
+//                ['title' => 'LAST article', 'text' => 'Dog eats dos!!!'],
+//            ],
+//            'info' => ['page' => 1, 'columns' => 3]
+//        ]
+//    ]);
+    View::render('blocks/logo', ['ajax' => true]);
 });
 Route::delete('delete', function() {
     echo 'and DELETE method';

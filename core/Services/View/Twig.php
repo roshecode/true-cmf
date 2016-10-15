@@ -23,6 +23,7 @@ class Twig extends ServiceProvider implements ViewInterface
         $this->fileExtension = 'twig';
         $this->engine = $environment;
         $this->engine->addExtension($debug);
+        $this->engine->addExtension(new \Twig_Extension_StringLoader());
     }
 
     public function addLayout($path, $blocks) {

@@ -23,6 +23,6 @@ return [
         'error'
     ],
     'site' => [
-        'theme' => 'default'
+        'theme' => 'basic'
     ]
 ];
