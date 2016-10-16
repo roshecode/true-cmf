@@ -1,101 +1,119 @@
 <?php
-
-namespace T\Services\Repository;
+namespace T\Services\ArrayObject;
 
 use ArrayAccess;
 use InvalidArgumentException;
 use T\Abstracts\ServiceProvider;
 
-class Repository extends ServiceProvider implements ArrayAccess
+class ArrayObject extends ServiceProvider implements ArrayAccess
 {
     /**
      * Some array
+     *
      * @var array $data
      */
     protected $data;
     /**
      * Query string separator
+     *
      * @var string $separator
      */
     protected $separator;
     /**
      * Last used query string
+     *
      * @var string $query
      */
     protected $query;
     /**
      * Array of path to value
+     *
      * @var array $path
      */
     protected $path;
     /**
      * Path length subtract one
+     *
      * @var integer $length
      */
     protected $end;
     /**
      * Last got value
+     *
      * @var string $sample
      */
     protected $sample;
-
     protected $placeholders;
-
+    
     /**
      * ArraySeparatorQuery constructor.
-     * @param $array
-     * @param string $separator
+     *
+     * @param string|array $data
+     * @param string       $separator
+     *
      * @throws InvalidArgumentException
      */
-    public function __construct(array $array = [], $separator = '.') {
-        $this->data = $array;
+    public function __construct($data, $separator = '.') {
         $this->separator = $separator;
+        $this->load($data);
     }
-
-    public function getData(){
-        return $this->data;
+    
+    /**
+     * @param array $data
+     *
+     * @return array $data
+     */
+    public function load($data) {
+        return $this->data = $data;
     }
-
+    
     /**
      * Return query string
+     *
      * @return string
      */
     public function getLastQuery() {
         return $this->query;
     }
-
+    
     /**
      * Recursively getting value from array by query
-     * @param array $array
+     *
+     * @param array   $array
      * @param integer $offset
+     *
      * @return mixed
      */
     protected function getValue(array &$array, &$offset) {
         $next = &$array[$this->path[$offset]];
         return $offset < $this->end && isset($next) ? $this->getValue($next, ++$offset) : $next;
     }
-
+    
     /**
      * Select value by query
-     * @param $query
+     *
+     * @param     $query
      * @param int $offset
+     *
      * @return mixed
      */
     public function get($query, $offset = 0) {
 //        if ($this->query === $query) {
 //            return $this->sample;
 //        } else {
-            $this->query = $query;
-            $this->path = explode($this->separator, $query);
-            $this->end = count($this->path) - 1;
+        $this->query = $query;
+        $this->path  = explode($this->separator, $query);
+        $this->end   = count($this->path) - 1;
 //        }
         return $this->sample = $this->getValue($this->data, $offset);
     }
-
+    
     /**
      * Recursively getting array item reference by query
-     * @param array $array
+     *
+     * @param array   $array
      * @param integer $offset
+     *
      * @return mixed
      */
     protected function &setValue(array &$array, &$offset) {
@@ -108,57 +126,60 @@ class Repository extends ServiceProvider implements ArrayAccess
             return $next;
         }
     }
-
+    
     /**
      * Set value by query
-     * @param $query
-     * @param $value
+     *
+     * @param         $query
+     * @param         $value
      * @param integer $offset
      */
     public function set($query, $value, $offset = 0) {
         $this->query = $query;
-        $this->path = explode($this->separator, $query);
-        $this->end = count($this->path) - 1;
+        $this->path  = explode($this->separator, $query);
+        $this->end   = count($this->path) - 1;
         $placeholder = &$this->setValue($this->data, $offset);
         $placeholder = $value;
     }
-
+    
     /**
      * Whether a offset exists
+     *
      * @param mixed $offset
+     *
      * @return boolean
      */
-    public function offsetExists($offset)
-    {
+    public function offsetExists($offset) {
         return isset($this->data[$offset]);
     }
-
+    
     /**
      * Offset to retrieve
+     *
      * @param mixed $offset
+     *
      * @return mixed
      */
-    public function offsetGet($offset)
-    {
+    public function offsetGet($offset) {
         return isset($this->data[$offset]) ? $this->data[$offset] : null;
     }
-
+    
     /**
      * Offset to set
+     *
      * @param mixed $offset
      * @param mixed $value
      */
-    public function offsetSet($offset, $value)
-    {
+    public function offsetSet($offset, $value) {
         is_null($offset) ? $this->data[] = $value : $this->data[$offset] = $value;
     }
-
+    
     /**
      * Offset to unset
+     *
      * @param mixed $offset
      */
-    public function offsetUnset($offset)
-    {
+    public function offsetUnset($offset) {
         unset($this->data[$offset]);
     }
 }

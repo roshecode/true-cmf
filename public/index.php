@@ -43,6 +43,10 @@ Route::put('put', function() {
     View::render('blocks/logo');
 });
 
+echo Lang::get('debug.exceptions.InvalidArgument');
+Lang::load('ru-RU');
+echo Lang::get('debug.exceptions.InvalidArgument');
+
 ?>
     <form action="/put" method="PUT">
         <input type="submit" />

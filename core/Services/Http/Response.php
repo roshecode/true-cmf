@@ -1,45 +1,41 @@
 <?php
-
 namespace T\Services\Http;
 
 class HttpStatus
 {
-    const OK = 200;
+    const OK        = 200;
     const NOT_FOUND = 404;
 }
 
 class Response
 {
-    public $headers;
+    public    $headers;
     protected $content;
     protected $version;
     protected $statusCode;
     protected $statusMsg;
     protected $charset;
-
-    public function __construct($content = '', $status = HttpStatus::OK, $headers = [])
-    {
+    
+    public function __construct($content = '', $status = HttpStatus::OK, $headers = []) {
 //        $this->setContent($content);
 //        $this->setStatusCode($status);
 //        $this->setProtocolVersion('1.0');
         $this->statusCode = $status;
-        $this->version = '1.0';
+        $this->version    = '1.0';
     }
-
+    
     public function setStatusCode($code) {
         http_response_code($code);
         return $this;
     }
-
-    public static function create($content = '', $status = 200, $headers = [])
-    {
+    
+    public static function create($content = '', $status = 200, $headers = []) {
         return new static($content, $status, $headers);
     }
-
-    public function sendHeaders()
-    {
+    
+    public function sendHeaders() {
         // headers have already been sent by the developer
-        if (! headers_sent()) {
+        if (!headers_sent()) {
 //            if (!$this->headers->has('Date')) {
 //                $this->setDate(\DateTime::createFromFormat('U', time()));
 //            }
@@ -51,7 +47,8 @@ class Response
 //            }
             // status
 //            header(sprintf('HTTP/%s %s %s', $this->version, $this->statusCode, $this->statusText), true, $this->statusCode);
-            header('HTTP/' . $this->version . ' ' . $this->statusCode . ' ' . $this->statusMsg, true, $this->statusCode);
+            header('HTTP/' . $this->version . ' ' . $this->statusCode . ' ' . $this->statusMsg, true,
+                $this->statusCode);
             // cookies
 //            foreach ($this->headers->getCookies() as $cookie) {
 //                if ($cookie->isRaw()) {
@@ -65,15 +62,13 @@ class Response
         }
         return $this;
     }
-
-    public function sendContent()
-    {
+    
+    public function sendContent() {
         echo $this->content;
         return $this;
     }
-
-    public function send()
-    {
+    
+    public function send() {
         $this->sendHeaders();
         $this->sendContent();
         if (function_exists('fastcgi_finish_request')) {
@@ -83,7 +78,7 @@ class Response
         }
         return $this;
     }
-
+    
     /**
      * Cleans or flushes output buffers up to target level.
      *
@@ -92,15 +87,14 @@ class Response
      * @param int  $targetLevel The target output buffering level
      * @param bool $flush       Whether to flush or clean the buffers
      */
-    public static function closeOutputBuffers($targetLevel, $flush)
-    {
+    public static function closeOutputBuffers($targetLevel, $flush) {
         $status = ob_get_status(true);
-        $level = count($status);
+        $level  = count($status);
         // PHP_OUTPUT_HANDLER_* are not defined on HHVM 3.3
         $flags = defined('PHP_OUTPUT_HANDLER_REMOVABLE') ?
             PHP_OUTPUT_HANDLER_REMOVABLE | ($flush ? PHP_OUTPUT_HANDLER_FLUSHABLE : PHP_OUTPUT_HANDLER_CLEANABLE) : -1;
         while ($level-- > $targetLevel && ($s = $status[$level]) &&
-            (!isset($s['del']) ? !isset($s['flags']) || $flags === ($s['flags'] & $flags) : $s['del'])) {
+               (!isset($s['del']) ? !isset($s['flags']) || $flags === ($s['flags'] & $flags) : $s['del'])) {
             if ($flush) {
                 ob_end_flush();
             } else {

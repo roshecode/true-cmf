@@ -2,9 +2,10 @@
 namespace T\Services\Container;
 
 use ReflectionClass;
+use ReflectionParameter;
 use SplFixedArray;
 use T\Abstracts\Facade;
-use T\Interfaces\ContainerInterface;
+use T\Interfaces\Container as ContainerInterface;
 use T\Exceptions\FileNotFoundException;
 
 class Box implements ContainerInterface
@@ -205,12 +206,12 @@ class Box implements ContainerInterface
      * @return SplFixedArray $building
      */
     protected function build(SplFixedArray $stack, array &$params) {
-        $index    = 0;
-        $length   = count($stack);
+        $length   = count($params);
+        $index    = count($stack) - 1 - $length;
         $building = new SplFixedArray($length);
-        while ($index < $length) {
-            $item                         = $stack[$index];
-            $building[$length - ++$index] = $item instanceof \ReflectionParameter ? array_pop($params)
+        while ($length) {
+            $item                = $stack[++$index];
+            $building[--$length] = $item instanceof ReflectionParameter ? array_pop($params)
                 : $this->makeInstance($item->name, $params);
         }
         return $building;

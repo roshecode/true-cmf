@@ -1,28 +1,36 @@
 <?php
-
-namespace T\Services\Repository;
+namespace T\Services\ArrayObject;
 
 use T\Services\FileSystem\FS;
 
-class FileRepository extends Repository
+class FileArrayObject extends ArrayObject
 {
     /**
-     * @var \T\Support\Services\FileSystem\FS $fileSystem
+     * @var FS $fileSystem
      */
     protected $fileSystem;
-
+    
     /**
      * FileRepository constructor.
      *
-     * @param FS $fileSystem
+     * @param FS     $fileSystem
      * @param string $filePath
      * @param string $separator
      */
     public function __construct(FS &$fileSystem, $filePath, $separator = '.') {
         $this->fileSystem = $fileSystem;
-        parent::__construct($fileSystem->insert($filePath), $separator);
+        parent::__construct($filePath, $separator);
     }
-
+    
+    /**
+     * @param string $filePath
+     *
+     * @return array $data
+     */
+    public function load($filePath) {
+        return parent::load($this->fileSystem->insert($filePath));
+    }
+    
     public function getBasedir() {
         return $this->fileSystem->getBasedir();
     }

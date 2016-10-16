@@ -15,10 +15,11 @@ abstract class Facade
     }
     
     protected static function getFacadeAccessor() {
-        return null;
+        throw new \Exception('getFacadeAccessor method must be overwritten');
     }
     
     final public static function __callStatic($name, $arguments) {
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
         return call_user_func_array([static::$box->make(static::getFacadeAccessor()), $name], $arguments);
     }
 }

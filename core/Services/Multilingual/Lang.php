@@ -1,49 +1,49 @@
 <?php
-
 namespace T\Services\Multilingual;
 
-use T\Interfaces\LangInterface;
 use T\Services\FileSystem\FS;
-use T\Services\Repository\MultiFileRepository;
+use T\Services\ArrayObject\MultiFileArrayObject;
+use T\Interfaces\Lang as LangInterface;
 
-class Lang extends MultiFileRepository implements LangInterface
+class Lang extends MultiFileArrayObject implements LangInterface
 {
-    protected $baseLang = 'en-EN';
-
+    const WRAP_TAG  = 'strong';
+    const BASE_LANG = 'en-EN';
+    
     /**
-     * @param FS $fileSystem
+     * @param FS     $fileSystem
      * @param string $filePath
+     * @param string $separator
      */
-    public function __construct(FS &$fileSystem, $filePath) {
+    public function __construct(FS &$fileSystem, $filePath = null, $separator = '.') {
         parent::__construct($fileSystem, $filePath);
-
-//        if (Config::get('localization.language') === self::BASE_LANG) {
-//
-//        }
-//        self::$data = File::inc($filePath);
-//        if (self::$base_data === null) {
-//            self::$base_data = File::reqOnce(Config::getDirectoryPath('languages').self::BASE_LANG.'.php');
-//        }
     }
-
-    public function parse($str, array $data, $wrapLeft = '', $wrapRight = '') {
-        return preg_replace_callback('|{{\s*\w+\s*}}|U', function($matches) use($data, $wrapLeft, $wrapRight) {
+    
+    public function load($lang) {
+        $this->loadFiles($lang);
+    }
+    
+    public function parse($str, array $data, $tag = null) {
+        return preg_replace_callback('|{{\s*\w+\s*}}|U', function ($matches) use ($data, $tag) {
             $key = trim($matches[0], '{ }');
-            return isset($data[$key]) ? $wrapLeft . $data[$key] . $wrapRight : '';
+            return isset($data[$key]) ? $this->tag($data[$key], $tag) : '';
         }, $str);
     }
-
+    
     public function exception($exception, array $data) {
-        $debug = &$this->data['debug'];
-        $exceptions = &$debug['exceptions'];
-        return $this->parse(
-            $debug['before'] . $exceptions[$exception] . $debug['after'], $data, '<strong>', '</strong>');
+        return $this->debug('exceptions', $exception, $data);
     }
-
+    
     public function notice($notice, array $data) {
+        return $this->debug('notices', $notice, $data);
+    }
+    
+    protected function tag($data, $tag) {
+        return $tag ? "<$tag>$data</$tag>" : '';
+    }
+    
+    protected function debug($placeholder, $text, array $data) {
         $debug = &$this->data['debug'];
-        $notices = &$debug['notices'];
-        return $this->parse(
-            $debug['before'] . $notices[$notice] . $debug['after'], $data, '<strong>', '</strong>');
+        return $this->parse("{$debug['before']}{$debug[$placeholder][$text]}{$debug['after']}", $data, self::WRAP_TAG);
     }
 }

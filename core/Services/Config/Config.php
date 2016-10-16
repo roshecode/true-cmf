@@ -1,79 +1,67 @@
 <?php
-
 namespace T\Services\Config;
 
-use InvalidArgumentException;
-use T\Interfaces\ConfigInterface;
 use T\Services\FileSystem\FS;
-use T\Services\Repository\MultiFileRepository;
+use T\Services\ArrayObject\MultiFileArrayObject;
+use T\Interfaces\Config as ConfigInterface;
 
-class Config extends MultiFileRepository implements ConfigInterface
+class Config extends MultiFileArrayObject implements ConfigInterface
 {
+    protected $inferiors;
+    
     /**
-     * @param FS $fileSystem
+     * @param FS     $fileSystem
      * @param string $filePaths
+     * @param string $separator
      */
-    public function __construct(FS &$fileSystem, $filePaths) {
-        parent::__construct($fileSystem, $filePaths);
+    public function __construct(FS &$fileSystem, $filePaths, $separator = '.') {
+        parent::__construct($fileSystem, $filePaths, $separator);
     }
-
+    
     public function boot() {
-//        $this->setLanguage($this->data['main']['localization']['language']);
-        $this->setErrors($this->data['main']['errors']);
+        $this->inferiors['Lang'] = $this->box->make('Lang');
+        $this->setErrors($this['main']['errors']);
+        $this->setLanguage($this['main']['localization']['language']);
     }
-
+    
     /**
-     * @param string $path
-     * @return string
-     *
-     * @throws InvalidArgumentException
-     */
-    public function getDirectoryPath($path) {
-        if (is_string($path)) {
-            // TODO: directory separator to windows
-            return $this->data['main']['directories'][$path] . '/';
-        } else {
-            throw new InvalidArgumentException('exceptions.invalid_argument'); // TODO: Envisage
-        }
-    }
-
-    /**
-     * @param string $lang
-     *
-     * @throws InvalidArgumentException
+     * @inheritdoc
      */
     public function setLanguage($lang) {
-        if (is_string($lang)) {
-            $this->box->make('Lang', [$this->box->make('Lang')->getBasedir(), $lang . '.php']); // TODO: Bad make
-        } else {
-            throw new InvalidArgumentException('exceptions.invalid_argument'); // TODO: Envisage
-        }
+        $this->inferiors['Lang']->load($lang);
     }
-
+    
     /**
-     * @param array $params
-     *
-     * @throws InvalidArgumentException
+     * @inheritdoc
      */
-    public function setErrors($params) {
-        if (is_array($params)) {
-            if (isset($params['display'])) {
-                ini_set('display_errors', $params['display']);
-                ini_set('display_startup_errors', $params['display']);
-            }
-            if (isset($params['reporting'])) {
-                error_reporting($params['reporting']);
-            }
-        } else {
-            throw new InvalidArgumentException('exceptions.invalid_argument');  // TODO: Envisage
+    public function setErrors(array $params) {
+        if (isset($params['display'])) {
+            ini_set('display_errors', $params['display']);
+            ini_set('display_startup_errors', $params['display']);
+        }
+        if (isset($params['reporting'])) {
+            error_reporting($params['reporting']);
         }
     }
-
-    public function getCurrentThemeName() {
-        return $this->data['main']['site']['theme'];
+    
+    /**
+     * @inheritdoc
+     */
+    public function getDirectoryPath($path) {
+        return $this['main']['directories'][$path] . '/';
     }
-
+    
+    /**
+     * @inheritdoc
+     */
+    public function getCurrentThemeName() {
+        return $this['main']['site']['theme'];
+    }
+    
+    /**
+     * @inheritdoc
+     */
     public function getCurrentThemePath() {
-        return $this->getDirectoryPath('themes') . '/' . $this->getCurrentThemeName();
+        return $this->getDirectoryPath('themes') . '/' . $this->getCurrentThemeName() . '/';
     }
 }

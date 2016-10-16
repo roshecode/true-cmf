@@ -3,7 +3,7 @@ namespace T\Interfaces;
 
 use Closure;
 
-interface ContainerInterface
+interface Container
 {
     /**
      * Register an existing instance as shared in the container.
@@ -63,7 +63,7 @@ interface ContainerInterface
      * Register a binding first and then make an instance
      *
      * @param string|array $abstract
-     * @param array $params
+     * @param array        $params
      *
      * @return mixed
      */

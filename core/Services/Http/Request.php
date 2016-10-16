@@ -2,7 +2,7 @@
 namespace T\Services\Http;
 
 use T\Abstracts\ServiceProvider;
-use T\Interfaces\RequestInterface;
+use T\Interfaces\Request as RequestInterface;
 
 class Request extends ServiceProvider implements RequestInterface
 {
@@ -18,12 +18,12 @@ class Request extends ServiceProvider implements RequestInterface
         $this->path = &$parse_uri['path'];
     }
     
-    public function method() {
-        return $this->method;
-    }
-    
     public function domain() {
         return $this->domain;
+    }
+    
+    public function method() {
+        return $this->method;
     }
     
     public function path() {

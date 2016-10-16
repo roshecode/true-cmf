@@ -1,19 +1,15 @@
 <?php
-
 namespace T\Services\View;
 
-use T\Interfaces\ViewInterface;
+use T\Interfaces\View as ViewInterface;
 
 class Blade implements ViewInterface
 {
-
-    public function display($layout, $data)
-    {
+    public function display($layout, $data) {
         // TODO: Implement display() method.
     }
-
-    public function render($layout, $data)
-    {
+    
+    public function render($layout, $data) {
         // TODO: Implement render() method.
     }
 }
