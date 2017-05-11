@@ -15,7 +15,7 @@ class Lang extends MultiFileArrayObject implements LangInterface
      * @param string $filePath
      * @param string $separator
      */
-    public function __construct(FS &$fileSystem, $filePath = null, $separator = '.') {
+    public function __construct(FS $fileSystem, $filePath = null, $separator = '.') {
         parent::__construct($fileSystem, $filePath);
     }
     

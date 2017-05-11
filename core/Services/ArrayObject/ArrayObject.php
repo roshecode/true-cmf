@@ -84,7 +84,7 @@ class ArrayObject extends ServiceProvider implements ArrayAccess
      *
      * @return mixed
      */
-    protected function getValue(array &$array, &$offset) {
+    protected function getValue(array $array, $offset) {
         $next = &$array[$this->path[$offset]];
         return $offset < $this->end && isset($next) ? $this->getValue($next, ++$offset) : $next;
     }
@@ -116,7 +116,7 @@ class ArrayObject extends ServiceProvider implements ArrayAccess
      *
      * @return mixed
      */
-    protected function &setValue(array &$array, &$offset) {
+    protected function &setValue(array $array, $offset) {
         $next = &$array[$this->path[$offset]];
 //        return ($offset < $this->end) ?
 //            $this->setValue(isset($next) ? $next : $next = [], ++$offset) : $next;

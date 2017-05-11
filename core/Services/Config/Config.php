@@ -14,7 +14,7 @@ class Config extends MultiFileArrayObject implements ConfigInterface
      * @param string $filePaths
      * @param string $separator
      */
-    public function __construct(FS &$fileSystem, $filePaths, $separator = '.') {
+    public function __construct(FS $fileSystem, $filePaths, $separator = '.') {
         parent::__construct($fileSystem, $filePaths, $separator);
     }
     

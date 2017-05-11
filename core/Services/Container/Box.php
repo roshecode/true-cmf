@@ -1,6 +1,7 @@
 <?php
 namespace T\Services\Container;
 
+use ArrayAccess;
 use ReflectionClass;
 use ReflectionParameter;
 use SplFixedArray;
@@ -8,7 +9,7 @@ use T\Abstracts\Facade;
 use T\Interfaces\Container as ContainerInterface;
 use T\Exceptions\FileNotFoundException;
 
-class Box implements ContainerInterface
+class Box implements ContainerInterface, ArrayAccess
 {
     const MAKE  = 0;
     const SHARE = 1;
@@ -225,13 +226,13 @@ class Box implements ContainerInterface
      *
      * @return mixed
      */
-    protected function makeInstance(&$abstract, array &$params = []) {
+    protected function makeInstance(string &$abstract, array &$params = []) {
         return isset($this->bindings[$abstract])
             ? $this->bindings[$abstract][self::MAKE]($params)
             : $this->create($abstract, $params);
     }
     
-    public function pack($filePath) {
+    public function pack(string $filePath) {
         $this->instance('Box', $this);
         if (file_exists($filePath)) {
             $config = include $filePath;
@@ -247,5 +248,67 @@ class Box implements ContainerInterface
     public function __destruct() {
         $elapsed = (microtime(true) - $this->startTime) * 1000;
         echo "<br /><br /><hr />Container execution time : $elapsed ms";
+    }
+
+    /**
+     * Whether a offset exists
+     * @link http://php.net/manual/en/arrayaccess.offsetexists.php
+     * @param mixed $offset <p>
+     * An offset to check for.
+     * </p>
+     * @return boolean true on success or false on failure.
+     * </p>
+     * <p>
+     * The return value will be casted to boolean if non-boolean was returned.
+     * @since 5.0.0
+     */
+    public function offsetExists($offset)
+    {
+        return isset($this->bindings[$offset]);
+    }
+
+    /**
+     * Offset to retrieve
+     * @link http://php.net/manual/en/arrayaccess.offsetget.php
+     * @param mixed $abstract <p>
+     * The offset to retrieve.
+     * </p>
+     * @return mixed Can return all value types.
+     * @since 5.0.0
+     */
+    public function offsetGet($abstract)
+    {
+        return $this->make($abstract);
+    }
+
+    /**
+     * Offset to set
+     * @link http://php.net/manual/en/arrayaccess.offsetset.php
+     * @param mixed $abstract <p>
+     * The offset to assign the value to.
+     * </p>
+     * @param mixed $concrete <p>
+     * The value to set.
+     * </p>
+     * @return void
+     * @since 5.0.0
+     */
+    public function offsetSet($abstract, $concrete)
+    {
+        $this->singleton($abstract, $concrete);
+    }
+
+    /**
+     * Offset to unset
+     * @link http://php.net/manual/en/arrayaccess.offsetunset.php
+     * @param mixed $offset <p>
+     * The offset to unset.
+     * </p>
+     * @return void
+     * @since 5.0.0
+     */
+    public function offsetUnset($offset)
+    {
+        // TODO: Implement offsetUnset() method.
     }
 }

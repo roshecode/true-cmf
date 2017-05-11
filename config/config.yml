@@ -1,0 +1,24 @@
+interfaces:
+  Twig_LoaderInterface: Twig_Loader_Filesystem
+mutable:
+  T\Interfaces\Lang:
+    bind: T\Services\Multilingual\Lang
+    arguments: resources/languages
+singletons:
+  T\Interfaces\Config:
+    bind: T\Services\Config\Config
+    alias: Config
+    arguments:
+    - config
+    - [ main ]
+  T\Interfaces\Router:
+    bind: T\Services\Routing\Router
+    alias: Route
+  T\Interfaces\View:
+    bind: T\Services\View\Twig
+    arguments:
+    - resources/themes
+    - cache: cache/themes
+      debug: true
+      auto_reload: true
+  FS: T\Services\FileSystem\FS

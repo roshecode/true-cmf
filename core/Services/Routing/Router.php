@@ -18,7 +18,15 @@ class Router extends ServiceProvider implements RouterInterface
         $this->domain = $domain;
         $this->tail .= str_repeat(' ', self::ROUTES_GROUP_COUNT - 1);
     }
-    
+
+    public function boot()
+    {
+        include __DIR__ . '/../../../app/Routes/Api/api.php'; // todo: load all files (folders names as namespaces)
+//        if (!($parse_uri = parse_url($_SERVER['REQUEST_URI']))) throw new \Exception('Invalid uri');
+//        $path = &$parse_uri['path'];
+//        $this->make($_SERVER['REQUEST_METHOD'], $path)[0]();
+    }
+
     public function get($route, $handler) { $this->add('GET', $route, $handler); }
     
     public function post($route, $handler) { $this->add('POST', $route, $handler); }
@@ -72,7 +80,7 @@ class Router extends ServiceProvider implements RouterInterface
                 return [$routes[$i][1][strlen(array_pop($matches)) - 1], &$matches];
             }
         }
-        return 404;
+        return [function() {echo 'Not found';}, [404]];
     }
     
     public function makeFromRequest(Request $request) {
