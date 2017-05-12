@@ -1,6 +1,6 @@
 <?php
 namespace T\Interfaces;
 
-interface Logger
+interface Log
 {
 }

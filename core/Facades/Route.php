@@ -7,6 +7,6 @@ use T\Abstracts\Facade;
 class Route extends Facade
 {
     protected static function getFacadeAccessor() {
-        return 'Route';
+        return \T\Interfaces\Route::class;
     }
 }

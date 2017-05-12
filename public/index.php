@@ -1,13 +1,26 @@
+<a href="/">Home</a>
+<form action="delete" method="POST">
+    <h2>Delete method</h2>
+    <input type="hidden" name="_method" value="DELETE">
+    <button type="submit">Delete</button>
+</form>
+<form action="put" method="POST">
+    <h2>Put method</h2>
+    <input type="hidden" name="_method" value="PUT">
+    <button type="submit">Put</button>
+</form>
 <?php
 
-//ini_set('display_errors', true);
-//ini_set('display_startup_errors', true);
-//error_reporting(E_ALL);
+ini_set('display_errors', true);
+ini_set('display_startup_errors', true);
+error_reporting(E_ALL);
 
 $start = microtime(true);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../bootstrap.php';
+
+//d(\T\Facades\Box::make('Route'));
 
 //use T\Facades\Lang;
 

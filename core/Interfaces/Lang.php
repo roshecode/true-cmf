@@ -1,7 +1,7 @@
 <?php
 namespace T\Interfaces;
 
-interface Lang
+interface Lang extends Service
 {
     public function load($lang);
 }

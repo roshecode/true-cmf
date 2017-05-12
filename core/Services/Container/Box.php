@@ -6,22 +6,34 @@ use ReflectionClass;
 use ReflectionParameter;
 use SplFixedArray;
 use T\Abstracts\Facade;
-use T\Interfaces\Container as ContainerInterface;
-use T\Exceptions\FileNotFoundException;
+use T\Interfaces\Box as ContainerInterface;
+use T\Interfaces\Service;
 
 class Box implements ContainerInterface, ArrayAccess
 {
     const MAKE  = 0;
     const SHARE = 1;
     const STACK = 2;
+
+    const ALIAS     = 'alias';
+    const CONCRETE  = 'bind';
+    const ARGUMENTS = 'arguments';
+
+    const SCOPE_INSTANCES   = 'instances';
+    const SCOPE_INTERFACES  = 'interfaces';
+    const SCOPE_MUTABLE     = 'mutable';
+    const SCOPE_SINGLETONS  = 'singletons';
+
+    private $config;
+
     /**
      * The container's bindings.
      *
      * @var array
      */
-    protected $bindings;
-    protected $resolved;
-    protected $startTime;
+    public $bindings = [];
+    public $resolved = [];
+    public $startTime;
     
     /**
      * Box constructor.
@@ -52,7 +64,10 @@ class Box implements ContainerInterface, ArrayAccess
                     : (is_string($abstract)
                         ? $this->instance($abstract, $concrete)
                         : $this->error()
-                    ))));
+                    )
+                )
+            )
+        );
     }
     
     /**
@@ -83,6 +98,20 @@ class Box implements ContainerInterface, ArrayAccess
      */
     public function alias($alias, $abstract) {
         $this->bindings[$alias] = &$this->bindings[$abstract];
+    }
+
+    /**
+     * Resolve the given type from the container.
+     *
+     * @param string $abstract
+     * @param array  $params
+     *
+     * @return mixed
+     */
+    protected function makeInstance(string &$abstract, array &$params = []) {
+        return isset($this->bindings[$abstract])
+            ? $this->bindings[$abstract][self::MAKE]($params)
+            : $this->create($abstract, $params);
     }
     
     /**
@@ -177,10 +206,11 @@ class Box implements ContainerInterface, ArrayAccess
     protected function newInstance(&$concrete, &$params, &$stack = null) {
         $reflectionClass = new ReflectionClass($concrete);
         $constructor     = $reflectionClass->getConstructor();
-        return ($constructor && $reflectionParams = $constructor->getParameters())
+        $instance = ($constructor && $reflectionParams = $constructor->getParameters())
             ? $reflectionClass->newInstanceArgs($this->build($stack
                 ?: $stack = $this->getStack($reflectionParams), $params)->toArray())
             : new $concrete;
+        return $instance instanceof Service ? $instance->__register($this) : $instance;
     }
     
     /**
@@ -217,32 +247,44 @@ class Box implements ContainerInterface, ArrayAccess
         }
         return $building;
     }
-    
-    /**
-     * Resolve the given type from the container.
-     *
-     * @param string $abstract
-     * @param array  $params
-     *
-     * @return mixed
-     */
-    protected function makeInstance(string &$abstract, array &$params = []) {
-        return isset($this->bindings[$abstract])
-            ? $this->bindings[$abstract][self::MAKE]($params)
-            : $this->create($abstract, $params);
+
+    public function packScope(array $config, \Closure $method) {
+        foreach ($config as $abstract => $params) {
+            if (is_array($params)) {
+                $concrete = $params[self::CONCRETE];
+                if (isset($params[self::ALIAS])) {
+                    $this->alias($params[self::ALIAS], $abstract);
+                }
+                $method($abstract, $concrete,
+                    isset($params[self::ARGUMENTS]) ? $params[self::ARGUMENTS] : []);
+            } else {
+                $method($abstract, $params);
+            }
+        }
+    }
+
+    protected function packScopeFromSelf($scope, \Closure $method) {
+        if (isset($this->config[$scope])) {
+            $this->packScope($this->config[$scope], $method);
+        }
     }
     
-    public function pack(string $filePath) {
-        $this->instance('Box', $this);
-        if (file_exists($filePath)) {
-            $config = include $filePath;
-            foreach ($config['interfaces'/**/] as $abstract => $concrete) $this->bind($abstract, $concrete);
-            foreach ($config['singletons'/**/] as $abstract => $concrete) $this->singleton($abstract, $concrete);
-            foreach ($config['mutable'/*   */] as $abstract => $concrete) $this->mutable($abstract, $concrete);
-            foreach ($config['aliases'/*   */] as $abstract => $concrete) $this->alias($abstract, $concrete);
-            foreach ($config['settings'/*  */] as $abstract => $settings) $this->make($abstract, $settings)
-                                                                               ->__register($this)->boot();
-        } else throw new FileNotFoundException('File to pack not found');
+    public function pack(array $config) {
+        $this->config = $config;
+        $this->packScopeFromSelf(self::SCOPE_INSTANCES, function ($abstract, $concrete) {
+            $this->instance($abstract, $concrete);
+        });
+        $this->packScopeFromSelf(self::SCOPE_INTERFACES, function ($abstract, $concrete) {
+            $this->bind($abstract, $concrete);
+        });
+        $this->packScopeFromSelf(self::SCOPE_MUTABLE, function ($abstract, $concrete, $arguments) {
+            $this->mutable($abstract, $concrete);
+            $this->makeInstance($abstract, $arguments)->boot();
+        });
+        $this->packScopeFromSelf(self::SCOPE_SINGLETONS, function ($abstract, $concrete, $arguments) {
+            $this->singleton($abstract, $concrete);
+            $this->makeInstance($abstract, $arguments)->boot();
+        });
     }
     
     public function __destruct() {

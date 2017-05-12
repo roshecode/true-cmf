@@ -1,7 +1,7 @@
 <?php
 namespace T\Interfaces;
 
-interface Router
+interface Route extends Service
 {
     public function get($route, $handler);
     

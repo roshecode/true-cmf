@@ -1,16 +1,22 @@
 <?php
+define('BASEDIR', __DIR__);
+
+use T\Exceptions\FileNotFoundException;
 
 require_once __DIR__ . '/helpers.php';
-define('BASEDIR', __DIR__ . '/');
 
 // set errors handler
 $whoops = new \Whoops\Run;
 $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
-$whoops->register();
+//$whoops->register();
 
 // init container and register services
-$box = new \T\Services\Container\Box();
-$box->pack(__DIR__ . '/config/services.php');
+$servicesConfigFile = __DIR__ . '/config/services.php';
+if (file_exists($servicesConfigFile)) {
+    $box = new \T\Services\Container\Box();
+    $box->pack(include $servicesConfigFile);
+//    d($box->make('Route'));
+} else throw new FileNotFoundException('File to pack not found');
 
 // launch app
 $kernel = $box['Kernel'];

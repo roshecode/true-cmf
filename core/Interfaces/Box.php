@@ -3,7 +3,7 @@ namespace T\Interfaces;
 
 use Closure;
 
-interface Container
+interface Box
 {
     /**
      * Register an existing instance as shared in the container.

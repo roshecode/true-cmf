@@ -1,25 +1,25 @@
 <?php
 namespace T\Services\Config;
 
-use T\Services\FileSystem\FS;
-use T\Services\ArrayObject\MultiFileArrayObject;
+use T\Traits\Service;
 use T\Interfaces\Config as ConfigInterface;
+use T\Interfaces\Filesystem;
+use T\Services\ArrayObject\MultiFileArrayObject;
 
 class Config extends MultiFileArrayObject implements ConfigInterface
 {
-    protected $inferiors;
-    
+    use Service;
+
     /**
-     * @param FS     $fileSystem
+     * @param Filesystem     $fileSystem
      * @param string $filePaths
      * @param string $separator
      */
-    public function __construct(FS $fileSystem, $filePaths, $separator = '.') {
+    public function __construct(Filesystem $fileSystem, $filePaths, string $separator = '.') {
         parent::__construct($fileSystem, $filePaths, $separator);
     }
     
     public function boot() {
-        $this->inferiors['Lang'] = $this->box->make('Lang');
         $this->setErrors($this['main']['errors']);
         $this->setLanguage($this['main']['localization']['language']);
     }
@@ -27,8 +27,8 @@ class Config extends MultiFileArrayObject implements ConfigInterface
     /**
      * @inheritdoc
      */
-    public function setLanguage($lang) {
-        $this->inferiors['Lang']->load($lang);
+    public function setLanguage(string $lang) {
+        $this->box['Lang']->load($lang);
     }
     
     /**
@@ -47,21 +47,21 @@ class Config extends MultiFileArrayObject implements ConfigInterface
     /**
      * @inheritdoc
      */
-    public function getDirectoryPath($path) {
+    public function getDirectoryPath($path) : string {
         return $this['main']['directories'][$path] . '/';
     }
     
     /**
      * @inheritdoc
      */
-    public function getCurrentThemeName() {
+    public function getCurrentThemeName() : string {
         return $this['main']['site']['theme'];
     }
     
     /**
      * @inheritdoc
      */
-    public function getCurrentThemePath() {
+    public function getCurrentThemePath() : string {
         return $this->getDirectoryPath('themes') . '/' . $this->getCurrentThemeName() . '/';
     }
 }

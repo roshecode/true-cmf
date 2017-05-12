@@ -1,14 +1,23 @@
 <?php
 namespace T\Services\Routing;
 
-use T\Abstracts\ServiceProvider;
-use T\Interfaces\Request;
-use T\Interfaces\Router as RouterInterface;
+use T\Interfaces\Route as RouterInterface;
+use T\Traits\Service;
 
-class Router extends ServiceProvider implements RouterInterface
+class Route implements RouterInterface
 {
-    const ROUTES_GROUP_COUNT = 100;
+    use Service;
+
+    const DELETE    = 'DELETE';
+    const GET       = 'GET';
+    const HEAD      = 'HEAD';
+    const PATCH     = 'PATCH';
+    const POST      = 'POST';
+    const PUT       = 'PUT';
+
+    const ROUTES_CHUNK_LIMIT = 100;
     const ROUTES_SPLIT_REGEX = '/(?:(?>\\\)\/|[^\/\s])+/i';
+
     protected $domain;
     protected $routes = [];
     protected $count  = -1;
@@ -16,7 +25,7 @@ class Router extends ServiceProvider implements RouterInterface
     
     public function __construct($domain = '') {
         $this->domain = $domain;
-        $this->tail .= str_repeat(' ', self::ROUTES_GROUP_COUNT - 1);
+        $this->tail .= str_repeat(' ', self::ROUTES_CHUNK_LIMIT - 1);
     }
 
     public function boot()
@@ -27,21 +36,33 @@ class Router extends ServiceProvider implements RouterInterface
 //        $this->make($_SERVER['REQUEST_METHOD'], $path)[0]();
     }
 
-    public function get($route, $handler) { $this->add('GET', $route, $handler); }
+    public function get($route, $handler) {
+        $this->add('GET', $route, $handler);
+    }
     
-    public function post($route, $handler) { $this->add('POST', $route, $handler); }
+    public function post($route, $handler) {
+        $this->add('POST', $route, $handler);
+    }
     
-    public function put($route, $handler) { $this->add('PUT', $route, $handler); }
+    public function put($route, $handler) {
+        $this->add('PUT', $route, $handler);
+    }
     
-    public function patch($route, $handler) { $this->add('PATCH', $route, $handler); }
+    public function patch($route, $handler) {
+        $this->add('PATCH', $route, $handler);
+    }
     
-    public function delete($route, $handler) { $this->add('DELETE', $route, $handler); }
+    public function delete($route, $handler) {
+        $this->add('DELETE', $route, $handler);
+    }
     
-    public function options($route, $handler) { $this->add('OPTIONS', $route, $handler); }
+    public function options($route, $handler) {
+        $this->add('OPTIONS', $route, $handler);
+    }
     
     protected function add($method, $route, $handler) {
         $route = $route[0] == '/' ? $route : '/' . $route;
-        $rest  = ++$this->count % self::ROUTES_GROUP_COUNT;
+        $rest  = ++$this->count % self::ROUTES_CHUNK_LIMIT;
         $regex = '(?:' . preg_replace_callback(self::ROUTES_SPLIT_REGEX, function ($matches) {
                 $node = &$matches[0];
                 if ($node[0] == ':') {
@@ -50,11 +71,10 @@ class Router extends ServiceProvider implements RouterInterface
                 }
                 return $node;
             }, $route) . ')/( {' . ($rest + 1) . '})';
-        $route = &$this->routes[$this->domain][$method][($this->count - $rest) / self::ROUTES_GROUP_COUNT];
+        $route = &$this->routes[$this->domain][$method][($this->count - $rest) / self::ROUTES_CHUNK_LIMIT];
         $rest
             ? $route[0] = $regex . '|' . $route[0]
-            :
-            $route = \SplFixedArray::fromArray([$regex, new \SplFixedArray(self::ROUTES_GROUP_COUNT)]);
+            : $route = \SplFixedArray::fromArray([$regex, new \SplFixedArray(self::ROUTES_CHUNK_LIMIT)]);
         $route[1][$rest] = $handler;
     }
     
@@ -81,9 +101,5 @@ class Router extends ServiceProvider implements RouterInterface
             }
         }
         return [function() {echo 'Not found';}, [404]];
-    }
-    
-    public function makeFromRequest(Request $request) {
-        return $this->domain($request->domain())->make($request->method(), $request->path());
     }
 }

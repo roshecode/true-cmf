@@ -1,17 +1,19 @@
 <?php
-namespace T\Services\FileSystem;
+namespace T\Services\Filesystem;
 
 use Closure;
 use InvalidArgumentException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use UnexpectedValueException;
-use T\Abstracts\ServiceProvider;
 use T\Services\ArrayObject\FileArrayObject;
+use T\Traits\Service;
 use T\Exceptions\FileNotFoundException;
 
-class FS extends ServiceProvider
+class Filesystem implements \T\Interfaces\Filesystem
 {
+    use Service;
+
     const TAKE         = 'take';
     const READ         = 'read';
     const ASSOC        = 'getAssoc';
@@ -23,7 +25,7 @@ class FS extends ServiceProvider
     protected $lastFilePath;
     
     /**
-     * FS constructor with base directory path.
+     * Filesystem constructor with base directory path.
      *
      * @param string $base
      */
@@ -74,6 +76,7 @@ class FS extends ServiceProvider
      * @param Closure $callback
      *
      * @throws FileNotFoundException
+     * @return boolean
      */
     private function isFileCallback($filePath, $callback) {
         if (self::isFile($filePath)) return $callback($this->lastFilePath);

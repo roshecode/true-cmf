@@ -1,5 +1,5 @@
 <?php
-namespace T\Services\FileSystem;
+namespace T\Services\Filesystem;
 
 class FileStream
 {

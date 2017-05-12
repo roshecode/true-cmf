@@ -4,11 +4,13 @@ namespace T\Services\View;
 use Twig_Environment;
 use Twig_Extension_Debug;
 use Symfony\Component\Yaml\Yaml;
-use T\Abstracts\ServiceProvider;
 use T\Interfaces\View as ViewInterface;
+use T\Traits\Service;
 
-class Twig extends ServiceProvider implements ViewInterface
+class Twig implements ViewInterface
 {
+    use Service;
+
     const PATH_WRAPPERS = 'wrappers';
     const PATH_BLOCKS   = 'blocks';
     protected $structure;

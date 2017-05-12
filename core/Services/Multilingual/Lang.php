@@ -1,21 +1,24 @@
 <?php
 namespace T\Services\Multilingual;
 
-use T\Services\FileSystem\FS;
-use T\Services\ArrayObject\MultiFileArrayObject;
 use T\Interfaces\Lang as LangInterface;
+use T\Interfaces\Filesystem;
+use T\Services\ArrayObject\MultiFileArrayObject;
+use T\Traits\Service;
 
 class Lang extends MultiFileArrayObject implements LangInterface
 {
+    use Service;
+
     const WRAP_TAG  = 'strong';
     const BASE_LANG = 'en-EN';
     
     /**
-     * @param FS     $fileSystem
+     * @param Filesystem     $fileSystem
      * @param string $filePath
      * @param string $separator
      */
-    public function __construct(FS $fileSystem, $filePath = null, $separator = '.') {
+    public function __construct(Filesystem $fileSystem, $filePath = null, $separator = '.') {
         parent::__construct($fileSystem, $filePath);
     }
     

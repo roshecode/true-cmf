@@ -3,9 +3,8 @@ namespace T\Services\ArrayObject;
 
 use ArrayAccess;
 use InvalidArgumentException;
-use T\Abstracts\ServiceProvider;
 
-class ArrayObject extends ServiceProvider implements ArrayAccess
+class ArrayObject implements ArrayAccess
 {
     /**
      * Some array
@@ -92,12 +91,11 @@ class ArrayObject extends ServiceProvider implements ArrayAccess
     /**
      * Select value by query
      *
-     * @param     $query
-     * @param int $offset
+     * @param string $query
      *
      * @return mixed
      */
-    public function get($query, $offset = 0) {
+    public function get(string $query) {
 //        if ($this->query === $query) {
 //            return $this->sample;
 //        } else {
@@ -105,7 +103,7 @@ class ArrayObject extends ServiceProvider implements ArrayAccess
         $this->path  = explode($this->separator, $query);
         $this->end   = count($this->path) - 1;
 //        }
-        return $this->sample = $this->getValue($this->data, $offset);
+        return $this->sample = $this->getValue($this->data, 0);
     }
     
     /**
@@ -130,15 +128,14 @@ class ArrayObject extends ServiceProvider implements ArrayAccess
     /**
      * Set value by query
      *
-     * @param         $query
-     * @param         $value
-     * @param integer $offset
+     * @param string $query
+     * @param mixed $value
      */
-    public function set($query, $value, $offset = 0) {
+    public function set(string $query, $value) {
         $this->query = $query;
         $this->path  = explode($this->separator, $query);
         $this->end   = count($this->path) - 1;
-        $placeholder = &$this->setValue($this->data, $offset);
+        $placeholder = &$this->setValue($this->data, 0);
         $placeholder = $value;
     }
     

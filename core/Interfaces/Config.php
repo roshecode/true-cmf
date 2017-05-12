@@ -1,8 +1,30 @@
 <?php
 namespace T\Interfaces;
 
-interface Config
+interface Config extends Service
 {
+    /**
+     * @param array $data
+     */
+//    public function load(array $data);
+
+    /**
+     * Set value by query
+     *
+     * @param string $query
+     * @param mixed $value
+     */
+    public function set(string $query, $value);
+
+    /**
+     * Select value by query
+     *
+     * @param     $query
+     *
+     * @return mixed
+     */
+    public function get(string $query);
+
     /**
      * Set php errors displaying mode
      *
@@ -15,7 +37,7 @@ interface Config
      *
      * @param string $lang
      */
-    public function setLanguage($lang);
+    public function setLanguage(string $lang);
     
     /**
      * Get directory path
@@ -24,19 +46,19 @@ interface Config
      *
      * @return string
      */
-    public function getDirectoryPath($path);
+    public function getDirectoryPath($path) : string;
     
     /**
      * Get current theme name
      *
      * @return string
      */
-    public function getCurrentThemeName();
+    public function getCurrentThemeName() : string;
     
     /**
      * Get current theme path
      *
      * @return string
      */
-    public function getCurrentThemePath();
+    public function getCurrentThemePath() : string;
 }

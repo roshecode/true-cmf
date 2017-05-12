@@ -1,11 +1,11 @@
 <?php
 namespace T\Services\ArrayObject;
 
-use T\Services\FileSystem\FS;
+use T\Interfaces\Filesystem;
 
 class MultiFileArrayObject extends FileArrayObject
 {
-    public function __construct(FS $fileSystem, $filePaths = null, $separator = '.') {
+    public function __construct(Filesystem $fileSystem, $filePaths = null, $separator = '.') {
         if ($filePaths) {
             $multiData = [];
             if (is_array($filePaths)) {

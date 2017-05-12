@@ -2,7 +2,7 @@
 
 namespace T\Services\Cli\Abstracts;
 
-use T\Services\FileSystem\Exceptions\FileNotFoundException;
+use T\Services\Filesystem\Exceptions\FileNotFoundException;
 
 class Command
 {
