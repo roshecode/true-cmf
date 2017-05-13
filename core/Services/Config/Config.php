@@ -1,6 +1,7 @@
 <?php
 namespace T\Services\Config;
 
+use T\Interfaces\Lang;
 use T\Traits\Service;
 use T\Interfaces\Config as ConfigInterface;
 use T\Interfaces\Filesystem;
@@ -28,7 +29,7 @@ class Config extends MultiFileArrayObject implements ConfigInterface
      * @inheritdoc
      */
     public function setLanguage(string $lang) {
-        $this->box['Lang']->load($lang);
+        $this->box[Lang::class]->load($lang);
     }
     
     /**

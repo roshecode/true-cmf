@@ -1,14 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Андрей
- * Date: 21.07.2016
- * Time: 13:28
- */
 
-namespace T\Controllers;
+namespace App\Controllers;
 
-use T\Routing\Route;
+use T\Services\Routing\Route;
 
 abstract class Controller {
     public function index() {

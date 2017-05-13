@@ -210,7 +210,7 @@ class Box implements ContainerInterface, ArrayAccess
             ? $reflectionClass->newInstanceArgs($this->build($stack
                 ?: $stack = $this->getStack($reflectionParams), $params)->toArray())
             : new $concrete;
-        return $instance instanceof Service ? $instance->__register($this) : $instance;
+        return $instance instanceof Service ? $instance->register($this) : $instance;
     }
     
     /**

@@ -2,6 +2,7 @@
 
 namespace T\Services\Foundation\Http;
 
+use T\Interfaces\Route;
 use T\Services\Http\Request;
 use T\Services\Http\Response;
 use T\Traits\Service;
@@ -20,8 +21,13 @@ class Kernel implements KernelInterface
 //        $type = self::MASTER_REQUEST,
 //        $catch = true
     ) {
+        d([
+            $request->getMethod(),
+            $request->getRequestPath()
+        ]);
+        $response = $this->box[Route::class]->make($request->getMethod(), $request->getRequestPath());
         return new Response(
-            $this->box['Route']->make($request->getMethod(), $request->getRequestPath())[0](),
+            $response[0]($response[1]),
             Response::HTTP_OK,
             ['content-type' => 'text/html']
         );

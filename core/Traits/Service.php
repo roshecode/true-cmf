@@ -15,7 +15,7 @@ trait Service
      *
      * @return Service
      */
-    final public function __register(Box $container) {
+    final public function register(Box $container) {
         $this->box = $container;
         return $this;
     }

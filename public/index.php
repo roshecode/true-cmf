@@ -1,10 +1,11 @@
 <a href="/">Home</a>
-<form action="delete" method="POST">
+<a href="/account/roma">Account</a>
+<form action="/delete" method="POST">
     <h2>Delete method</h2>
     <input type="hidden" name="_method" value="DELETE">
     <button type="submit">Delete</button>
 </form>
-<form action="put" method="POST">
+<form action="/put" method="POST">
     <h2>Put method</h2>
     <input type="hidden" name="_method" value="PUT">
     <button type="submit">Put</button>
@@ -18,9 +19,11 @@ error_reporting(E_ALL);
 $start = microtime(true);
 
 require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../libs/autoload.php';
 require_once __DIR__ . '/../bootstrap.php';
 
-//d(\T\Facades\Box::make('Route'));
+//\T\Facades\Route::make('GET', '/');
+//die('EXIT');
 
 //use T\Facades\Lang;
 
