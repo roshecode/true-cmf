@@ -1,19 +1,16 @@
 <?php
-namespace T\Services\Filesystem;
+namespace Truecode\Filesystem;
 
 use Closure;
 use InvalidArgumentException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use UnexpectedValueException;
-use T\Services\ArrayObject\FileArrayObject;
-use T\Traits\Service;
-use T\Exceptions\FileNotFoundException;
+//use T\Services\ArrayObject\FileArrayObject;
+use Truecode\Filesystem\Exceptions\FileNotFoundException;
 
-class Filesystem implements \T\Interfaces\Filesystem
+class FS
 {
-    use Service;
-
     const TAKE         = 'take';
     const READ         = 'read';
     const ASSOC        = 'getAssoc';
@@ -21,6 +18,7 @@ class Filesystem implements \T\Interfaces\Filesystem
     const INVOLVE      = 'involve';
     const INSERT_ONCE  = 'insertOnce';
     const INVOLVE_ONCE = 'involveOnce';
+
     protected $basedir;
     protected $lastFilePath;
     
@@ -201,14 +199,14 @@ class Filesystem implements \T\Interfaces\Filesystem
         });
     }
     
-    /**
-     * @param string $filePath
-     *
-     * @return FileArrayObject
-     */
-    public function arrayObject($filePath) {
-        return new FileArrayObject($this, $this->basedir . $filePath);
-    }
+//    /**
+//     * @param string $filePath
+//     *
+//     * @return FileArrayObject
+//     */
+//    public function arrayObject($filePath) {
+//        return new FileArrayObject($this, $this->basedir . $filePath);
+//    }
     
     /**
      * Get basedir for all paths
@@ -229,7 +227,7 @@ class Filesystem implements \T\Interfaces\Filesystem
         unlink($filePath);
     }
     
-    public function parse($filePath, $type = File::PHP) {
+    public function parse($filePath, $type = File::EXT_PHP) {
         return new File($filePath);
     }
 }

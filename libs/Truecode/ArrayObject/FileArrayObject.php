@@ -1,23 +1,23 @@
 <?php
-namespace T\Services\ArrayObject;
+namespace Truecode\ArrayObject;
 
-use T\Interfaces\Filesystem;
+use T\Interfaces\FS;
 
 class FileArrayObject extends ArrayObject
 {
     /**
-     * @var Filesystem $fileSystem
+     * @var FS $fileSystem
      */
     protected $fileSystem;
     
     /**
      * FileRepository constructor.
      *
-     * @param Filesystem     $fileSystem
+     * @param FS     $fileSystem
      * @param string $filePath
      * @param string $separator
      */
-    public function __construct(Filesystem &$fileSystem, $filePath, $separator = '.') {
+    public function __construct(FS &$fileSystem, $filePath, $separator = '.') {
         $this->fileSystem = $fileSystem;
         parent::__construct($filePath, $separator);
     }

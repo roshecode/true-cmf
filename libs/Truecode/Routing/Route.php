@@ -24,30 +24,6 @@ class Route
         $this->backtrackLimit = ini_get('pcre.backtrack_limit');
         $this->tail .= str_repeat(' ', self::ROUTES_CHUNK_LIMIT - 1);
     }
-
-    public function get($route, $handler) {
-        $this->add(self::GET, $route, $handler);
-    }
-    
-    public function post($route, $handler) {
-        $this->add(self::POST, $route, $handler);
-    }
-    
-    public function put($route, $handler) {
-        $this->add(self::PUT, $route, $handler);
-    }
-    
-    public function patch($route, $handler) {
-        $this->add(self::PATCH, $route, $handler);
-    }
-    
-    public function delete($route, $handler) {
-        $this->add(self::DELETE, $route, $handler);
-    }
-    
-    public function options($route, $handler) {
-        $this->add(self::OPTIONS, $route, $handler);
-    }
     
     protected function add($method, $route, $handler) {
         $route = $route[0] == '/' ? $route : '/' . $route;
@@ -86,5 +62,29 @@ class Route
             }
         }
         return [function() {echo 'Not found';}, [404]];
+    }
+
+    public function get($route, $handler) {
+        $this->add(self::GET, $route, $handler);
+    }
+
+    public function post($route, $handler) {
+        $this->add(self::POST, $route, $handler);
+    }
+
+    public function put($route, $handler) {
+        $this->add(self::PUT, $route, $handler);
+    }
+
+    public function patch($route, $handler) {
+        $this->add(self::PATCH, $route, $handler);
+    }
+
+    public function delete($route, $handler) {
+        $this->add(self::DELETE, $route, $handler);
+    }
+
+    public function options($route, $handler) {
+        $this->add(self::OPTIONS, $route, $handler);
     }
 }

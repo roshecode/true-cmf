@@ -1,5 +1,5 @@
 <?php
-namespace T\Services\Filesystem;
+namespace Truecode\Filesystem;
 
 class FileStream
 {

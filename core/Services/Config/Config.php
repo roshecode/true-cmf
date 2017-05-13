@@ -4,19 +4,19 @@ namespace T\Services\Config;
 use T\Interfaces\Lang;
 use T\Traits\Service;
 use T\Interfaces\Config as ConfigInterface;
-use T\Interfaces\Filesystem;
-use T\Services\ArrayObject\MultiFileArrayObject;
+use T\Interfaces\FS;
+use Truecode\ArrayObject\MultiFileArrayObject;
 
 class Config extends MultiFileArrayObject implements ConfigInterface
 {
     use Service;
 
     /**
-     * @param Filesystem     $fileSystem
+     * @param FS     $fileSystem
      * @param string $filePaths
      * @param string $separator
      */
-    public function __construct(Filesystem $fileSystem, $filePaths, string $separator = '.') {
+    public function __construct(FS $fileSystem, $filePaths, string $separator = '.') {
         parent::__construct($fileSystem, $filePaths, $separator);
     }
     

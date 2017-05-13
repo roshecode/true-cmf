@@ -1,6 +1,6 @@
 <?php
 
-namespace T\Exceptions;
+namespace Truecode\Filesystem\Exceptions;
 
 class InvalidFileException extends FileException
 {

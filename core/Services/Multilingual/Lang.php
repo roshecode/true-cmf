@@ -2,8 +2,8 @@
 namespace T\Services\Multilingual;
 
 use T\Interfaces\Lang as LangInterface;
-use T\Interfaces\Filesystem;
-use T\Services\ArrayObject\MultiFileArrayObject;
+use T\Interfaces\FS;
+use Truecode\ArrayObject\MultiFileArrayObject;
 use T\Traits\Service;
 
 class Lang extends MultiFileArrayObject implements LangInterface
@@ -14,11 +14,11 @@ class Lang extends MultiFileArrayObject implements LangInterface
     const BASE_LANG = 'en-EN';
     
     /**
-     * @param Filesystem     $fileSystem
+     * @param FS     $fileSystem
      * @param string $filePath
      * @param string $separator
      */
-    public function __construct(Filesystem $fileSystem, $filePath = null, $separator = '.') {
+    public function __construct(FS $fileSystem, $filePath = null, $separator = '.') {
         parent::__construct($fileSystem, $filePath);
     }
     

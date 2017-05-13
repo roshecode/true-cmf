@@ -1,5 +1,5 @@
 <?php
-namespace T\Services\ArrayObject;
+namespace Truecode\ArrayObject;
 
 use ArrayAccess;
 use InvalidArgumentException;

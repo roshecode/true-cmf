@@ -2,8 +2,8 @@
 return [
     'interfaces' => [
         Twig_LoaderInterface::class => Twig_Loader_Filesystem::class,
-        T\Interfaces\Filesystem::class => [
-            'bind' => T\Services\Filesystem\Filesystem::class,
+        T\Interfaces\FS::class => [
+            'bind' => T\Services\Filesystem\FS::class,
             'arguments' => [
                 BASEDIR . '/'
             ]
@@ -30,7 +30,7 @@ return [
     ],
     'singletons' => [
         'Filesystem' => [
-            'bind' => T\Services\Filesystem\Filesystem::class,
+            'bind' => T\Services\Filesystem\FS::class,
             'arguments' => [
                 BASEDIR . '/'
             ]

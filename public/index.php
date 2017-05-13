@@ -24,6 +24,7 @@ require_once __DIR__ . '/../bootstrap.php';
 
 //\T\Facades\Route::make('GET', '/');
 //die('EXIT');
+//Box::make(\T\Interfaces\Route::class)->get('GET', 'good');
 
 //use T\Facades\Lang;
 
