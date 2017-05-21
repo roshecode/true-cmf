@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers;
+namespace T\Abstracts;
 
 use T\Services\Routing\Route;
 

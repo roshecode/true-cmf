@@ -1,5 +1,4 @@
 .idea
-/app/External
 node_modules
 vendor
 build

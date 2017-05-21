@@ -1,0 +1,12 @@
+- path: /
+  name: home
+  component: Main
+  controller: Dashboard
+  action: latestActivity
+
+- path: articles
+  controller: Articles
+  action: getAll
+  children:
+  - path: :slug
+    action: getBySlug
