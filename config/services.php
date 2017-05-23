@@ -3,7 +3,7 @@ return [
     'interfaces' => [
         Twig_LoaderInterface::class => Twig_Loader_Filesystem::class,
         T\Interfaces\FS::class => [
-            'bind' => T\Services\Filesystem\FS::class,
+            'bind' => T\Services\FS::class,
             'arguments' => [
                 BASEDIR . '/'
             ]
@@ -12,14 +12,14 @@ return [
     'mutable'    => [
         T\Interfaces\Lang::class => [
             'alias' => 'Lang',
-            'bind' => T\Services\Multilingual\Lang::class,
+            'bind' => T\Services\Lang::class,
             'arguments' => [
                 BASEDIR . '/resources/languages'
             ]
         ],
         T\Interfaces\Config::class  => [
             'alias' => 'Config',
-            'bind' => T\Services\Config\Config::class,
+            'bind' => T\Services\Config::class,
             'arguments' => [
                 BASEDIR . '/config',
                 [
@@ -29,17 +29,26 @@ return [
         ],
     ],
     'singletons' => [
-        'Filesystem' => [
-            'bind' => T\Services\Filesystem\FS::class,
+        'FS' => [
+            'bind' => T\Services\FS::class,
             'arguments' => [
                 BASEDIR . '/'
             ]
         ],
+        T\Interfaces\DB::class => [
+            'alias' => 'DB',
+            'bind' => T\Services\Mongodb::class,
+            'arguments' => [
+                'mongodb://localhost:27017',
+                'rosem'
+            ]
+        ],
         T\Interfaces\View::class    => [
             'alias' => 'View',
-            'bind' => T\Services\View\Twig::class,
+            'bind' => T\Services\Twig::class,
             'arguments' => [
-                BASEDIR . '/resources/themes',
+                BASEDIR . '/resources/themes', // rootPath
+                null, // paths
                 [
                     'cache' => BASEDIR . 'cache/themes',
                     'debug' => true,
@@ -49,14 +58,14 @@ return [
         ],
         T\Interfaces\Route::class  => [
             'alias' => 'Route',
-            'bind' => T\Services\Routing\Route::class,
+            'bind' => T\Services\Route::class,
             'arguments' => [
                 'true.app'
             ]
         ],
-        T\Interfaces\Foundation\Http\Kernel::class => [
+        T\Interfaces\Kernel::class => [
             'alias' => 'Kernel',
-            'bind' => T\Services\Foundation\Http\Kernel::class
+            'bind' => T\Services\Kernel::class
         ],
     ],
 ];

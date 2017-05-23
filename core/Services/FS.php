@@ -1,6 +1,6 @@
 <?php
 
-namespace T\Services\Filesystem;
+namespace T\Services;
 
 use T\Interfaces\FS as FSInterface;
 use T\Traits\Service;

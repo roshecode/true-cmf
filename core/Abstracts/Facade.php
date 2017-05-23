@@ -1,7 +1,7 @@
 <?php
 namespace T\Abstracts;
 
-use T\Services\Container\Box;
+use T\Services\Box;
 
 abstract class Facade
 {

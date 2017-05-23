@@ -1,5 +1,5 @@
 <?php
-namespace T\Services\View;
+namespace T\Services;
 
 use Twig_Environment;
 use Twig_Extension_Debug;

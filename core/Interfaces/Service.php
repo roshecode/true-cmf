@@ -6,5 +6,5 @@ interface Service
 {
     public function __register(Box $container);
 
-    public function boot();
+    public function __boot();
 }

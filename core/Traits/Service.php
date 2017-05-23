@@ -20,5 +20,5 @@ trait Service
         return $this;
     }
     
-    public function boot() { }
+    public function __boot() { }
 }

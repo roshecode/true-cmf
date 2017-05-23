@@ -7,7 +7,7 @@ error_reporting(E_ALL);
 //});
 require __DIR__ . '/../vendor/nikic/fast-route/src/bootstrap.php';
 require __DIR__ . '/../vendor/kint-php/kint/build/kint.php';
-require __DIR__ . '/../libs/truecode/true-route/Route.php';
+require __DIR__ . '/../libs/Truecode/Routing/Route.php';
 /*$options = [
     'dataGenerator' => 'FastRoute\\OldDataGenerator',
     'dispatcher' => 'FastRoute\\OldDispatcher',
@@ -17,10 +17,10 @@ const FIRST = 'first';
 const MIDDLE = 'middle';
 const LAST = 'last';
 const UNKNOWN = 'unknown';
-const TRUE_ROUTER_1 = 'true-route | routes: 300, matches: 30000, arguments: 01';
-const TRUE_ROUTER_2 = 'true-route | routes: 300, matches: 30000, arguments: 12';
-const FAST_ROUTER_1 = 'fast-route | routes: 300, matches: 30000, arguments: 01';
-const FAST_ROUTER_2 = 'fast-route | routes: 300, matches: 30000, arguments: 12';
+const TRUE_ROUTER_1 = 'true-route | routes: 300, matches: 30000, arguments: 1';
+const TRUE_ROUTER_2 = 'true-route | routes: 300, matches: 30000, arguments: 9';
+const FAST_ROUTER_1 = 'fast-route | routes: 300, matches: 30000, arguments: 1';
+const FAST_ROUTER_2 = 'fast-route | routes: 300, matches: 30000, arguments: 9';
 
 $stats = [
     TRUE_ROUTER_1 => [], FAST_ROUTER_1 => [],
@@ -43,28 +43,28 @@ $truerouter = new Truecode\Routing\Route();
 // first route ---------------------------------------------------------------------------------------------------------
 $startTime = microtime(true);
 for ($i = 0; $i < $nMatches; $i++) {
-    $res = $truerouter->make('GET', 'a/foo');
+    $res = $truerouter->make('GET', '/a/foo');
 }
 $stats[TRUE_ROUTER_1][FIRST] = microtime(true) - $startTime;
 
 // middle route --------------------------------------------------------------------------------------------------------
 $startTime = microtime(true);
 for ($i = 0; $i < $nMatches; $i++) {
-    $res = $truerouter->make('GET', 'es/foo');
+    $res = $truerouter->make('GET', '/es/foo');
 }
 $stats[TRUE_ROUTER_1][MIDDLE] = microtime(true) - $startTime;
 
 // last route ----------------------------------------------------------------------------------------------------------
 $startTime = microtime(true);
 for ($i = 0; $i < $nMatches; $i++) {
-    $res = $truerouter->make('GET', '' . $lastStr . '/foo');
+    $res = $truerouter->make('GET', '/' . $lastStr . '/foo');
 }
 $stats[TRUE_ROUTER_1][LAST] = microtime(true) - $startTime;
 
 // unknown route -------------------------------------------------------------------------------------------------------
 $startTime = microtime(true);
 for ($i = 0; $i < $nMatches; $i++) {
-    $res = $truerouter->make('GET', 'foobar/bar');
+    $res = $truerouter->make('GET', '/foobar/bar');
 }
 $stats[TRUE_ROUTER_1][UNKNOWN] = microtime(true) - $startTime;
 
@@ -89,7 +89,7 @@ $stats[FAST_ROUTER_1][FIRST] = microtime(true) - $startTime;
 // middle route --------------------------------------------------------------------------------------------------------
 $startTime = microtime(true);
 for ($i = 0; $i < $nMatches; $i++) {
-    $res = $fastrouter->dispatch('GET', 'es/foo');
+    $res = $fastrouter->dispatch('GET', '/es/foo');
 }
 $stats[FAST_ROUTER_1][MIDDLE] = microtime(true) - $startTime;
 
@@ -110,7 +110,7 @@ $stats[FAST_ROUTER_1][UNKNOWN] = microtime(true) - $startTime;
 // ---------------------------------------------------------------------------------------------------------------------
 
 $nRoutes = 300;
-$nArgs = 12;
+$nArgs = 9;
 $nMatches = 30000;
 $args = implode('/', array_map(function($i) { return ':arg' . $i; }, range(1, $nArgs)));
 
@@ -125,28 +125,28 @@ $truerouter = new Truecode\Routing\Route();
 // first route ---------------------------------------------------------------------------------------------------------
 $startTime = microtime(true);
 for ($i = 0; $i < $nMatches; $i++) {
-    $res = $truerouter->make('GET', 'a/' . $args);
+    $res = $truerouter->make('GET', '/a/' . $args);
 }
 $stats[TRUE_ROUTER_2][FIRST] = microtime(true) - $startTime;
 
 // middle route --------------------------------------------------------------------------------------------------------
 $startTime = microtime(true);
 for ($i = 0; $i < $nMatches; $i++) {
-    $res = $truerouter->make('GET', 'es/foo');
+    $res = $truerouter->make('GET', '/es/' . $args);
 }
 $stats[TRUE_ROUTER_2][MIDDLE] = microtime(true) - $startTime;
 
 // last route ----------------------------------------------------------------------------------------------------------
 $startTime = microtime(true);
 for ($i = 0; $i < $nMatches; $i++) {
-    $res = $truerouter->make('GET', '' . $lastStr . '/' . $args);
+    $res = $truerouter->make('GET', '/' . $lastStr . '/' . $args);
 }
 $stats[TRUE_ROUTER_2][LAST] = microtime(true) - $startTime;
 
 // unknown route -------------------------------------------------------------------------------------------------------
 $startTime = microtime(true);
 for ($i = 0; $i < $nMatches; $i++) {
-    $res = $truerouter->make('GET', 'foobar/' . $args);
+    $res = $truerouter->make('GET', '/foobar/' . $args);
 }
 $stats[TRUE_ROUTER_2][UNKNOWN] = microtime(true) - $startTime;
 
@@ -173,7 +173,7 @@ $stats[FAST_ROUTER_2][FIRST] = microtime(true) - $startTime;
 // middle route --------------------------------------------------------------------------------------------------------
 $startTime = microtime(true);
 for ($i = 0; $i < $nMatches; $i++) {
-    $res = $fastrouter->dispatch('GET', 'es/foo');
+    $res = $fastrouter->dispatch('GET', '/es/' . $args);
 }
 $stats[FAST_ROUTER_2][MIDDLE] = microtime(true) - $startTime;
 

@@ -1,5 +1,5 @@
 <?php
-namespace T\Services\Logging;
+namespace T\Services;
 
 use T\Interfaces\Log as LogInterface;
 

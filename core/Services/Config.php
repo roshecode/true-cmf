@@ -1,5 +1,5 @@
 <?php
-namespace T\Services\Config;
+namespace T\Services;
 
 use T\Interfaces\Lang;
 use T\Traits\Service;

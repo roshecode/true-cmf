@@ -1,10 +1,9 @@
 <?php
 
-namespace T\Interfaces\Foundation\Http;
+namespace T\Interfaces;
 
-use T\Interfaces\Service;
-use T\Services\Http\Response;
-use T\Services\Http\Request;
+use T\Services\Response;
+use T\Services\Request;
 
 interface Kernel extends Service {
     /**

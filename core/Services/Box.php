@@ -1,5 +1,5 @@
 <?php
-namespace T\Services\Container;
+namespace T\Services;
 
 use ArrayAccess;
 use ReflectionClass;
@@ -134,7 +134,7 @@ class Box implements ContainerInterface, ArrayAccess
      * {@inheritdoc}
      */
     public function isShared($abstract) {
-        return !!$this->bindings[$abstract][self::SHARE];
+        return isset($this->bindings[$abstract]) && !!$this->bindings[$abstract][self::SHARE];
     }
     
     /**
@@ -208,7 +208,7 @@ class Box implements ContainerInterface, ArrayAccess
         $constructor     = $reflectionClass->getConstructor();
         $instance = ($constructor && $reflectionParams = $constructor->getParameters())
             ? $reflectionClass->newInstanceArgs($this->build($stack
-                ?: $stack = $this->getStack($reflectionParams), $params)->toArray())
+                ?: $stack = $this->getStack($reflectionParams), $params))
             : new $concrete;
         return $instance instanceof Service ? $instance->__register($this) : $instance;
     }
@@ -234,18 +234,30 @@ class Box implements ContainerInterface, ArrayAccess
      * @param SplFixedArray $stack
      * @param array         $params
      *
-     * @return SplFixedArray $building
+     * @return array $building
      */
     protected function build(SplFixedArray $stack, array &$params) {
-        $length   = count($params);
-        $index    = count($stack) - 1 - $length;
-        $building = new SplFixedArray($length);
-        while ($length) {
-            $item                = $stack[++$index];
-            $building[--$length] = $item instanceof ReflectionParameter ? array_pop($params)
-                : $this->makeInstance($item->name, $params);
+        $stackLength = count($stack);
+        $building = [];
+        while ($stackLength) {
+            $item = $stack[--$stackLength];
+            $item instanceof ReflectionClass
+                ? $building[] = $this->isShared($item->name)
+                    ? $this->bindings[$item->name][self::SHARE]
+                    : $this->makeInstance($item->name, $params)
+                : empty($params) ?: $building[] = array_shift($params);
         }
         return $building;
+
+//        $length   = count($params);
+//        $index    = count($stack) - 1 - $length;
+//        $building = new SplFixedArray($length);
+//        while ($length) {
+//            $item                = $stack[++$index];
+//            $building[--$length] = $item instanceof ReflectionParameter ? array_pop($params)
+//                : $this->makeInstance($item->name, $params);
+//        }
+//        return $building;
     }
 
     public function packScope(array $config, \Closure $method) {
@@ -279,11 +291,11 @@ class Box implements ContainerInterface, ArrayAccess
         });
         $this->packScopeFromSelf(self::SCOPE_MUTABLE, function ($abstract, $concrete, $arguments) {
             $this->mutable($abstract, $concrete);
-            $this->makeInstance($abstract, $arguments)->boot();
+            $this->makeInstance($abstract, $arguments)->__boot();
         });
         $this->packScopeFromSelf(self::SCOPE_SINGLETONS, function ($abstract, $concrete, $arguments) {
             $this->singleton($abstract, $concrete);
-            $this->makeInstance($abstract, $arguments)->boot();
+            $this->makeInstance($abstract, $arguments)->__boot();
         });
     }
     

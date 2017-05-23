@@ -4,21 +4,18 @@ namespace App\Controllers;
 
 use T\Facades\Route;
 
+//$route = \T\Facades\Box::make(\T\Interfaces\Route::class);
+
 Route::get('/', function() {
-    return 'You are at home';
+    return 'Here we will return latest activity';
 });
 
-Route::get('a/:arg', function($params) {
-    echo 'Test good ' . $params[0];
+Route::get('user/:slug', function($params) {
+    echo 'Hello, ' . $params[0] . '! How are you?';
 });
 
-Route::get('/current', Account\User::class, 'show');
-
-//Route::get('/account/:user:\d+[/un[ne]cessary]', function($params) {
-Route::get('/account/:user', function($params) {
-    var_dump($params);
-    return "Hello, $params[0]";
-});
+Route::get('/articles', Articles::class, 'show');
+Route::get('/articles/:slug', Articles::class, 'showOne');
 
 Route::delete('delete', function() {
     return 'DELETE method';

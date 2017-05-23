@@ -1,12 +1,12 @@
 <?php
 
-namespace T\Services\Foundation\Http;
+namespace T\Services;
 
 use T\Interfaces\Route;
-use T\Services\Http\Request;
-use T\Services\Http\Response;
+use T\Services\Request;
+use T\Services\Response;
 use T\Traits\Service;
-use T\Interfaces\Foundation\Http\Kernel as KernelInterface;
+use T\Interfaces\Kernel as KernelInterface;
 
 class Kernel implements KernelInterface
 {

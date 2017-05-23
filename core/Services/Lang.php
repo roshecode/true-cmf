@@ -1,5 +1,5 @@
 <?php
-namespace T\Services\Multilingual;
+namespace T\Services;
 
 use T\Interfaces\Lang as LangInterface;
 use T\Interfaces\FS;

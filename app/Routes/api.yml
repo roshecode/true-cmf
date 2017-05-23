@@ -4,9 +4,9 @@
   controller: Dashboard
   action: latestActivity
 
-- path: articles
+- path: /articles
   controller: Articles
-  action: getAll
+  action: showAll
   children:
   - path: :slug
-    action: getBySlug
+    action: showOne
