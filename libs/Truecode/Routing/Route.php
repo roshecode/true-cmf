@@ -13,13 +13,22 @@ class Route
 
     protected const REGEX_DELIMITER = ':';
     protected const VARIABLE_DELIMITER = ':';
-    protected const ROUTES_CHUNK_LIMIT = 128;
+    protected const ROUTES_CHUNK_LIMIT = 96;
     protected const ROUTES_SPLIT_REGEX = '/(?:(?>\\\)\/|[^\/\s])+/i';
 
     private $backtrackLimit; // TODO: add mechanism for regex length limiting
 
     protected $routes = [];
-    protected $count  = -1;
+//    protected $count  = -1;
+    protected $counts  = [
+        self::DELETE    => 0,
+        self::GET       => 0,
+        self::HEAD      => 0,
+        self::OPTIONS   => 0,
+        self::PATCH     => 0,
+        self::POST      => 0,
+        self::PUT       => 0
+    ];
     protected $tail;
 
     public function __construct() {
@@ -30,7 +39,8 @@ class Route
     protected function add($method, $route, $handler) {
 //        $hash = crc32($route);
         $route[0] == '/' ?: $route = "/$route"; // TODO: check if absolute / relative route
-        $rest  = ++$this->count % static::ROUTES_CHUNK_LIMIT;
+        $count = &$this->counts[$method];
+        $rest  = $count % static::ROUTES_CHUNK_LIMIT;
         $regex = preg_replace_callback(static::ROUTES_SPLIT_REGEX, function ($matches) {
                 $node = &$matches[0];
                 if ($node[0] == static::VARIABLE_DELIMITER) {
@@ -39,10 +49,10 @@ class Route
                 }
                 return $node;
             }, $route) . "/( {{$rest}})";
-        $route = &$this->routes[$method][($this->count - $rest) / static::ROUTES_CHUNK_LIMIT];
+        $route = &$this->routes[$method][(++$count - $rest) / static::ROUTES_CHUNK_LIMIT];
         $rest
-            ? $route[0] = "$regex|$route[0]"
-//            ? $route[0] .= "|$regex"
+//            ? $route[0] = "$regex|$route[0]"
+            ? $route[0] .= "|$regex"
             : $route = \SplFixedArray::fromArray([
                 $regex,
                 new \SplFixedArray(static::ROUTES_CHUNK_LIMIT)
@@ -59,20 +69,19 @@ class Route
     public function make($method, $uri) {
         $matches = [];
         $routes  = &$this->routes[$method];
-        for ($i = count($routes) - 1; $i >= 0, $route = &$routes[$i]; --$i) {
-            if (preg_match("~^(?|{$route[0]})~", "$uri$this->tail", $matches)) {
-                //unset($matches[0]);
-                array_shift($matches);
-                return [$route[1][strlen(array_pop($matches))], &$matches];
-            }
-        }
-//        foreach ($routes as &$route) {
+//        for ($i = count($routes) - 1; $i >= 0, $route = &$routes[$i]; --$i) {
 //            if (preg_match("~^(?|{$route[0]})~", "$uri$this->tail", $matches)) {
-////                unset($matches[0]);
 //                array_shift($matches);
 //                return [$route[1][strlen(array_pop($matches))], &$matches];
 //            }
 //        }
+        foreach ($routes as &$route) {
+            if (preg_match("~^(?|{$route[0]})~", "$uri$this->tail", $matches)) {
+                array_shift($matches);
+//                var_dump($route); die;
+                return [$route[1][strlen(array_pop($matches))], &$matches];
+            }
+        }
         return [function() {echo 'Not found';}, [404]];
     }
 

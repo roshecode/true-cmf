@@ -16,9 +16,6 @@ if (file_exists($servicesConfigFile)) {
     $box = new \T\Services\Box();
     $box->pack(include $servicesConfigFile);
 
-    $user = $box->make(App\Models\User::class);
-    var_dump($user->first()->name);
-
 //    $box->make(\T\Interfaces\Route::class)->
 //    $box[\T\Interfaces\Route::class]->
 //    \T\Facades\Box::
