@@ -2,20 +2,24 @@
 
 namespace App\Controllers;
 
+use T\Facades\Box;
 use T\Facades\Route;
+use T\Services\Response;
 
 //$route = \T\Facades\Box::make(\T\Interfaces\Route::class);
 
-Route::get('/', function() {
-    return 'Here we will return latest activity';
+//Route::get('api/users/:slug', function($params) {
+//
+//});
+
+Route::get('api/users/:slug', function($params) {
+    $user = $this->box->make(\App\Models\User::class)->first(['slug' => $params[0]]);
+    $this->box->make(Response::class)->headers->set('Content-Type', 'application/json');
+    return $user ? json_encode($user) : "There are no users with slug $params[0]";
 });
 
-Route::get('user/:slug', function($params) {
-    echo 'Hello, ' . $params[0] . '! How are you?';
-});
-
-Route::get('/articles', Articles::class, 'show');
-Route::get('/articles/:slug', Articles::class, 'showOne');
+Route::get('api/articles', Articles::class, 'show');
+Route::get('api/articles/:slug', Articles::class, 'showOne');
 
 Route::delete('delete', function() {
     return 'DELETE method';

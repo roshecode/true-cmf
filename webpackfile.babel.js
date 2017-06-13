@@ -1,0 +1,153 @@
+'use strict';
+
+import webpack from 'webpack';
+import path from 'path';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import ProgressBarPlugin from 'progress-bar-webpack-plugin';
+
+let NODE_ENV = process.env.NODE_ENV || 'development';
+
+const extractCSS = new ExtractTextPlugin('css/style.css');
+// const extractDocs = new ExtractTextPlugin('docs/docs.md');
+
+export default {
+    context: path.resolve(__dirname, './resources'),
+
+    entry: {
+        main:    './scripts/main',
+        // common: './js/common',
+        style:  './styles/style.pcss'
+    },
+
+    output: {
+        path: `${__dirname}/public`,
+        publicPath: '/',
+        filename: 'js/[name].js',
+        // library: '[name]' // add global variable
+    },
+
+    resolve: {
+        alias: {
+            'vue$': 'vue/dist/vue.common.js'
+        },
+        extensions: ['.html', '.js', '.vue', '.json', '.yml', '.png']
+    },
+
+    watch: NODE_ENV === 'development',
+
+    devtool: NODE_ENV === 'development' ? 'inline-source-map' : null,
+
+    module: {
+        rules: [
+            // {test: /\.js$/, exclude: /node_modules/, loader: 'eslint', enforce: 'pre'},
+            // {test: /\.vue$/, exclude: /node_modules/, loader: 'eslint', enforce: 'pre'},
+
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                use: 'babel-loader'
+            },
+            {
+                test: /\.vue$/,
+                loader: 'vue-loader',
+                options: {
+                    loaders: {
+                        css: extractCSS.extract({
+                            fallback: 'vue-style-loader',
+                            use: 'css-loader'
+                        }),
+                        postcss: extractCSS.extract({
+                            use: [
+                                {
+                                    loader: 'css-loader',
+                                    options: {
+                                        importLoaders: 1
+                                    },
+                                },
+                                'postcss-loader'
+                            ],
+                            fallback: 'vue-style-loader'
+                        }),
+                        // docs: extractDocs.extract('raw-loader')
+                    },
+                    // cssModules: {
+                    //     localIdentName: '[path][name]---[local]---[hash:base64:5]',
+                    //     camelCase: true
+                    // }
+                }
+            },
+            {
+                test: /\.html$/,
+                use: 'html-loader'
+            },
+            {
+                test: /\.json/,
+                use: 'json-loader'
+            },
+            {
+                test: /\.yml$/,
+                use: ['json-loader', 'yaml-loader']
+            },
+            {
+                test: /\.css$/,
+                use: extractCSS.extract({
+                    fallback: 'style-loader',
+                    use: 'css-loader'
+                })
+            },
+            {
+                test: /\.pcss$/,
+                use: extractCSS.extract({
+                    fallback: 'style-loader',
+                    use: [
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                importLoaders: 1
+                            },
+                        },
+                        'postcss-loader'
+                    ]
+                })
+            },
+            {
+                test: /\.(gif|jpg|png)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: 'images/[name].[ext]'
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+
+    // watchOptions: {
+    //     agregateTimeout: 100 // set less for more speed
+    // },
+
+    plugins: [
+        // new webpack.NoErrorsPlugin(),
+        new webpack.DefinePlugin({
+            NODE_ENV: JSON.stringify(NODE_ENV)
+        }),
+        // new webpack.optimize.CommonsChunkPlugin({
+        //     name: 'common',
+        //     // filename: 'common.js',
+        //     // async: true,
+        //     // minChunk: Infinity
+        //     minChunk: 3
+        // }),
+        new webpack.LoaderOptionsPlugin({
+            // minimize: true,
+            debug: true
+        }),
+        new ProgressBarPlugin({
+            complete: ':'
+        }),
+        extractCSS,
+        // extractDocs
+    ],
+};

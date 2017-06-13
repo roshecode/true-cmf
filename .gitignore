@@ -4,4 +4,7 @@ vendor
 build
 cache
 logs
+public/js
+public/css
 tmp
+yarn.lock

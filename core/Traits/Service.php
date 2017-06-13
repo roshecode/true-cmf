@@ -11,12 +11,12 @@ trait Service
     protected $box;
     
     /**
-     * @param Box $container
+     * @param Box $box
      *
      * @return Service
      */
-    final public function __register(Box $container) {
-        $this->box = $container;
+    final public function __register(Box $box) {
+        $this->box = $box;
         return $this;
     }
     

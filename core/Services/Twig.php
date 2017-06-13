@@ -63,7 +63,7 @@ class Twig implements ViewInterface
     public function render($layout, $data = null) {
 //        $structure = Yaml::parse(file_get_contents($data));
         $this->currentThemeName = $this->box->make('Config')->getCurrentThemeName();
-        echo $this->engine->render($this->currentThemeName . '/' .
+        return $this->engine->render($this->currentThemeName . '/' .
                                    $layout . '.' . $this->fileExtension, $this->create($layout, $data));
     }
     

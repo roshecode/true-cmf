@@ -29,7 +29,7 @@ return [
         ],
     ],
     'singletons' => [
-        'FS' => [
+        T\Interfaces\FS::class => [
             'bind' => T\Services\FS::class,
             'arguments' => [
                 BASEDIR . '/'
@@ -41,6 +41,15 @@ return [
             'arguments' => [
                 'mongodb://localhost:27017',
                 'rosem'
+            ]
+        ],
+        T\Interfaces\Hash::class => [
+            'alias' => 'Hash',
+            'bind' => T\Services\Hash::class,
+            'arguments' => [
+                [
+                    'cost' => 10
+                ]
             ]
         ],
         T\Interfaces\View::class    => [

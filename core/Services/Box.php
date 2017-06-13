@@ -32,7 +32,9 @@ class Box implements ContainerInterface, ArrayAccess
      * @var array
      */
     public $bindings = [];
+
     public $resolved = [];
+
     public $startTime;
     
     /**
@@ -299,10 +301,10 @@ class Box implements ContainerInterface, ArrayAccess
         });
     }
     
-    public function __destruct() {
-        $elapsed = (microtime(true) - $this->startTime) * 1000;
-        echo "<br /><br /><hr />Container execution time : $elapsed ms";
-    }
+//    public function __destruct() {
+//        $elapsed = (microtime(true) - $this->startTime) * 1000;
+//        echo "<br /><br /><hr />Container execution time : $elapsed ms";
+//    }
 
     /**
      * Whether a offset exists

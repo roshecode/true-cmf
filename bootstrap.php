@@ -3,8 +3,6 @@ define('BASEDIR', __DIR__);
 
 use T\Interfaces\Kernel;
 
-require_once __DIR__ . '/helpers.php';
-
 // set errors handler
 $whoops = new \Whoops\Run;
 $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
@@ -15,11 +13,7 @@ $servicesConfigFile = __DIR__ . '/config/services.php';
 if (file_exists($servicesConfigFile)) {
     $box = new \T\Services\Box();
     $box->pack(include $servicesConfigFile);
-
-//    $box->make(\T\Interfaces\Route::class)->
-//    $box[\T\Interfaces\Route::class]->
-//    \T\Facades\Box::
-} else throw new Exception('File to pack not found');
+} else throw new Exception('Services configuration file not found');
 
 // launch app
 $kernel = $box[Kernel::class];

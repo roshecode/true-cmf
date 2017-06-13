@@ -7,21 +7,72 @@ use T\Interfaces\DB;
 abstract class Model
 {
     /**
-     * @var \MongoDB\Collection
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
+
+    /**
+     * The storage format of the model's date columns.
+     *
+     * @var string
+     */
+    protected $dateFormat = 'U';
+
+    const CREATED_AT = 'created_at';
+    const UPDATED_AT = 'updated_at';
+
+    /**
+     * @var \MongoDB\Collection $data
      */
     protected $data;
+
+    /**
+     * Collection name
+     *
+     * @var string $collection
+     */
     protected $collection;
 
+    /**
+     * Model constructor.
+     *
+     * @param DB $db
+     */
     public function __construct(DB $db)
     {
         $this->data = $db->{$this->collection};
     }
 
-    public function first() {
-        return $this->data->findOne();
+    /**
+     * Get first model
+     *
+     * @param array $filter
+     * @param array $options
+     * @return array|null|object
+     */
+    public function first($filter = [], array $options = []) {
+        return $this->data->findOne($filter, $options);
     }
 
-    public function find() {
-        return $this->data->find(...func_get_args());
+    /**
+     * Get all models
+     *
+     * @return \MongoDB\Driver\Cursor
+     */
+    public function all() {
+        return $this->data->find();
+    }
+
+    /**
+     * Find model by parameters
+     *
+     * @param array $filter
+     * @param array $options
+     * @return \MongoDB\Driver\Cursor
+     */
+    public function find($filter = [], array $options = []) {
+        return $this->data->find($filter, $options);
     }
 }

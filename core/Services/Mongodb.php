@@ -14,7 +14,8 @@ class Mongodb /*extends \Truecode\Filesystem\DB*/ implements DBInterface
 
     public function __construct($uri, $databaseName)
     {
-        $this->db = (new Client($uri))->$databaseName;
+        $client = new Client($uri);
+        $this->db = $client->$databaseName;
     }
 
     public function __get($name) {
