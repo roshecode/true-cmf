@@ -1,6 +1,6 @@
 "use strict";
 
-// require('../css/style.pcss');
+require('../styles/root.pcss');
 // require('./global/plugins');
 // require('./global/interceptors');
 // require('./global/components');

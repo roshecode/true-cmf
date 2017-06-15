@@ -7,7 +7,7 @@ import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 
 let NODE_ENV = process.env.NODE_ENV || 'development';
 
-const extractCSS = new ExtractTextPlugin('css/style.css');
+const extractCSS = new ExtractTextPlugin('css/[name].css');
 // const extractDocs = new ExtractTextPlugin('docs/docs.md');
 
 export default {
@@ -28,6 +28,7 @@ export default {
 
     resolve: {
         alias: {
+            styles: path.resolve(__dirname, 'resources/styles'),
             'vue$': 'vue/dist/vue.common.js'
         },
         extensions: ['.html', '.js', '.vue', '.json', '.yml', '.png']
@@ -50,6 +51,8 @@ export default {
             {
                 test: /\.vue$/,
                 loader: 'vue-loader',
+                // include: path.join(__dirname, 'resources'),
+                exclude: /node_modules/,
                 options: {
                     loaders: {
                         css: extractCSS.extract({
@@ -57,6 +60,7 @@ export default {
                             use: 'css-loader'
                         }),
                         postcss: extractCSS.extract({
+                            fallback: 'vue-style-loader',
                             use: [
                                 {
                                     loader: 'css-loader',
@@ -65,8 +69,7 @@ export default {
                                     },
                                 },
                                 'postcss-loader'
-                            ],
-                            fallback: 'vue-style-loader'
+                            ]
                         }),
                         // docs: extractDocs.extract('raw-loader')
                     },

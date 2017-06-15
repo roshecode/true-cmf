@@ -1,0 +1,24 @@
+:root {
+    /*Breakpoints*/
+    @custom-media --tiny        only screen and (width < 34em);
+    @custom-media --small       only screen and (width >= 34em) and (width < 48em);
+    @custom-media --medium      only screen and (width >= 48em) and (width < 62em);
+    @custom-media --large       only screen and (width >= 62em) and (width < 75em);
+    @custom-media --huge        only screen and (width >= 75em);
+    @custom-media --small-up    only screen and (width >= 34em);
+    @custom-media --medium-up   only screen and (width >= 48em);
+    @custom-media --large-up    only screen and (width >= 62em);
+    @custom-media --huge-up     only screen and (width >= 75em);
+    @custom-media --tiny-down   only screen and (width < 34em);
+    @custom-media --small-down  only screen and (width < 48em);
+    @custom-media --medium-down only screen and (width < 62em);
+    @custom-media --large-down  only screen and (width < 75em);
+
+    @custom-selector :--input input, .input, textarea, [role=textbox];
+    @custom-selector :--button button, .button, [role=button];
+    @custom-selector :--control :--input, :--button;
+    @custom-selector :--submit input[type=submit], button[type=submit];
+    @custom-selector :--icon i;
+    @custom-selector :--h h1, h2, h3, h4, h5, h6;
+    @custom-selector :--placeholder ::placeholder, [aria-placeholder];
+}

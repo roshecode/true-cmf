@@ -13,13 +13,11 @@ class Users
         foreach ($usersCursor as $user) {
             $users[] = $user;
         }
-        Box::make(\T\Services\Response::class)->headers->set('Content-Type', 'application/json');
-        return $users ? json_encode($users) : 'There are no any user';
+        return $users ? $users : 'There are no any user';
     }
 
     public function withSlug($slug) {
         $user = Box::make(User::class)->first(['slug' => $slug]);
-        Box::make(\T\Services\Response::class)->headers->set('Content-Type', 'application/json');
-        return $user ? json_encode($user) : "There is no user with slug '$slug'";
+        return $user ? $user : "There is no user with slug '$slug'";
     }
 }
