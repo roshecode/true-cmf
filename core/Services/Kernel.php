@@ -21,17 +21,19 @@ class Kernel implements KernelInterface
 //        $type = self::MASTER_REQUEST,
 //        $catch = true
     ) {
-        $response = $this->box[Route::class]->make($request->getMethod(), $request->getRequestPath());
-//        return new Response(
-//            $response[0]($response[1]),
-//            Response::HTTP_OK,
-//            ['content-type' => 'text/html']
-////            ['content-type' => 'application/json']
-//        );
+        $make = $this->box->make(Route::class)->make($request->getMethod(), $request->getRequestPath());
+        if (is_array($make[0])) {
+            $class = key($make[0]);
+            $method = current($make[0]);
+            $content = $this->box->make($class)->$method(...$make[1]);
+        } else {
+            $content = call_user_func_array($make[0], $make[1]);
+        }
         return $this->box->make(Response::class, [
-            $response[0]($response[1]),
+            $content,
             Response::HTTP_OK,
             ['content-type' => 'text/html']
+//            ['content-type' => 'application/json']
         ]);
     }
 

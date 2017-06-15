@@ -32,8 +32,8 @@ class RouteCollection
             }, $route) . "/( {{$rest}})";
         $route = &$this->routes[(++$count - $rest) / static::ROUTES_CHUNK_LIMIT];
         $rest
-//            ? $route[0] = "$regex|$route[0]"
-            ? $route[0] .= "|$regex"
+            ? $route[0] = "$regex|$route[0]"
+//            ? $route[0] .= "|$regex"
             : $route = \SplFixedArray::fromArray([
                 $regex,
                 new \SplFixedArray(static::ROUTES_CHUNK_LIMIT)
@@ -43,18 +43,18 @@ class RouteCollection
 
     public function get($uri) {
         $matches = [];
-//        for ($i = count($routes) - 1; $i >= 0, $route = &$routes[$i]; --$i) {
-//            if (preg_match("~^(?|{$route[0]})~", "$uri$this->tail", $matches)) {
-//                array_shift($matches);
-//                return [$route[1][strlen(array_pop($matches))], &$matches];
-//            }
-//        }
-        foreach ($this->routes as &$route) {
+        for ($i = count($this->routes) - 1; $i >= 0, $route = &$this->routes[$i]; --$i) {
             if (preg_match("~^(?|{$route[0]})~", "$uri$this->tail", $matches)) {
                 array_shift($matches);
                 return [$route[1][strlen(array_pop($matches))], &$matches];
             }
         }
-        return [function() {echo 'Not found';}, [404]];
+//        foreach ($this->routes as &$route) {
+//            if (preg_match("~^(?|{$route[0]})~", "$uri$this->tail", $matches)) {
+//                array_shift($matches);
+//                return [$route[1][strlen(array_pop($matches))], &$matches];
+//            }
+//        }
+        return [function($errorCode) {return "$errorCode Not found";}, [404]];
     }
 }

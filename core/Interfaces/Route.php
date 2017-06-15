@@ -47,15 +47,14 @@ interface Route extends Service
     public function match($methods, string $route, $handler);
 
     /**
-     * @param string|\Closure $prefixOrHandler
-     * @param string|\Closure $handler
+     * @param string $method
+     * @param string $route
      */
-    public function group($prefixOrHandler, $handler);
+    public function make($method, string $route);
 
     /**
-     * @param string|array $methods
-     * @param string $route
-     * @param string|array|\Closure $handler
+     * @param string $prefix
+     * @param string|array|\Closure $group
      */
-    public function make($methods, string $route, $handler);
+    public function prefix(string $prefix, $group);
 }

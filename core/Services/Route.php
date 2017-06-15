@@ -29,6 +29,6 @@ class Route extends RouteCollector implements RouterInterface
      * @param string|array|\Closure $handler
      */
     public function api($handler) {
-        $this->group('api', $handler);
+        $this->prefix('/api', $handler);
     }
 }

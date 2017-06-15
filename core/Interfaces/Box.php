@@ -3,7 +3,7 @@ namespace T\Interfaces;
 
 use Closure;
 
-interface Box
+interface Box //extends Service
 {
     /**
      * Register an existing instance as shared in the container.
@@ -47,7 +47,7 @@ interface Box
      * @param string $alias
      * @param string $abstract
      */
-    public function alias($alias, $abstract);
+    public function alias(string $alias, $abstract);
     
     /**
      * Wrap function under makeInstance

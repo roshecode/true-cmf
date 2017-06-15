@@ -29,7 +29,7 @@ class Config extends MultiFileArrayObject implements ConfigInterface
      * @inheritdoc
      */
     public function setLanguage(string $lang) {
-        $this->box[Lang::class]->load($lang);
+        $this->box->make(Lang::class)->load($lang);
     }
     
     /**

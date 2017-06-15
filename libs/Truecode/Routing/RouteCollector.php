@@ -51,19 +51,19 @@ class RouteCollector
     }
 
     /**
-     * @param string|\Closure $prefixOrHandler
-     * @param string|\Closure $handler
+     * @param string|\Closure $prefix
+     * @param string|array|\Closure $group
      */
-    public function group($prefixOrHandler, $handler = null) {
-        $this->prefix = ($prefixOrHandler[0] === '/'
-            ? static::normalize($prefixOrHandler)
-            : $this->prefix . static::normalize($prefixOrHandler));
-        is_string($handler) ? call_user_func($handler) : $handler();
+    public function prefix(string $prefix, $group) {
+        $this->prefix = ($prefix[0] === '/'
+            ? static::normalize($prefix)
+            : $this->prefix . static::normalize($prefix));
+        is_callable($group) ? $group() : call_user_func($group);
         $this->prefix = '';
     }
 
     /**
-     * @param $method
+     * @param string $method
      * @param string $route
      *
      * @return array
@@ -77,7 +77,7 @@ class RouteCollector
      * @param string $route
      * @param string|array|\Closure $handler
      */
-    public function match($methods, $route, $handler) {
+    public function match($methods, string $route, $handler) {
         foreach ((array) $methods as $method) {
             $this->add($method, $route, $handler);
         }

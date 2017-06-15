@@ -29,6 +29,9 @@ return [
         ],
     ],
     'singletons' => [
+//        T\Interfaces\Box::class => [
+//            'bind' => T\Services\Box::class
+//        ],
         T\Interfaces\FS::class => [
             'bind' => T\Services\FS::class,
             'arguments' => [

@@ -7,10 +7,13 @@ use ReflectionParameter;
 use SplFixedArray;
 use T\Abstracts\Facade;
 use T\Interfaces\Box as ContainerInterface;
-use T\Interfaces\Service;
+use T\Interfaces\Service as ServiceInterface;
+use T\Traits\Service;
 
 class Box implements ContainerInterface, ArrayAccess
 {
+    //use Service;
+
     const MAKE  = 0;
     const SHARE = 1;
     const STACK = 2;
@@ -43,10 +46,7 @@ class Box implements ContainerInterface, ArrayAccess
     public function __construct() {
         $this->startTime = microtime(true);
         Facade::__register($this);
-    }
-    
-    public function getInstance() {
-        return $this;
+        $this->instance(\T\Interfaces\Box::class, $this);
     }
     
     protected function error() {
@@ -98,7 +98,7 @@ class Box implements ContainerInterface, ArrayAccess
     /**
      * {@inheritdoc}
      */
-    public function alias($alias, $abstract) {
+    public function alias(string $alias, $abstract) {
         $this->bindings[$alias] = &$this->bindings[$abstract];
     }
 
@@ -115,9 +115,12 @@ class Box implements ContainerInterface, ArrayAccess
             ? $this->bindings[$abstract][self::MAKE]($params)
             : $this->create($abstract, $params);
     }
-    
+
     /**
-     * {@inheritdoc}
+     * @param string $abstract
+     * @param array $params
+     *
+     * @return mixed
      */
     public function make($abstract, array $params = []) {
         return $this->makeInstance($abstract, $params);
@@ -131,9 +134,11 @@ class Box implements ContainerInterface, ArrayAccess
         $this->bind($abstract);
         return $this->make($abstract, $params);
     }
-    
+
     /**
-     * {@inheritdoc}
+     * @param string $abstract
+     *
+     * @return bool
      */
     public function isShared($abstract) {
         return isset($this->bindings[$abstract]) && !!$this->bindings[$abstract][self::SHARE];
@@ -212,7 +217,7 @@ class Box implements ContainerInterface, ArrayAccess
             ? $reflectionClass->newInstanceArgs($this->build($stack
                 ?: $stack = $this->getStack($reflectionParams), $params))
             : new $concrete;
-        return $instance instanceof Service ? $instance->__register($this) : $instance;
+        return $instance instanceof ServiceInterface ? $instance->__register($this) : $instance;
     }
     
     /**
