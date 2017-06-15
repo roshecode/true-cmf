@@ -24,7 +24,8 @@
     "autoload": {
         "psr-4": {
             "T\\": "core/",
-            "App\\": "app/"
+            "App\\": "app/",
+            "Truecode\\": "libs/Truecode/"
         }
     }
 }

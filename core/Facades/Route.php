@@ -8,8 +8,8 @@ use T\Abstracts\Facade;
  * Class Route
  * @package T\Facades
  *
- * @method static get(string $route, string|\Closure $handler)
- * @see \Truecode\Routing\Route::get()
+ * @method static get(string $route, string|array|\Closure $handler)
+ * @see \T\Interfaces\Route::get()
  */
 class Route extends Facade
 {

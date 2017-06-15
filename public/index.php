@@ -5,7 +5,6 @@ ini_set('display_startup_errors', true);
 error_reporting(E_ALL);
 
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../libs/autoload.php';
 require_once __DIR__ . '/../bootstrap.php';
 
 //$client = new MongoDB\Client("mongodb://localhost:27017");

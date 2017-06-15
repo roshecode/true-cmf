@@ -3,8 +3,9 @@ namespace T\Services;
 
 use T\Interfaces\Route as RouterInterface;
 use T\Traits\Service;
+use Truecode\Routing\RouteCollector;
 
-class Route extends \Truecode\Routing\Route implements RouterInterface
+class Route extends RouteCollector implements RouterInterface
 {
     use Service;
 
@@ -14,5 +15,20 @@ class Route extends \Truecode\Routing\Route implements RouterInterface
 //        if (!($parse_uri = parse_url($_SERVER['REQUEST_URI']))) throw new \Exception('Invalid uri');
 //        $path = &$parse_uri['path'];
 //        $this->make($_SERVER['REQUEST_METHOD'], $path)[0]();
+    }
+
+    /**
+     * @param string $route
+     * @param string|array|\Closure $handler
+     */
+    public function any(string $route, $handler) {
+        $this->match(['DELETE', 'GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'PUT'], $route, $handler);
+    }
+
+    /**
+     * @param string|array|\Closure $handler
+     */
+    public function api($handler) {
+        $this->group('api', $handler);
     }
 }

@@ -57,7 +57,7 @@ interface Box
      *
      * @return mixed
      */
-    public function make($abstract, array $params);
+    public function make($abstract, array $params = []);
     
     /**
      * Register a binding first and then make an instance
@@ -67,7 +67,7 @@ interface Box
      *
      * @return mixed
      */
-    public function create($abstract, array $params);
+    public function create($abstract, array $params = []);
     
     /**
      * Determine if a given type is shared.

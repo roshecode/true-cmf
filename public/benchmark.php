@@ -7,7 +7,8 @@ error_reporting(E_ALL);
 //});
 require __DIR__ . '/../vendor/nikic/fast-route/src/bootstrap.php';
 require __DIR__ . '/../vendor/kint-php/kint/build/kint.php';
-require __DIR__ . '/../libs/Truecode/Routing/Route.php';
+require __DIR__ . '/../libs/Truecode/Routing/RouteCollector.php';
+require __DIR__ . '/../libs/Truecode/Routing/RouteCollection.php';
 /*$options = [
     'dataGenerator' => 'FastRoute\\OldDataGenerator',
     'dispatcher' => 'FastRoute\\OldDispatcher',
@@ -34,7 +35,7 @@ $nMatches = 30000;
 
 // MY ROUTER ===========================================================================================================
 
-$truerouter = new Truecode\Routing\Route();
+$truerouter = new Truecode\Routing\RouteCollector();
     for ($i = 0, $str = 'a'; $i < $nRoutes; $i++, $str++) {
         $truerouter->match('GET', '' . $str . '/:arg', 'handler' . $i);
         $lastStr = $str;
@@ -116,7 +117,7 @@ $args = implode('/', array_map(function($i) { return ':arg' . $i; }, range(1, $n
 
 // MY ROUTER ===========================================================================================================
 
-$truerouter = new Truecode\Routing\Route();
+$truerouter = new Truecode\Routing\RouteCollector();
     for ($i = 0, $str = 'a'; $i < $nRoutes; $i++, $str++) {
         $truerouter->match('GET', '' . $str . '/' . $args, 'handler' . $i);
         $lastStr = $str;
