@@ -2,6 +2,11 @@ import Main from '../../Views/Main.vue';
 
 export default [
     {
+        path: '*',
+        name: 404,
+        component: '404'
+    },
+    {
         path: '/',
         name: 'home',
         component: Main

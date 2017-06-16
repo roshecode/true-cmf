@@ -43,19 +43,17 @@
 </script>
 
 <style lang="postcss">
-    /*@import "~styles/root.pcss";*/
-
     .user {
         display: grid;
         grid-template-columns: auto 1fr;
         grid-gap: .5rem;
 
-        & > *:first-child, & > *:last-child {
+        & > :--first-last-child {
             grid-column: span 2;
         }
 
-        /*& > :--submit {*/
-            /*margin-top: 1em;*/
-        /*}*/
+        & > :--submit {
+            margin-top: 1rem;
+        }
     }
 </style>

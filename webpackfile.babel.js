@@ -7,7 +7,7 @@ import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 
 let NODE_ENV = process.env.NODE_ENV || 'development';
 
-const extractCSS = new ExtractTextPlugin('css/[name].css');
+const extractCSS = new ExtractTextPlugin('css/style.css');
 // const extractDocs = new ExtractTextPlugin('docs/docs.md');
 
 export default {
@@ -68,7 +68,13 @@ export default {
                                         importLoaders: 1
                                     },
                                 },
-                                'postcss-loader'
+                                'postcss-loader',
+                                {
+                                    loader: 'sass-resources-loader',
+                                    options: {
+                                        resources: path.resolve(__dirname, 'resources/styles/root.pcss')
+                                    }
+                                }
                             ]
                         }),
                         // docs: extractDocs.extract('raw-loader')
