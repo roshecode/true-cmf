@@ -1,5 +1,10 @@
 <?php
 return [
+    'instances' => [
+        T\Interfaces\Request::class => [
+            'bind' => T\Services\Request::capture()
+        ]
+    ],
     'interfaces' => [
         Twig_LoaderInterface::class => Twig_Loader_Filesystem::class,
         T\Interfaces\FS::class => [
@@ -31,6 +36,9 @@ return [
     'singletons' => [
 //        T\Interfaces\Box::class => [
 //            'bind' => T\Services\Box::class
+//        ],
+//        T\Interfaces\Request::class => [
+//            'bind' => T\Services\Request::class
 //        ],
         T\Interfaces\FS::class => [
             'bind' => T\Services\FS::class,

@@ -2,26 +2,26 @@
 
 namespace T\Services;
 
-use T\Interfaces\Route;
-use T\Services\Request;
-use T\Services\Response;
-use T\Traits\Service;
 use T\Interfaces\Kernel as KernelInterface;
+use T\Interfaces\Route as RouteInteface;
+use T\Interfaces\Request as RequestInterface;
+use T\Traits\Service;
 
 class Kernel implements KernelInterface
 {
     use Service;
 
     /**
-     * @param Request $request
+     * @param RequestInterface $request
      * @return Response A Response instance
      */
     public function handle(
-        Request $request
+        RequestInterface $request
 //        $type = self::MASTER_REQUEST
 //        $catch = true
     ) {
-        $make = $this->box->make(Route::class)->make($request->getMethod(), $request->getRequestPath());
+//        $this->box->instance(\T\Interfaces\Request::class, $request);
+        $make = $this->box->make(RouteInteface::class)->make($request->getMethod(), $request->getRequestPath());
         $content = is_array($make[0])
             ? $this->box->make(key($make[0]))->{current($make[0])}(...$make[1])
             : call_user_func_array($make[0], $make[1]);
@@ -31,7 +31,7 @@ class Kernel implements KernelInterface
         );
     }
 
-    public function terminate(Request $request, Response $response) {
+    public function terminate(RequestInterface $request, Response $response) {
         // todo
     }
 }

@@ -75,4 +75,8 @@ abstract class Model
     public function find($filter = [], array $options = []) {
         return $this->data->find($filter, $options);
     }
+
+    public function update($filter, $update) {
+        return $this->data->updateOne($filter, $update);
+    }
 }

@@ -1,12 +1,12 @@
 <template>
-    <form class="user">
+    <form class="user" ref="user" @submit.prevent="post">
         <h2>{{ `${user.lastName} ${user.firstName} ${user.middleName}` }}</h2>
-        <label for="firstName">First name: </label>
-        <input id="firstName" type="text" :value="user.firstName">
-        <label for="middleName">Middle name: </label>
-        <input id="middleName" type="text" :value="user.middleName">
-        <label for="lastName">First name: </label>
-        <input id="lastName" type="text" :value="user.lastName">
+        <label for="first-name">First name: </label>
+        <input id="first-name" name="firstName" type="text" :value="user.firstName">
+        <label for="middle-name">Middle name: </label>
+        <input id="middle-name" name="middleName" type="text" :value="user.middleName">
+        <label for="last-name">First name: </label>
+        <input id="last-name" name="lastName" type="text" :value="user.lastName">
         <input type="submit" value="update">
     </form>
 </template>
@@ -23,11 +23,18 @@
             }
         },
 
+        methods: {
+            post() {
+                fetch(`/api${this.$route.fullPath}`, {
+                    method: 'POST',
+                    body: new FormData(this.$refs.user)
+                });
+            }
+        },
+
         beforeRouteEnter(to, from, next) {
-            console.log(to);
             fetch(`/api${to.fullPath}`).then(response => {
                 response.json().then(data => {
-                    console.log(data);
                     next(vm => vm.user = data);
                 });
             });

@@ -2,16 +2,16 @@
 
 namespace T\Interfaces;
 
-use T\Services\Response;
-use T\Services\Request;
+use T\Interfaces\Response as ResponseInterface;
+use T\Interfaces\Request as RequestInterface;
 
 interface Kernel extends Service {
     /**
-     * @param Request $request
-     * @return Response A Response instance
+     * @param RequestInterface $request
+     * @return ResponseInterface A Response instance
      */
     public function handle(
-        Request $request
+        RequestInterface $request
 //        $type = self::MASTER_REQUEST,
 //        $catch = true
     );
