@@ -1,5 +1,3 @@
-"use strict";
-
 // require('./global/plugins');
 // require('./global/interceptors');
 // require('./global/components');
