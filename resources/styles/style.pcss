@@ -1,3 +1,119 @@
+@import "root.pcss";
+@import "reset.pcss";
+
+@namespace svg url(http://www.w3.org/2000/svg);
+
+:root, body {
+    height: 100%;
+}
+
 body {
-    background: silver;
+    display: flex;
+    font-family: 'Abel', sans-serif;
+    font-size: 16px;
+    background: #0F141A;
+    color: #333;
+}
+
+h4, p, label {
+    margin: .5rem;
+}
+
+h4 {
+    font-size: 1.6rem;
+}
+
+h5 {
+    font-size: 0.78594em;
+    line-height: 1.5;
+}
+
+h6, small {
+    //font-size: .8rem;
+    font-size: 0.64379em;
+    line-height: 1.25;
+}
+
+header {
+    margin-bottom: .5rem;
+}
+
+footer {
+    margin-top: .5rem;
+}
+
+form {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    //grid-gap: .8rem;
+    //align-items: start;
+
+    & > header, & > footer {
+        grid-column: span 2;
+    }
+}
+
+label {
+    padding: .4rem .2rem;
+}
+
+form, :--control, .popup {
+    border-radius: .2rem;
+}
+
+:--button {
+    //display: inline-block;
+    text-align: center;
+    padding: 0.5rem 1rem;
+    background: #466D69;
+    color: white;
+
+    &:hover {
+        cursor: pointer;
+        background: #3e605c;
+    }
+}
+
+:--submit {
+    text-transform: uppercase;
+}
+
+:--input {
+    padding: .4rem .6rem;
+    border: 1px solid lightgrey;
+    background: whitesmoke;
+    color: dimgray;
+}
+
+:--control {
+    margin: .5rem;
+
+    &:focus {
+        box-shadow: 0 0 0 1px #ddd;
+    }
+}
+
+.popup {
+    max-width: 23rem;
+    width: 100%;
+    padding: 1.5rem;
+    background: white;
+    box-shadow: 0 0 1.5rem black;
+
+    & > :first-child {
+        margin-top: 0;
+    }
+
+    & > :last-child {
+        margin-bottom: 0;
+    }
+
+    & header {
+        text-align: right;
+    }
+
+    & footer {
+        display: flex;
+        justify-content: flex-end;
+    }
 }

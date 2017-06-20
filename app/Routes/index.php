@@ -13,6 +13,7 @@ Route::get('::.*', function() {
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Home page</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
 </head>
 <body>
 <div id="app"></div>

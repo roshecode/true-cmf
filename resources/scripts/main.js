@@ -3,6 +3,7 @@
 // require('./global/components');
 // require('./global/directives');
 // require('./global/polyfills');
+// require('./animation');
 
 import Vue from 'vue';
 import router from './router';

@@ -14,12 +14,14 @@
     @custom-media --medium-down only screen and (width < 62em);
     @custom-media --large-down  only screen and (width < 75em);
 
-    @custom-selector :--input input, .input, textarea, [role=textbox];
-    @custom-selector :--button button, .button, [role=button];
-    @custom-selector :--control :--input, :--button;
+    @custom-selector :--input input:not([type=submit]), .input, textarea, [role=textbox], [contenteditable=true];
+    @custom-selector :--button button, .button, input[type=button], input[type=submit], [role=button];
+    @custom-selector :--control input, button, textarea,
+                                .input, .button, .textbox,
+                                [role=button], [role=textbox], [contenteditable=true];
     @custom-selector :--submit input[type=submit], button[type=submit];
     @custom-selector :--first-last-child :first-child, :last-child;
     @custom-selector :--icon i;
     @custom-selector :--h h1, h2, h3, h4, h5, h6;
-    @custom-selector :--placeholder ::placeholder, [aria-placeholder];
+    @custom-selector :--placeholder :placeholder-shown, [aria-placeholder];
 }

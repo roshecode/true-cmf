@@ -4,3 +4,6 @@
 - Session
 - OAuth
 - Slugs generation
+
+popin - relative
+popup - absolute
