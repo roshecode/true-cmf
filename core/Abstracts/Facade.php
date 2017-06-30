@@ -26,7 +26,7 @@ abstract class Facade
      * @param  Box &$box
      * @return void
      */
-    final public static function __register(Box &$box) {
+    final public static function __register(Box $box) {
         static::$box = $box;
     }
 

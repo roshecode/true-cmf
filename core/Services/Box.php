@@ -42,11 +42,16 @@ class Box implements ContainerInterface, ArrayAccess
     
     /**
      * Box constructor.
+     *
+     * @param array|null $config
      */
-    public function __construct() {
+    public function __construct(array $config = null) {
         $this->startTime = microtime(true);
         Facade::__register($this);
-        $this->instance(\T\Interfaces\Box::class, $this);
+        $this->instance(ContainerInterface::class, $this);
+        if ($config) {
+            $this->pack($config);
+        }
     }
     
     protected function error() {
@@ -267,43 +272,47 @@ class Box implements ContainerInterface, ArrayAccess
 //        return $building;
     }
 
-    public function packScope(array $config, \Closure $method) {
-        foreach ($config as $abstract => $params) {
-            if (is_array($params)) {
-                $concrete = $params[self::CONCRETE];
-                if (isset($params[self::ALIAS])) {
-                    $this->alias($params[self::ALIAS], $abstract);
-                }
-                $method($abstract, $concrete,
-                    isset($params[self::ARGUMENTS]) ? $params[self::ARGUMENTS] : []);
-            } else {
-                $method($abstract, $params);
-            }
-        }
-    }
-
-    protected function packScopeFromSelf($scope, \Closure $method) {
+    protected function packScope($scope, \Closure $method) {
         if (isset($this->config[$scope])) {
-            $this->packScope($this->config[$scope], $method);
+            foreach ($this->config[$scope] as $abstract => $params) {
+                if (is_array($params)) {
+                    $concrete = $params[self::CONCRETE];
+                    if (isset($params[self::ALIAS])) {
+                        $this->alias($params[self::ALIAS], $abstract);
+                    }
+                    $method($abstract, $concrete,
+                        isset($params[self::ARGUMENTS]) ? $params[self::ARGUMENTS] : []);
+                } else {
+                    $method($abstract, $params);
+                }
+            }
         }
     }
     
     public function pack(array $config) {
         $this->config = $config;
-        $this->packScopeFromSelf(self::SCOPE_INSTANCES, function ($abstract, $concrete) {
+        /**
+         * @var ServiceInterface[] $bootServices
+         */
+        $bootServices = [];
+        $this->packScope(self::SCOPE_INSTANCES, function ($abstract, $concrete) {
             $this->instance($abstract, $concrete);
         });
-        $this->packScopeFromSelf(self::SCOPE_INTERFACES, function ($abstract, $concrete) {
+        $this->packScope(self::SCOPE_INTERFACES, function ($abstract, $concrete) {
             $this->bind($abstract, $concrete);
         });
-        $this->packScopeFromSelf(self::SCOPE_MUTABLE, function ($abstract, $concrete, $arguments) {
+        $this->packScope(self::SCOPE_MUTABLE, function ($abstract, $concrete, $arguments) use(&$bootServices) {
             $this->mutable($abstract, $concrete);
-            $this->makeInstance($abstract, $arguments)->__boot();
+            $bootServices[] = $this->makeInstance($abstract, $arguments);//->__boot();
         });
-        $this->packScopeFromSelf(self::SCOPE_SINGLETONS, function ($abstract, $concrete, $arguments) {
+        $this->packScope(self::SCOPE_SINGLETONS, function ($abstract, $concrete, $arguments) use(&$bootServices) {
             $this->singleton($abstract, $concrete);
-            $this->makeInstance($abstract, $arguments)->__boot();
+            $bootServices[] = $this->makeInstance($abstract, $arguments);//->__boot();
         });
+        foreach ($bootServices as $service) {
+            $service->__boot();
+        }
+        unset($bootServices);
     }
     
 //    public function __destruct() {
