@@ -1,11 +1,11 @@
 <?php
 namespace Truecode\ArrayObject;
 
-use T\Interfaces\FS;
+use T\Interfaces\FSInterface;
 
 class MultiFileArrayObject extends FileArrayObject
 {
-    public function __construct(FS $fileSystem, $filePaths = null, $separator = '.') {
+    public function __construct(FSInterface $fileSystem, $filePaths = null, $separator = '.') {
         if ($filePaths) {
             $multiData = [];
             if (is_array($filePaths)) {

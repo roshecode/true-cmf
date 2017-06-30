@@ -1,14 +1,13 @@
 <?php
 namespace T\Services;
 
-use T\Interfaces\Lang as LangInterface;
-use T\Interfaces\FS;
+use T\Interfaces\LangInterface;
+use T\Traits\Servant;
 use Truecode\ArrayObject\MultiFileArrayObject;
-use T\Traits\Service;
 
 class Lang extends MultiFileArrayObject implements LangInterface
 {
-    use Service;
+    use Servant;
 
     const WRAP_TAG  = 'strong';
     const BASE_LANG = 'en-EN';

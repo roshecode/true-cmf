@@ -2,7 +2,7 @@
 
 namespace T\Abstracts;
 
-use T\Services\Routing\Route;
+use T\Services\Route;
 
 abstract class Controller {
     public function index() {

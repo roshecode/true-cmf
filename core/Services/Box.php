@@ -6,11 +6,11 @@ use ReflectionClass;
 use ReflectionParameter;
 use SplFixedArray;
 use T\Abstracts\Facade;
-use T\Interfaces\Box as ContainerInterface;
-use T\Interfaces\Service as ServiceInterface;
-use T\Traits\Service;
+use T\Interfaces\BoxInterface;
+use T\Interfaces\ServiceInterface;
+//use T\Traits\Service;
 
-class Box implements ContainerInterface, ArrayAccess
+class Box implements BoxInterface, ArrayAccess
 {
     //use Service;
 
@@ -48,7 +48,7 @@ class Box implements ContainerInterface, ArrayAccess
     public function __construct(array $config = null) {
         $this->startTime = microtime(true);
         Facade::__register($this);
-        $this->instance(ContainerInterface::class, $this);
+        $this->instance(BoxInterface::class, $this);
         if ($config) {
             $this->pack($config);
         }
@@ -276,7 +276,7 @@ class Box implements ContainerInterface, ArrayAccess
         if (isset($this->config[$scope])) {
             foreach ($this->config[$scope] as $abstract => $params) {
                 if (is_array($params)) {
-                    $concrete = $params[self::CONCRETE];
+                    $concrete = $params[self::CONCRETE] ?? $abstract;
                     if (isset($params[self::ALIAS])) {
                         $this->alias($params[self::ALIAS], $abstract);
                     }
@@ -303,11 +303,17 @@ class Box implements ContainerInterface, ArrayAccess
         });
         $this->packScope(self::SCOPE_MUTABLE, function ($abstract, $concrete, $arguments) use(&$bootServices) {
             $this->mutable($abstract, $concrete);
-            $bootServices[] = $this->makeInstance($abstract, $arguments);//->__boot();
+            $bootService = $this->makeInstance($abstract, $arguments);//->__boot();
+            if ($bootService instanceof ServiceInterface) {
+                $bootServices[] = $bootService;
+            }
         });
         $this->packScope(self::SCOPE_SINGLETONS, function ($abstract, $concrete, $arguments) use(&$bootServices) {
             $this->singleton($abstract, $concrete);
-            $bootServices[] = $this->makeInstance($abstract, $arguments);//->__boot();
+            $bootService = $this->makeInstance($abstract, $arguments);//->__boot();
+            if ($bootService instanceof ServiceInterface) {
+                $bootServices[] = $bootService;
+            }
         });
         foreach ($bootServices as $service) {
             $service->__boot();

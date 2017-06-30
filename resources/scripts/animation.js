@@ -194,28 +194,28 @@ class Animation {
 setTimeout(() => {
     let animation = new Animation({el: '.popup'});
 
-    animation.animat({from: 50, to: 100}, {
-        duration: 400,
-        easing: Animation.easing2d.cubicBezier,
-        params: [[.42, 0], [.58, 1]],
-        process(startValue, valueFraction) {
-            el.style.marginTop = startValue + valueFraction + 'px';
-        }
-    });
-
-    animation.animate([
-        {maxWidth: 750},
-        {height: 450}
-    ], {
-        round: 1,
-        loop: 3,
-        duration: 300,
-        easing: Animation.easing2d.cubicBezier,
-        params: [[.42, 0], [.58, 1]],
-        process() {
-            console.log(this.progress);
-        }
-    });
+    // animation.animat({from: 50, to: 100}, {
+    //     duration: 400,
+    //     easing: Animation.easing2d.cubicBezier,
+    //     params: [[.42, 0], [.58, 1]],
+    //     process(startValue, valueFraction) {
+    //         el.style.marginTop = startValue + valueFraction + 'px';
+    //     }
+    // });
+    //
+    // animation.animate([
+    //     {maxWidth: 750},
+    //     {height: 450}
+    // ], {
+    //     round: 1,
+    //     loop: 3,
+    //     duration: 300,
+    //     easing: Animation.easing2d.cubicBezier,
+    //     params: [[.42, 0], [.58, 1]],
+    //     process() {
+    //         console.log(this.progress);
+    //     }
+    // });
 
     // animation.play();
 

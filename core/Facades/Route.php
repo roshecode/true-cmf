@@ -37,6 +37,6 @@ class Route extends Facade
      * @return string Facade accessor
      */
     protected static function getFacadeAccessor() {
-        return \T\Interfaces\Route::class;
+        return \T\Interfaces\RouteInterface::class;
     }
 }

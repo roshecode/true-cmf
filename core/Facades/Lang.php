@@ -7,6 +7,6 @@ use T\Abstracts\Facade;
 class Lang extends Facade
 {
     protected static function getFacadeAccessor() {
-        return \T\Interfaces\Lang::class;
+        return \T\Interfaces\LangInterface::class;
     }
 }

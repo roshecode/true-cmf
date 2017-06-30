@@ -2,11 +2,12 @@
 
 namespace T\Services;
 
-use T\Traits\Service;
+use T\Interfaces\HashInterface;
+use T\Traits\Servant;
 
-class Hash implements \T\Interfaces\Hash, \T\Interfaces\Service
+class Hash implements HashInterface
 {
-    use Service;
+    use Servant;
 
     protected $options;
 

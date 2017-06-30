@@ -2,7 +2,7 @@
 
 namespace T\Abstracts;
 
-use T\Interfaces\DB;
+use T\Interfaces\DBInterface;
 
 abstract class Model
 {
@@ -38,9 +38,9 @@ abstract class Model
     /**
      * Model constructor.
      *
-     * @param DB $db
+     * @param DBInterface $db
      */
-    public function __construct(DB $db)
+    public function __construct(DBInterface $db)
     {
         $this->data = $db->{$this->collection};
     }

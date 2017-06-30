@@ -6,15 +6,8 @@
 // require('./animation');
 
 import Vue from 'vue';
-import router from './router';
-import store from './store';
-// import { sync } from 'vuex-router-sync';
+import VueRouter from 'vue-router';
 
-// sync(store, router, { moduleName: 'Route' } );
+Vue.use(VueRouter);
 
-new Vue({
-    el: '#app',
-    store,
-    router,
-    render: (h) => (<router-view />)
-});
+export default Vue;

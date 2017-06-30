@@ -7,6 +7,6 @@ use T\Abstracts\Facade;
 class Config extends Facade
 {
     protected static function getFacadeAccessor() {
-        return \T\Interfaces\Config::class;
+        return \T\Interfaces\ConfigInterface::class;
     }
 }

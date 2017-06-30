@@ -1,9 +1,0 @@
-{% set layout = 'basic/layouts/pages/home.twig' %}
-{% extends 'basic/layouts/pages/home.twig' if ajax %}
-
-{% block ol %}
-<section data-request="content">
-    <h3>{{ title }}</h3>
-    <p>{{ text }}</p>
-</section>
-{% endblock %}

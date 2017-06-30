@@ -1,7 +1,7 @@
 <?php
 define('BASEDIR', __DIR__);
 
-use T\Interfaces\Kernel;
+use T\Interfaces\KernelInterface;
 
 // set errors handler
 $whoops = new \Whoops\Run;
@@ -16,9 +16,9 @@ if (file_exists($servicesConfigFile)) {
 } else throw new Exception('Services configuration file not found');
 
 // launch app
-$kernel = $box[Kernel::class];
+$kernel = $box[KernelInterface::class];
 //$request = T\Services\Request::capture();
-$request = $box->make(\T\Interfaces\Request::class);
+$request = $box->make(\T\Interfaces\RequestInterface::class);
 //$box->instance(\T\Interfaces\Request::class, $request);
 $response = $kernel->handle($request);
 $response->send();

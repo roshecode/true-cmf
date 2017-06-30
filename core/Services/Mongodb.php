@@ -3,12 +3,12 @@
 namespace T\Services;
 
 use MongoDB\Client;
-use T\Interfaces\DB as DBInterface;
-use T\Traits\Service;
+use T\Interfaces\DBInterface;
+use T\Traits\Servant;
 
 class Mongodb /*extends \Truecode\Filesystem\DB*/ implements DBInterface
 {
-    use Service;
+    use Servant;
 
     protected $db;
 

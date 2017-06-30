@@ -1,22 +1,22 @@
 <?php
 namespace T\Services;
 
-use T\Interfaces\Lang;
-use T\Traits\Service;
-use T\Interfaces\Config as ConfigInterface;
-use T\Interfaces\FS;
+use T\Interfaces\LangInterface;
+use T\Traits\Servant;
+use T\Interfaces\ConfigInterface;
+use T\Interfaces\FSInterface;
 use Truecode\ArrayObject\MultiFileArrayObject;
 
 class Config extends MultiFileArrayObject implements ConfigInterface
 {
-    use Service;
+    use Servant;
 
     /**
-     * @param FS     $fileSystem
-     * @param string $filePaths
-     * @param string $separator
+     * @param FSInterface $fileSystem
+     * @param string      $filePaths
+     * @param string      $separator
      */
-    public function __construct(FS $fileSystem, $filePaths, string $separator = '.') {
+    public function __construct(FsInterface $fileSystem, $filePaths, string $separator = '.') {
         parent::__construct($fileSystem, $filePaths, $separator);
     }
     

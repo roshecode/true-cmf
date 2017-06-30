@@ -7,16 +7,20 @@ import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 
 let NODE_ENV = process.env.NODE_ENV || 'development';
 
-const extractCSS = new ExtractTextPlugin('css/style.css');
+const extractCSS = new ExtractTextPlugin('css/[name].css');
 // const extractDocs = new ExtractTextPlugin('docs/docs.md');
 
 export default {
     context: path.resolve(__dirname, './resources'),
 
     entry: {
-        main:    './scripts/main',
+        main: './scripts/main',
         // common: './js/common',
-        style:  './styles/style.pcss'
+        home: './styles/themes/default/home.pcss',
+        admin: './styles/themes/default/admin.pcss',
+        homejs: './scripts/views/home.js',
+        adminjs: './scripts/views/admin.js',
+        style: './styles/style.pcss'
     },
 
     output: {
@@ -77,6 +81,14 @@ export default {
                                 }
                             ]
                         }),
+                        // html: [
+                        //     {
+                        //         loader: 'vue-html-loader',
+                        //         options: {
+                        //             minimize: true
+                        //         }
+                        //     }
+                        // ]
                         // docs: extractDocs.extract('raw-loader')
                     },
                     // cssModules: {

@@ -2,10 +2,10 @@
 
 namespace T\Services;
 
-use T\Interfaces\FS as FSInterface;
-use T\Traits\Service;
+use T\Interfaces\FSInterface;
+use T\Traits\Servant;
 
 class FS extends \Truecode\Filesystem\FS implements FSInterface
 {
-    use Service;
+    use Servant;
 }

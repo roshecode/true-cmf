@@ -1,13 +1,12 @@
 <?php
 return [
     'instances' => [
-        T\Interfaces\Request::class => [
+        T\Interfaces\RequestInterface::class => [
             'bind' => T\Services\Request::capture()
-        ]
+        ],
     ],
     'interfaces' => [
-        Twig_LoaderInterface::class => Twig_Loader_Filesystem::class,
-        T\Interfaces\FS::class => [
+        T\Interfaces\FSInterface::class => [
             'bind' => T\Services\FS::class,
             'arguments' => [
                 BASEDIR . '/'
@@ -15,14 +14,14 @@ return [
         ],
     ],
     'mutable'    => [
-        T\Interfaces\Lang::class => [
-            'alias' => 'Lang',
-            'bind' => T\Services\Lang::class,
-            'arguments' => [
-                BASEDIR . '/resources/languages'
-            ]
-        ],
-        T\Interfaces\Config::class  => [
+//        T\Interfaces\LangInterface::class => [
+//            'alias' => 'Lang',
+//            'bind' => T\Services\Lang::class,
+//            'arguments' => [
+//                BASEDIR . '/resources/languages'
+//            ]
+//        ],
+        T\Interfaces\ConfigInterface::class  => [
             'alias' => 'Config',
             'bind' => T\Services\Config::class,
             'arguments' => [
@@ -40,13 +39,13 @@ return [
 //        T\Interfaces\Request::class => [
 //            'bind' => T\Services\Request::class
 //        ],
-        T\Interfaces\FS::class => [
+        T\Interfaces\FSInterface::class => [
             'bind' => T\Services\FS::class,
             'arguments' => [
                 BASEDIR . '/'
             ]
         ],
-        T\Interfaces\DB::class => [
+        T\Interfaces\DBInterface::class => [
             'alias' => 'DB',
             'bind' => T\Services\Mongodb::class,
             'arguments' => [
@@ -54,7 +53,7 @@ return [
                 'rosem'
             ]
         ],
-        T\Interfaces\Hash::class => [
+        T\Interfaces\HashInterface::class => [
             'alias' => 'Hash',
             'bind' => T\Services\Hash::class,
             'arguments' => [
@@ -63,27 +62,24 @@ return [
                 ]
             ]
         ],
-        T\Interfaces\View::class    => [
+//        \League\Plates\Engine::class => [
+//            'arguments' => [BASEDIR . '/resources/views/static']
+//        ],
+//        \League\Plates\Extension\Asset::class => [
+//            'arguments' => [BASEDIR . '/public']
+//        ],
+        T\Interfaces\ViewInterface::class    => [
             'alias' => 'View',
-            'bind' => T\Services\Twig::class,
-            'arguments' => [
-                BASEDIR . '/resources/themes', // rootPath
-                null, // paths
-                [
-                    'cache' => BASEDIR . 'cache/themes',
-                    'debug' => true,
-                    'auto_reload' => true
-                ]
-            ]
+            'bind' => T\Services\View::class,
         ],
-        T\Interfaces\Route::class  => [
+        T\Interfaces\RouteInterface::class  => [
             'alias' => 'Route',
             'bind' => T\Services\Route::class,
             'arguments' => [
                 'true.app'
             ]
         ],
-        T\Interfaces\Kernel::class => [
+        T\Interfaces\KernelInterface::class => [
             'alias' => 'Kernel',
             'bind' => T\Services\Kernel::class
         ],

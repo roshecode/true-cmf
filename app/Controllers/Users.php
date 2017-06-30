@@ -27,7 +27,7 @@ class Users
         $user = $users->first(['slug' => $slug]);
         return $user ? $users->update(
             ['slug' => $slug],
-            ['$set' => Box::make(\T\Interfaces\Request::class)->request->all()]
+            ['$set' => Box::make(\T\Interfaces\RequestInterface::class)->request->all()]
         ) : "There is no user with slug '$slug'";
     }
 }

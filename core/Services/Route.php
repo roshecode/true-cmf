@@ -1,17 +1,17 @@
 <?php
 namespace T\Services;
 
-use T\Interfaces\Route as RouterInterface;
-use T\Traits\Service;
+use T\Interfaces\RouteInterface;
+use T\Traits\Servant;
 use Truecode\Routing\RouteCollector;
 
-class Route extends RouteCollector implements RouterInterface
+class Route extends RouteCollector implements RouteInterface
 {
-    use Service;
+    use Servant;
 
     public function __boot() {
 //        include __DIR__ . '/../../app/Routes/Api/api.php'; // todo: load all files (folders names as namespaces)
-        include __DIR__ . '/../../app/Routes/index.php';
+        include __DIR__ . '/../../app/Routes/back/index.php';
 //        if (!($parse_uri = parse_url($_SERVER['REQUEST_URI']))) throw new \Exception('Invalid uri');
 //        $path = &$parse_uri['path'];
 //        $this->make($_SERVER['REQUEST_METHOD'], $path)[0]();

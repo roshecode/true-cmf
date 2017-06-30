@@ -2,12 +2,15 @@
 
 namespace T\Services;
 
+use T\Interfaces\RequestInterface;
+use T\Traits\Servant;
 use Symfony\Component\HttpFoundation\Request as BaseRequest;
-use T\Traits\Service;
+//use Zend\Diactoros\Request as BaseRequest;
+use Zend\Diactoros\ServerRequestFactory;
 
-class Request extends BaseRequest implements \T\Interfaces\Request
+class Request extends BaseRequest implements RequestInterface
 {
-    use Service;
+    use Servant;
 
 //    public function __boot()
 //    {

@@ -7,6 +7,6 @@ use T\Abstracts\Facade;
 class FS extends Facade
 {
     protected static function getFacadeAccessor() {
-        return \T\Interfaces\FS::class;
+        return \T\Interfaces\FSInterface::class;
     }
 }
