@@ -4,8 +4,8 @@ namespace T\Services;
 
 use T\Interfaces\RequestInterface;
 use T\Traits\Servant;
-use Symfony\Component\HttpFoundation\Request as BaseRequest;
-//use Zend\Diactoros\Request as BaseRequest;
+//use Symfony\Component\HttpFoundation\Request as BaseRequest;
+use Zend\Diactoros\Request as BaseRequest;
 use Zend\Diactoros\ServerRequestFactory;
 
 class Request extends BaseRequest implements RequestInterface
@@ -19,11 +19,19 @@ class Request extends BaseRequest implements RequestInterface
 //    }
 
     public static function capture() {
-        static::enableHttpMethodParameterOverride();
-        return static::createFromGlobals();
+//        static::enableHttpMethodParameterOverride();
+//        return static::createFromGlobals();
+        return ServerRequestFactory::fromGlobals(
+            $_SERVER,
+            $_GET,
+            $_POST,
+            $_COOKIE,
+            $_FILES
+        );
     }
 
-    public function getRequestPath() {
-        return strtok(static::getRequestUri(), '?');
+    public function getUriPath() {
+//        return strtok(static::getRequestUri(), '?');
+        return static::getUri()->getPath();
     }
 }

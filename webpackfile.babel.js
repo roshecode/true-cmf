@@ -14,9 +14,8 @@ export default {
     context: path.resolve(__dirname, './resources'),
 
     entry: {
+        vendor: ['vue', 'vuex', 'vue-router', 'vue-resource', 'vue-touch'],
         app: './scripts/app',
-        vendor: ['vue', 'vuex', 'vue-router', 'vue-resource'],
-        // common: './js/common',
         home: './styles/themes/default/home.pcss',
         admin: './styles/themes/default/admin.pcss',
         homejs: './scripts/views/home.js',
@@ -25,7 +24,7 @@ export default {
     },
 
     output: {
-        path: `${__dirname}/public`,
+        path: path.resolve(__dirname, './public'),
         publicPath: '/',
         filename: 'js/[name].js',
         // library: '[name]' // add global variable

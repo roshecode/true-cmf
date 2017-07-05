@@ -4,7 +4,8 @@ namespace T\Services;
 
 use T\Interfaces\KernelInterface;
 use T\Interfaces\RouteInterface;
-use T\Interfaces\RequestInterface;
+//use T\Interfaces\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use T\Traits\Servant;
 
 class Kernel implements KernelInterface
@@ -12,16 +13,16 @@ class Kernel implements KernelInterface
     use Servant;
 
     /**
-     * @param RequestInterface $request
+     * @param ServerRequestInterface $request
      * @return Response A Response instance
      */
     public function handle(
-        RequestInterface $request
+        ServerRequestInterface $request
 //        $type = self::MASTER_REQUEST
 //        $catch = true
     ) {
 //        $this->box->instance(\T\Interfaces\Request::class, $request);
-        $make = $this->box->make(RouteInterface::class)->make($request->getMethod(), $request->getRequestPath());
+        $make = $this->box->make(RouteInterface::class)->make($request->getMethod(), $request->getUri()->getPath());
         $content = is_array($make[0])
             ? $this->box->make(key($make[0]))->{current($make[0])}(...$make[1])
             : call_user_func_array($make[0], $make[1]);
@@ -31,7 +32,7 @@ class Kernel implements KernelInterface
         );
     }
 
-    public function terminate(RequestInterface $request, Response $response) {
+    public function terminate(ServerRequestInterface $request, Response $response) {
         // todo
     }
 }

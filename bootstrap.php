@@ -21,7 +21,7 @@ if (file_exists($servicesConfigFile)) {
 // launch app
 $kernel = $box[KernelInterface::class];
 //$request = T\Services\Request::capture();
-$request = $box->make(\T\Interfaces\RequestInterface::class);
+$request = $box->make(\Psr\Http\Message\ServerRequestInterface::class);
 //$box->instance(\T\Interfaces\Request::class, $request);
 $response = $kernel->handle($request);
 $response->send();

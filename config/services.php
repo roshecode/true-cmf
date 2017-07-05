@@ -1,7 +1,7 @@
 <?php
 return [
     'instances' => [
-        T\Interfaces\RequestInterface::class => [
+        Psr\Http\Message\ServerRequestInterface::class => [
             'bind' => T\Services\Request::capture()
         ],
     ],
