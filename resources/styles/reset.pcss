@@ -16,6 +16,11 @@ header {
     display: block;
 }
 
+// remove inner border on focus in Mozilla
+button::-moz-focus-inner {
+    border: none;
+}
+
 [contenteditable] {
     -webkit-user-modify: read-write;
 }

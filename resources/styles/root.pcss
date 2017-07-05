@@ -1,27 +1,30 @@
 :root {
     /*Breakpoints*/
-    @custom-media --tiny        only screen and (width < 34em);
-    @custom-media --small       only screen and (width >= 34em) and (width < 48em);
-    @custom-media --medium      only screen and (width >= 48em) and (width < 62em);
-    @custom-media --large       only screen and (width >= 62em) and (width < 75em);
-    @custom-media --huge        only screen and (width >= 75em);
-    @custom-media --small-up    only screen and (width >= 34em);
-    @custom-media --medium-up   only screen and (width >= 48em);
-    @custom-media --large-up    only screen and (width >= 62em);
-    @custom-media --huge-up     only screen and (width >= 75em);
-    @custom-media --tiny-down   only screen and (width < 34em);
-    @custom-media --small-down  only screen and (width < 48em);
-    @custom-media --medium-down only screen and (width < 62em);
-    @custom-media --large-down  only screen and (width < 75em);
+    --x-s: 36em; // 576px
+    --s-m: 48em; // 768px
+    --m-l: 63em; // 992px
+    --l-x: 75em; // 1200px
 
-    @custom-selector :--input input:not([type=submit]), .input, textarea, [role=textbox], [contenteditable=true];
+    @custom-media --s      (width >= 34em) and (width < 48em);
+    @custom-media --m      (width >= 48em) and (width < 62em);
+    @custom-media --l      (width >= 62em) and (width < 75em);
+
+    @custom-media --s-up   (width >= 34em);
+    @custom-media --m-up   (width >= 48em);
+    @custom-media --l-up   (width >= 62em);
+    @custom-media --xl     (width >= 75em);
+
+    @custom-media --xs     (width < 34em);
+    @custom-media --s-down (width < 48em);
+    @custom-media --m-down (width < 62em);
+    @custom-media --l-down (width < 75em);
+
     @custom-selector :--button button, .button, input[type=button], input[type=submit], [role=button];
-    @custom-selector :--control input, button, textarea,
-                                .input, .button, .textbox,
-                                [role=button], [role=textbox], [contenteditable=true];
-    @custom-selector :--submit input[type=submit], button[type=submit];
-    @custom-selector :--first-last-child :first-child, :last-child;
-    @custom-selector :--icon i;
+    @custom-selector :--control input, button, textarea, .input, .button, .textbox, [role=button], [role=textbox], [contenteditable=true];
+    @custom-selector :--edge-children :first-child, :last-child;
     @custom-selector :--heading h1, h2, h3, h4, h5, h6;
+    @custom-selector :--icon i;
+    @custom-selector :--input input:not([type=submit]), .input, textarea, [role=textbox], [contenteditable=true];
     @custom-selector :--placeholder :placeholder-shown, [aria-placeholder];
+    @custom-selector :--submit input[type=submit], button[type=submit];
 }

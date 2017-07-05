@@ -12,6 +12,7 @@
         "symfony/yaml": "^3.1",
         "symfony/http-foundation": "^v3.3.0-BETA1 ",
         "twig/twig": "^1.24",
+        "vlucas/phpdotenv": "^2.4",
         "zendframework/zend-diactoros": "^1.4"
     },
     "license": "MIT",
@@ -28,7 +29,7 @@
         "psr-4": {
             "T\\": "core/",
             "App\\": "app/",
-            "Truecode\\": "libs/Truecode/"
+            "Truecode\\": "libs/truecode/"
         }
     }
 }

@@ -14,7 +14,8 @@ export default {
     context: path.resolve(__dirname, './resources'),
 
     entry: {
-        main: './scripts/main',
+        app: './scripts/app',
+        vendor: ['vue', 'vuex', 'vue-router', 'vue-resource'],
         // common: './js/common',
         home: './styles/themes/default/home.pcss',
         admin: './styles/themes/default/admin.pcss',
@@ -162,6 +163,12 @@ export default {
         new webpack.DefinePlugin({
             NODE_ENV: JSON.stringify(NODE_ENV)
         }),
+        new webpack.optimize.CommonsChunkPlugin({
+            name: "vendor",
+            filename: "js/[name].bundle.js"
+        }),
+        // new webpack.optimize.UglifyJsPlugin(),
+
         // new webpack.optimize.CommonsChunkPlugin({
         //     name: 'common',
         //     // filename: 'common.js',

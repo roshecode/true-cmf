@@ -8,6 +8,9 @@ $whoops = new \Whoops\Run;
 $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
 //$whoops->register();
 
+// init dotenv
+(new Dotenv\Dotenv(__DIR__))->load();
+
 // init container and register services
 $servicesConfigFile = __DIR__ . '/config/services.php';
 if (file_exists($servicesConfigFile)) {

@@ -44,7 +44,8 @@ class Animation {
                     7.5625 * (timeFraction -= 2.625 / 2.75) * timeFraction + .984375;
         },
         easeOutExpo: (timeFraction) => {
-            return 1 - !~~timeFraction * 2**(-10 * timeFraction);
+            // return 1 - !~~timeFraction * 2**(-10 * timeFraction);
+            return 1 - !~~timeFraction * Math.pow(2, (-10 * timeFraction));
         },
     };
 

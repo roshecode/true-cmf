@@ -11,10 +11,10 @@
 <?php $this->end() ?>
 
 <?php $this->start('body') ?>
-<a href="/admin">ADMIN </a>
 <div id="app">Start home</div>
 <?php $this->end() ?>
 
 <?php $this->push('scripts'); ?>
+<?php echo file_get_contents(__DIR__ . '/icons.svg') ?>
 <script src="<?=$this->asset('/js/homejs.js')?>"></script>
 <?php $this->end(); ?>

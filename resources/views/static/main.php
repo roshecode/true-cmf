@@ -16,10 +16,12 @@
 </head>
 <body>
 <?=$this->section('body')?>
+<?php echo getenv('TEST') ?>
 <noscript>
     <p>To use <mark>True Framework</mark>, please enable JavaScript.</p>
 </noscript>
-<script src="<?=$this->asset('/js/main.js')?>"></script>
+<script src="<?=$this->asset('/js/vendor.bundle.js')?>"></script>
+<script src="<?=$this->asset('/js/app.js')?>"></script>
 <?=$this->section('scripts')?>
 </body>
 </html>
