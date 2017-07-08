@@ -6,7 +6,7 @@ use App\Models\User;
 use T\Facades\Box;
 use T\Services\Response;
 
-class Users
+class UsersController
 {
     public function all() {
         $usersCursor = Box::make(User::class)->all();

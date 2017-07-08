@@ -60,16 +60,6 @@ interface BoxInterface //extends Service
     public function make($abstract, array $params = []);
     
     /**
-     * Register a binding first and then make an instance
-     *
-     * @param string|array $abstract
-     * @param array        $params
-     *
-     * @return mixed
-     */
-    public function create($abstract, array $params = []);
-    
-    /**
      * Determine if a given type is shared.
      *
      * @param string $abstract

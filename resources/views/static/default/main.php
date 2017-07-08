@@ -7,7 +7,7 @@
 <?php $this->layout('main', ['title' => $title]) ?>
 
 <?php $this->push('styles') ?>
-<link rel="stylesheet" href="<?=$this->asset('/css/home.css')?>">
+<link rel="stylesheet" href="<?=$this->asset('/css/main.css')?>">
 <?php $this->end() ?>
 
 <?php $this->start('body') ?>
@@ -15,6 +15,5 @@
 <?php $this->end() ?>
 
 <?php $this->push('scripts'); ?>
-<?php echo file_get_contents(__DIR__ . '/icons.svg') ?>
-<script src="<?=$this->asset('/js/homejs.js')?>"></script>
+<script src="<?=$this->asset('/js/main.js')?>"></script>
 <?php $this->end(); ?>

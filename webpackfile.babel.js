@@ -3,6 +3,7 @@
 import webpack from 'webpack';
 import path from 'path';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import StyleLintPlugin from 'stylelint-webpack-plugin';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 
 let NODE_ENV = process.env.NODE_ENV || 'development';
@@ -16,11 +17,9 @@ export default {
     entry: {
         vendor: ['vue', 'vuex', 'vue-router', 'vue-resource', 'vue-touch'],
         app: './scripts/app',
-        home: './styles/themes/default/home.pcss',
-        admin: './styles/themes/default/admin.pcss',
-        homejs: './scripts/views/home.js',
-        adminjs: './scripts/views/admin.js',
-        style: './styles/style.pcss'
+        main: ['./scripts/views/main.js', './styles/themes/default/main.pcss'],
+        admin: ['./scripts/views/admin.js', './styles/themes/default/admin.pcss'],
+        style: './styles/style.pcss',
     },
 
     output: {
@@ -162,6 +161,9 @@ export default {
         new webpack.DefinePlugin({
             NODE_ENV: JSON.stringify(NODE_ENV)
         }),
+        // new StyleLintPlugin({
+        //
+        // }),
         new webpack.optimize.CommonsChunkPlugin({
             name: "vendor",
             filename: "js/[name].bundle.js"

@@ -2,7 +2,7 @@ let path = require('path'),
     postcss = require('postcss');
 
 module.exports = {
-    sourceMap: 'inline',
+    map: 'inline',
     parser: 'postcss-scss',
     plugins: [
         require('postcss-import'),
@@ -21,15 +21,12 @@ module.exports = {
         require('postcss-custom-selectors'),
         // require('postcss-smart-import')({ /* ...options */ }),
         // require('precss')({ /* ...options */ }),
-        // require('autoprefixer')({
-        //     browsers: ['last 2 versions']
-        // }),
-
+        // require('autoprefixer'),
         // require('cssnano')({
         //     zindex: false,
         //     discardComments: {
         //         removeAll: true
         //     }
-        // })
+        // }),
     ]
 };

@@ -4,7 +4,7 @@
         <router-link to="/users/rosem">ROSEM</router-link>
         <router-link to="/users/roshe">ROSHE</router-link>
         <a href="/">Home</a>
-        <a href="/user/roshe">Account</a>
+        <a href="/admin">Admin</a>
         <form action="/delete" method="POST">
             <fieldset>
                 <h2>Delete method</h2>
@@ -23,5 +23,9 @@
 </template>
 
 <script>
-    export default {}
+    export default {
+        metaInfo: {
+            title: 'Home page'
+        }
+    }
 </script>

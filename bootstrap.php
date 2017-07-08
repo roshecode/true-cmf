@@ -26,3 +26,23 @@ $request = $box->make(\Psr\Http\Message\ServerRequestInterface::class);
 $response = $kernel->handle($request);
 $response->send();
 $kernel->terminate($request, $response);
+
+//$box->make(function () {});
+
+//$server = Zend\Diactoros\Server::createServer(
+//    new RequestHandler(),
+//    $_SERVER,
+//    $_GET,
+//    $_POST,
+//    $_COOKIE,
+//    $_FILES
+//);
+//
+//$server->listen(function ($request, $response, $error = null) {
+//    // Final Handler
+//    if (! $error) {
+//        return $response;
+//    }
+//
+//    // Handle extra errors etc here
+//});

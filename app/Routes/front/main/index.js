@@ -1,5 +1,3 @@
-import Main from '../../../resources/views/dynamic/Main.vue';
-
 export default [
     {
         path: '*',
@@ -9,7 +7,7 @@ export default [
     {
         path: '/',
         name: 'home',
-        component: Main
+        component: 'Main'
     },
     {
         path: '/test',

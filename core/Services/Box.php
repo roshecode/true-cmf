@@ -115,10 +115,15 @@ class Box implements BoxInterface, ArrayAccess
      *
      * @return mixed
      */
-    protected function makeInstance(string &$abstract, array &$params = []) {
-        return isset($this->bindings[$abstract])
-            ? $this->bindings[$abstract][self::MAKE]($params)
-            : $this->create($abstract, $params);
+    protected function bindAndMake(string &$abstract, array &$params = []) {
+        if (isset($this->bindings[$abstract])) {
+            return $this->bindings[$abstract][self::MAKE]($params);
+        }
+        isset($this->resolved[$abstract]) ? ++$this->resolved[$abstract] : $this->resolved[$abstract] = 1; // statistic
+        $this->bind($abstract);
+
+//        return $this->make($abstract, $params);
+        return $this->bindings[$abstract][self::MAKE]($params);
     }
 
     /**
@@ -128,16 +133,7 @@ class Box implements BoxInterface, ArrayAccess
      * @return mixed
      */
     public function make($abstract, array $params = []) {
-        return $this->makeInstance($abstract, $params);
-    }
-    
-    /**
-     * {@inheritdoc}
-     */
-    public function create($abstract, array $params = []) {
-        isset($this->resolved[$abstract]) ? ++$this->resolved[$abstract] : $this->resolved[$abstract] = 1; // statistic
-        $this->bind($abstract);
-        return $this->make($abstract, $params);
+        return $this->bindAndMake($abstract, $params);
     }
 
     /**
@@ -256,7 +252,7 @@ class Box implements BoxInterface, ArrayAccess
             $item instanceof ReflectionClass
                 ? $building[] = $this->isShared($item->name)
                     ? $this->bindings[$item->name][self::SHARE]
-                    : $this->makeInstance($item->name, $params)
+                    : $this->bindAndMake($item->name, $params)
                 : empty($params) ?: $building[] = array_shift($params);
         }
         return $building;
@@ -280,8 +276,7 @@ class Box implements BoxInterface, ArrayAccess
                     if (isset($params[self::ALIAS])) {
                         $this->alias($params[self::ALIAS], $abstract);
                     }
-                    $method($abstract, $concrete,
-                        isset($params[self::ARGUMENTS]) ? $params[self::ARGUMENTS] : []);
+                    $method($abstract, $concrete, $params[self::ARGUMENTS] ?? null);
                 } else {
                     $method($abstract, $params);
                 }
@@ -303,16 +298,20 @@ class Box implements BoxInterface, ArrayAccess
         });
         $this->packScope(self::SCOPE_MUTABLE, function ($abstract, $concrete, $arguments) use(&$bootServices) {
             $this->mutable($abstract, $concrete);
-            $bootService = $this->makeInstance($abstract, $arguments);//->__boot();
-            if ($bootService instanceof ServiceInterface) {
-                $bootServices[] = $bootService;
+            if ($arguments) {
+                $bootService = $this->bindAndMake($abstract, $arguments);//->__boot();
+                if ($bootService instanceof ServiceInterface) {
+                    $bootServices[] = $bootService;
+                }
             }
         });
         $this->packScope(self::SCOPE_SINGLETONS, function ($abstract, $concrete, $arguments) use(&$bootServices) {
             $this->singleton($abstract, $concrete);
-            $bootService = $this->makeInstance($abstract, $arguments);//->__boot();
-            if ($bootService instanceof ServiceInterface) {
-                $bootServices[] = $bootService;
+            if ($arguments) {
+                $bootService = $this->bindAndMake($abstract, $arguments);//->__boot();
+                if ($bootService instanceof ServiceInterface) {
+                    $bootServices[] = $bootService;
+                }
             }
         });
         foreach ($bootServices as $service) {

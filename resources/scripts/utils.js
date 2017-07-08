@@ -1,4 +1,4 @@
-// import auth from './api/auth';
+// Convert
 
 function loadView(path) {
     return typeof path === 'string' ? () => import(`../views/dynamic/${path}`) : path;
@@ -25,13 +25,19 @@ export function prepareViewsInRoutes(items) {
     return items;
 }
 
-// router.beforeEach((to, from, next) => {
-//     if (!auth.hasToken() && !to.meta.guest) {
-//         next({
-//             name: 'login',
-//             query: {
-//                 redirect: to.name,
-//             },
-//         });
-//     } else next();
-// });
+
+// Get scrollable parent element
+
+function getScrollableParentRecursion(node) {
+    let computedStyle = window.getComputedStyle(node);
+
+    return /(auto|scroll)/.test(
+        computedStyle.getPropertyValue('overflow') +
+        computedStyle.getPropertyValue('overflow-y') +
+        computedStyle.getPropertyValue('overflow-x')
+    ) ? node : node.parentNode === null ? false : getScrollableParentRecursion(node.parentNode);
+}
+
+export const getScrollableParent = (node) => (node instanceof HTMLElement || node instanceof SVGElement)
+    ? getScrollableParentRecursion(node) || document.scrollingElement || document.documentElement
+    : undefined;

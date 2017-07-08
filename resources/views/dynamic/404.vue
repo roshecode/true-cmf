@@ -1,5 +1,5 @@
 <template>
-    <p>404 Not found</p>
+    <p>VUE: 404 Not found</p>
 </template>
 
 <script>

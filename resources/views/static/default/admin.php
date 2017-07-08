@@ -16,5 +16,5 @@
 <?php $this->end() ?>
 
 <?php $this->push('scripts'); ?>
-<script src="<?=$this->asset('/js/adminjs.js')?>"></script>
+<script src="<?=$this->asset('/js/admin.js')?>"></script>
 <?php $this->end(); ?>
