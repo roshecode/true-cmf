@@ -1,0 +1,25 @@
+form {
+    & > :--section {
+        padding: .5rem;
+    }
+
+    & > section {
+        display: grid;
+
+        @media (--small-up) {
+            grid-template-columns: minmax(auto, 8rem) 1fr;
+        }
+    }
+}
+
+@media (--x-small) {
+
+    label {
+        margin: .25rem .5rem;
+        padding: .25rem;
+
+        & + input {
+            margin-top: 0;
+        }
+    }
+}

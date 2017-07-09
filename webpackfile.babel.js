@@ -75,7 +75,8 @@ export default {
                                 {
                                     loader: 'sass-resources-loader',
                                     options: {
-                                        resources: path.resolve(__dirname, 'resources/styles/root.pcss')
+                                        resources: path.resolve(__dirname,
+                                            'resources/styles/framework/variables.pcss')
                                     }
                                 }
                             ]

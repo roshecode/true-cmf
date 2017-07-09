@@ -1,7 +1,18 @@
 <template>
     <main>
-        <div class="wrapper">
-            <div class="popup">
+        <adapt-list :items="['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight8888888', 'nine']">
+            <!--<template scope="list">-->
+                <!--<ul>-->
+                    <!--<li v-for="item in list.attachedItems">{{ item }}</li>-->
+                    <!--<li v-show="list.showMore">more</li>-->
+                <!--</ul>-->
+                <!--<ul>-->
+                    <!--<li v-for="item in list.detachedItems">{{ item }}</li>-->
+                <!--</ul>-->
+            <!--</template>-->
+        </adapt-list>
+        <div class="overlay">
+            <div class="modal">
                 <header>
                     <div class="control">
                         <i class="icon-close"></i>
@@ -22,6 +33,7 @@
                     </section>
                     <footer>
                         <input type="submit" value="Update">
+                        <input type="button" value="Update">
                     </footer>
                 </form>
             </div>
@@ -31,8 +43,13 @@
 
 <script>
     import Vue from 'vue';
+    import AdaptList from '../../../components/AdaptList';
 
     export default {
+        components: {
+            AdaptList
+        },
+
         api: {
             user: {
                 methods: ['GET', 'POST'],
@@ -94,32 +111,44 @@
 
         &:hover {
             cursor: pointer;
-            transform: scale(1.2);
+            /*transform: scale(1.1);*/
             box-shadow: 0 0 0.2rem #404040;
         }
     }
 
     .icon-close {
         background: tomato;
+        /*border: .2rem solid tomato;*/
+        /*border-radius: 50%;*/
+        /*transform: scale(1.12);*/
 
-            background: radial-gradient(color(tomato lightness(+10%)), color(tomato lightness(-10%)));
         &:hover {
+            /*background: radial-gradient(color(tomato lightness(+10%)), color(tomato lightness(-10%)));*/
         }
     }
 
     .icon-fullscreen {
-        background: yellow;
+        /*background: gold;*/
+        border: .2rem solid gold;
+        /*border-radius: .2rem;*/
+        /*transform: scale(1.05);*/
+        transition: border-radius .3s;
 
-            background: radial-gradient(color(yellow lightness(+10%)), color(yellow lightness(-10%)));
         &:hover {
+            border-radius: .2rem;
+            /*background: radial-gradient(color(gold lightness(+10%)), color(gold lightness(-10%)));*/
         }
     }
 
     .icon-collapse {
-        background: yellowgreen;
+        /*background: yellowgreen;*/
+        /*height: 0;*/
+        border: .2rem solid yellowgreen;
+        /*border-radius: .2rem;*/
+        /*transform: scale(1.1) rotateX(30deg);*/
 
-            background: radial-gradient(color(yellowgreen lightness(+10%)), color(yellowgreen lightness(-10%)));
         &:hover {
+            /*background: radial-gradient(color(yellowgreen lightness(+10%)), color(yellowgreen lightness(-10%)));*/
         }
     }
 </style>

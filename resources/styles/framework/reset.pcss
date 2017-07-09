@@ -1,0 +1,29 @@
+:root {
+    --unset-spacing: {
+        margin: unset;
+        padding: unset;
+    }
+}
+
+*, *:before, *:after {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    word-wrap: break-word;
+}
+
+body, input, button, textarea, [contenteditable=true] {
+    all: unset;
+}
+
+p, ul, ol {
+    @apply --unset-spacing;
+}
+
+a {
+    text-decoration: unset;
+}
+
+// remove inner border on focus in Mozilla
+button::-moz-focus-inner {
+    border: none;
+}

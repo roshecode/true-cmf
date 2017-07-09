@@ -1,0 +1,73 @@
+:root {
+
+    /* Breakpoints */
+
+    --break__x-small--small: 36em; // 576px
+    --break__small--medium:  48em; // 768px
+    --break__medium--large:  63em; // 992px
+    --break__large--x-large: 75em; // 1200px
+
+    @custom-media --small       (width >= 34em) and (width < 48em);
+    @custom-media --medium      (width >= 48em) and (width < 62em);
+    @custom-media --large       (width >= 62em) and (width < 75em);
+
+    @custom-media --small-up    (width >= 34em);
+    @custom-media --medium-up   (width >= 48em);
+    @custom-media --large-up    (width >= 62em);
+    @custom-media --x-large     (width >= 75em);
+
+    @custom-media --x-small     (width < 34em);
+    @custom-media --small-down  (width < 48em);
+    @custom-media --medium-down (width < 62em);
+    @custom-media --large-down  (width < 75em);
+
+
+    @custom-selector :--input
+        input:not([type=submit]):not([type=button]),
+        textarea,
+        [contenteditable=true],
+        [role=textbox],
+        .input;
+
+    @custom-selector :--form-button
+        input[type=button],
+        input[type=submit],
+        button;
+
+    @custom-selector :--button
+        input[type=button],
+        input[type=submit],
+        button,
+        [role=button],
+        .button;
+
+    @custom-selector :--submit
+        input[type=submit],
+        button[type=submit];
+
+    @custom-selector :--control
+        input,
+        button,
+        textarea,
+        [contenteditable=true],
+        [role=button],
+        [role=textbox],
+        .input,
+        .button,
+        .textbox;
+
+    @custom-selector :--heading h1, h2, h3, h4, h5, h6;
+
+    @custom-selector :--section header, section, aside, footer;
+
+    @custom-selector :--placeholder
+        :placeholder-shown,
+        [aria-placeholder];
+
+    @custom-selector :--icon
+        i[class|=icon];
+
+    @custom-selector :--edge-children
+        :first-child,
+        :last-child;
+}

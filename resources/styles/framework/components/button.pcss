@@ -1,0 +1,22 @@
+.primary {
+    background: #989c23;
+}
+
+:--form-button {
+    max-width: calc(100% - 3rem);
+    text-transform: uppercase;
+    text-align: center;
+    padding: 0.5rem 1rem;
+    background: #0d8275;
+    color: white;
+    transition: background .2s;
+
+    &:hover {
+        cursor: pointer;
+        background: color(#0d8275 lightness(+ 5%));
+    }
+
+    &:focus {
+        box-shadow: 0 0 0 1px #0eb1a2;;
+    }
+}

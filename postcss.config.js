@@ -2,7 +2,7 @@ let path = require('path'),
     postcss = require('postcss');
 
 module.exports = {
-    map: 'inline',
+    sourceMap: true,
     parser: 'postcss-scss',
     plugins: [
         require('postcss-import'),
