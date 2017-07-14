@@ -12,10 +12,10 @@ class Mongodb /*extends \Truecode\Filesystem\DB*/ implements DBInterface
 
     protected $db;
 
-    public function __construct($uri, $databaseName)
+    public function __construct()
     {
-        $client = new Client($uri);
-        $this->db = $client->$databaseName;
+        $client = new Client(getenv('DATABASE_URI'));
+        $this->db = $client->{getenv('DATABASE_NAME')};
     }
 
     public function __get($name) {

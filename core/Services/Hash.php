@@ -11,7 +11,7 @@ class Hash implements HashInterface
 
     protected $options;
 
-    public function __construct($options)
+    public function __construct($options = ['cost' => 10])
     {
         $this->options = $options;
     }

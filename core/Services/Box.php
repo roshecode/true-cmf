@@ -14,7 +14,7 @@ class Box implements BoxInterface, ArrayAccess
 {
     //use Service;
 
-    const MAKE  = 0;
+    const PROXY = 0;
     const SHARE = 1;
     const STACK = 2;
 
@@ -57,24 +57,38 @@ class Box implements BoxInterface, ArrayAccess
     protected function error() {
         throw new \Exception('ContextualBindingException');
     }
-    
+
     /**
-     * {@inheritdoc}
+     * Register a binding with the container.
+     *
+     * @param string|array               $abstract // TODO: bind from array
+     * @param string|\Closure|Object|null $concrete
+     * @param bool                       $shared
+     * @param bool                       $mutable
+     *
+     * @throws \Exception
      */
     public function bind($abstract, $concrete = null, $shared = false, $mutable = false) {
-        (is_null($concrete) && class_exists($abstract)
-            ? $this->setStringBinding($abstract, $abstract, $shared, $mutable)
-            : (is_string($concrete) && class_exists($concrete) && !is_callable($concrete)
-                ? $this->setStringBinding($abstract, $concrete, $shared, $mutable)
-                : (is_callable($concrete)
-                    ? $this->setClosureBinding($abstract, $concrete, $shared, $mutable)
-                    : (is_string($abstract)
-                        ? $this->instance($abstract, $concrete)
-                        : $this->error()
-                    )
-                )
-            )
-        );
+        $concrete = $concrete ?: $abstract;
+        $placeholder = &$this->bindings[$abstract];
+        $placeholder = [
+            self::PROXY  => $shared
+                ? $mutable
+                    ? function (&$params) use (&$concrete, &$placeholder) {
+                        $placeholder = &$placeholder[self::SHARE];
+                        return $placeholder && !$params
+                            ? $placeholder
+                            : $placeholder = $this->proxyMake($concrete, $params, $placeholder);
+                    }
+                    : function (&$params) use (&$abstract, &$concrete, &$placeholder) {
+                        return $placeholder[self::SHARE]
+                            ?: $placeholder[self::SHARE] = $this->proxyMake($concrete, $params, $placeholder);
+                    }
+                : function (&$params) use (&$concrete, &$placeholder) {
+                    return $this->proxyMake($concrete, $params, $placeholder);
+                },
+            self::SHARE => false
+        ];
     }
     
     /**
@@ -95,9 +109,9 @@ class Box implements BoxInterface, ArrayAccess
      * {@inheritdoc}
      */
     public function instance($abstract, $instance) {
-        $placeholder             = &$this->bindings[$abstract];
-        $placeholder             = new SplFixedArray(1);
-        $placeholder[self::MAKE] = function () use ($instance) { return $instance; };
+        $placeholder = &$this->bindings[$abstract];
+        $placeholder = new SplFixedArray(1);
+        $placeholder[self::PROXY] = function () use ($instance) { return $instance; };
     }
     
     /**
@@ -115,15 +129,35 @@ class Box implements BoxInterface, ArrayAccess
      *
      * @return mixed
      */
-    protected function bindAndMake(string &$abstract, array &$params = []) {
-        if (isset($this->bindings[$abstract])) {
-            return $this->bindings[$abstract][self::MAKE]($params);
+    protected function bindAndMakeRecursion(string &$abstract, array &$params = []) {
+        if (! isset($this->bindings[$abstract])) {
+            isset($this->resolved[$abstract])
+                ? ++$this->resolved[$abstract]
+                : $this->resolved[$abstract] = 1; // statistic
+            $this->bind($abstract);
         }
-        isset($this->resolved[$abstract]) ? ++$this->resolved[$abstract] : $this->resolved[$abstract] = 1; // statistic
-        $this->bind($abstract);
 
-//        return $this->make($abstract, $params);
-        return $this->bindings[$abstract][self::MAKE]($params);
+        return $this->bindings[$abstract][self::PROXY]($params);
+    }
+
+    /**
+     * Make closure result
+     *
+     * @param $concrete
+     * @param $params
+     * @param $placeholder
+     *
+     * @return mixed|object
+     */
+    protected function proxyMake(&$concrete, &$params, &$placeholder) {
+        if (is_string($concrete) && class_exists($concrete)) {
+            return $this->newInstance($concrete, $params, $placeholder[self::STACK]);
+        }
+        if (is_callable($concrete)) {
+            return call_user_func_array($concrete, $params);
+        }
+
+        return $placeholder[self::SHARE] = $concrete;
     }
 
     /**
@@ -133,7 +167,7 @@ class Box implements BoxInterface, ArrayAccess
      * @return mixed
      */
     public function make($abstract, array $params = []) {
-        return $this->bindAndMake($abstract, $params);
+        return $this->bindAndMakeRecursion($abstract, $params);
     }
 
     /**
@@ -146,62 +180,6 @@ class Box implements BoxInterface, ArrayAccess
     }
     
     /**
-     * Set closure for building from string
-     *
-     * @param string $abstract
-     * @param string $concrete
-     * @param bool   $shared
-     * @param bool   $mutable
-     */
-    protected function setStringBinding(&$abstract, &$concrete, &$shared, &$mutable) {
-        $placeholder = &$this->bindings[$abstract];
-        $placeholder = [
-            self::MAKE  => $shared
-                ? $mutable
-                    ? function (&$params) use (&$placeholder, &$abstract, &$concrete) {
-                        $shared = &$placeholder[self::SHARE];
-                        return $shared && !$params ? $shared
-                            : $shared = $this->newInstance($concrete, $params, $placeholder[self::STACK]);
-                    }
-                    : function (&$params) use (&$placeholder, &$abstract, &$concrete) {
-                        return $placeholder[self::SHARE]
-                            ?: $placeholder[self::SHARE] = $this->newInstance($concrete, $params);
-                    }
-                : function (&$params) use (&$placeholder, &$concrete) {
-                    return $this->newInstance($concrete, $params, $placeholder[self::STACK]);
-                },
-            self::SHARE => false];
-    }
-    
-    /**
-     * Set closure for building from closure
-     *
-     * @param string $abstract
-     * @param string $concrete
-     * @param bool   $shared
-     * @param bool   $mutable
-     */
-    protected function setClosureBinding(&$abstract, &$concrete, &$shared, &$mutable) {
-        $placeholder = &$this->bindings[$abstract];
-        $placeholder = [
-            self::MAKE  => $shared
-                ? $mutable
-                    ? function (&$params) use (&$placeholder, &$abstract, &$concrete) {
-                        $placeholder = &$placeholder[self::SHARE];
-                        return $placeholder && !$params ? $placeholder
-                            : $placeholder = call_user_func_array($concrete, $params);
-                    }
-                    : function (&$params) use (&$placeholder, &$abstract, &$concrete) {
-                        return $placeholder[self::SHARE]
-                            ?: $placeholder[self::SHARE] = call_user_func_array($concrete, $params);
-                    }
-                : function (&$params) use (&$concrete) {
-                    return call_user_func_array($concrete, $params);
-                },
-            self::SHARE => false];
-    }
-    
-    /**
      * Create new instance of concrete class
      *
      * @param string     $concrete
@@ -211,7 +189,7 @@ class Box implements BoxInterface, ArrayAccess
      * @return object
      * @throws \Exception
      */
-    protected function newInstance(&$concrete, &$params, &$stack = null) {
+    protected function newInstance(/*string*/&$concrete, &$params, &$stack = null) {
         $reflectionClass = new ReflectionClass($concrete);
         $constructor     = $reflectionClass->getConstructor();
         $instance = ($constructor && $reflectionParams = $constructor->getParameters())
@@ -252,7 +230,7 @@ class Box implements BoxInterface, ArrayAccess
             $item instanceof ReflectionClass
                 ? $building[] = $this->isShared($item->name)
                     ? $this->bindings[$item->name][self::SHARE]
-                    : $this->bindAndMake($item->name, $params)
+                    : $this->bindAndMakeRecursion($item->name, $params)
                 : empty($params) ?: $building[] = array_shift($params);
         }
         return $building;
@@ -270,15 +248,15 @@ class Box implements BoxInterface, ArrayAccess
 
     protected function packScope($scope, \Closure $method) {
         if (isset($this->config[$scope])) {
-            foreach ($this->config[$scope] as $abstract => $params) {
-                if (is_array($params)) {
-                    $concrete = $params[self::CONCRETE] ?? $abstract;
-                    if (isset($params[self::ALIAS])) {
-                        $this->alias($params[self::ALIAS], $abstract);
+            foreach ($this->config[$scope] as $abstract => $paramsOrConcrete) {
+                if (is_array($paramsOrConcrete)) {
+                    $concrete = $paramsOrConcrete[self::CONCRETE] ?? $abstract;
+                    if (isset($paramsOrConcrete[self::ALIAS])) {
+                        $this->alias($paramsOrConcrete[self::ALIAS], $abstract);
                     }
-                    $method($abstract, $concrete, $params[self::ARGUMENTS] ?? null);
+                    $method($abstract, $concrete, $paramsOrConcrete[self::ARGUMENTS] ?? null);
                 } else {
-                    $method($abstract, $params);
+                    $method($abstract, $paramsOrConcrete);
                 }
             }
         }
@@ -296,22 +274,24 @@ class Box implements BoxInterface, ArrayAccess
         $this->packScope(self::SCOPE_INTERFACES, function ($abstract, $concrete) {
             $this->bind($abstract, $concrete);
         });
-        $this->packScope(self::SCOPE_MUTABLE, function ($abstract, $concrete, $arguments) use(&$bootServices) {
+        $this->packScope(self::SCOPE_MUTABLE, function (
+            $abstract, $concrete, $arguments = null
+        ) use(&$bootServices) {
             $this->mutable($abstract, $concrete);
             if ($arguments) {
-                $bootService = $this->bindAndMake($abstract, $arguments);//->__boot();
+                $bootService = $this->bindAndMakeRecursion($abstract, $arguments);//->__boot();
                 if ($bootService instanceof ServiceInterface) {
                     $bootServices[] = $bootService;
                 }
             }
         });
-        $this->packScope(self::SCOPE_SINGLETONS, function ($abstract, $concrete, $arguments) use(&$bootServices) {
+        $this->packScope(self::SCOPE_SINGLETONS, function (
+            $abstract, $concrete, $arguments = []
+        ) use(&$bootServices) {
             $this->singleton($abstract, $concrete);
-            if ($arguments) {
-                $bootService = $this->bindAndMake($abstract, $arguments);//->__boot();
-                if ($bootService instanceof ServiceInterface) {
-                    $bootServices[] = $bootService;
-                }
+            $bootService = $this->bindAndMakeRecursion($abstract, $arguments);//->__boot();
+            if ($bootService instanceof ServiceInterface) {
+                $bootServices[] = $bootService;
             }
         });
         foreach ($bootServices as $service) {
