@@ -13,7 +13,8 @@
         "symfony/http-foundation": "^v3.3.0-BETA1 ",
         "twig/twig": "^1.24",
         "vlucas/phpdotenv": "^2.4",
-        "zendframework/zend-diactoros": "^1.4"
+        "zendframework/zend-diactoros": "^1.4",
+        "doctrine/orm": "^2.5"
     },
     "license": "MIT",
     "authors": [

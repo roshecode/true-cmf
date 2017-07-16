@@ -1,15 +1,15 @@
 <template>
     <main>
         <adapt-list :items="['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight8888888', 'nine']">
-            <!--<template scope="list">-->
-                <!--<ul>-->
-                    <!--<li v-for="item in list.attachedItems">{{ item }}</li>-->
-                    <!--<li v-show="list.showMore">more</li>-->
-                <!--</ul>-->
-                <!--<ul>-->
-                    <!--<li v-for="item in list.detachedItems">{{ item }}</li>-->
-                <!--</ul>-->
-            <!--</template>-->
+            <template scope="list">
+                <ul data-attached>
+                    <li v-for="item in list.attachedItems">{{ item }}</li>
+                </ul>
+                <button v-show="list.showMore">more</button>
+                <ul>
+                    <li v-for="item in list.detachedItems">{{ item }}</li>
+                </ul>
+            </template>
         </adapt-list>
         <div class="overlay">
             <div class="modal">
@@ -87,6 +87,10 @@
 //                })
                 next(vm => vm.$data.user = response.body);
             });
+        },
+
+        mounted() {
+            console.log(this.$refs);
         }
     }
 </script>

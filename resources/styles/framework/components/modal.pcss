@@ -11,11 +11,32 @@
         padding: 1rem;
     }
 
+    &.scrollable {
+        max-height: 100%;
+
+        & > *:not(form), & > form > * {
+            &:not(header):not(footer) {
+                overflow: auto;
+            }
+        }
+    }
+
+    &.scrollable, &.scrollable > form {
+        display: flex;
+        flex-direction: column;
+
+        & > header, & > footer {
+            flex-shrink: 0;
+        }
+    }
+
     & header {
         text-align: right;
         //stick
         margin: -.5rem -.5rem .5rem;
-        padding: 1rem;
+        border: solid .5rem transparent;
+        //
+        padding: .5rem;
         border-top-left-radius: .2rem;
         border-top-right-radius: .2rem;
         background: #4c4c4c;
@@ -23,12 +44,16 @@
 
         @media (--small-up) {
             margin: -1rem -1rem 1rem;
-            padding: 1.5rem;
+            padding: 1rem;
         }
 
         & > :--heading {
             text-transform: uppercase;
         }
+    }
+
+    & > form {
+        min-height: 0;
     }
 
 

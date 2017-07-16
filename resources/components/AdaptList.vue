@@ -1,15 +1,17 @@
 <template>
     <div class="v-adaptive">
         <slot :attached-items="attachedItems" :detached-items="detachedItems" :show-more="showMore">
-            <ul>
+            <ul ref="attached">
                 <li v-for="item in attachedItems">{{ item }}</li>
                 <li v-show="showMore" ref="popup">
                     <slot name="placeholder">
                         <span>More</span>
                     </slot>
-                    <ul>
-                        <li v-for="item in detachedItems">{{ item }}</li>
-                    </ul>
+                    <slot name="detached" :detached-items="detachedItems">
+                        <ul>
+                            <li v-for="item in detachedItems">{{ item }}</li>
+                        </ul>
+                    </slot>
                 </li>
             </ul>
         </slot>
@@ -94,27 +96,34 @@
         beforeMount() {
 
             this.$nextTick(() => {
-                let container = this.$el.firstElementChild,
+                let container = this.$el.querySelector('[data-attached]'),
                     elements = container.children,
                     attachedElementsWidth = container.getBoundingClientRect().width,
                     previousAttachedElementsWidth = attachedElementsWidth,
                     onResize = () => {
                     let containerRect = container.getBoundingClientRect(),
-                        containerWidth = containerRect.width -
-                            (this.showMore ? elements[elements.length - 1].getBoundingClientRect().width : 0);
+                        containerWidth = containerRect.width;
+
+                    console.log(elements[elements.length - 1].getBoundingClientRect().right - containerRect.left, containerWidth);
 
                     if (this.attachedItems.length
                         && (attachedElementsWidth =
-                            elements[elements.length - 2].getBoundingClientRect().right - containerRect.left)
+                            elements[elements.length - 1].getBoundingClientRect().right - containerRect.left)
                         > containerWidth
                     ) {
                         previousAttachedElementsWidth = attachedElementsWidth;
+
+                        console.log('DETACH');
+
                         this.detachedItems.splice(0, 0,
                             this.attachedItems.pop()
                         );
                         this.showMore = true;
                         this.$nextTick(onResize);
                     } else if (this.detachedItems.length && (containerWidth >= previousAttachedElementsWidth)) {
+
+                        console.log('ATTACH');
+
                         this.attachedItems.push(
                             ...this.detachedItems.splice(0, 1)
                         );
@@ -155,7 +164,7 @@
 
             &:last-of-type {
                 position: relative;
-                margin-left: auto;
+                /*margin-left: auto;*/
 
                 & > ul {
                     position: absolute;
@@ -168,8 +177,15 @@
     }
 </style>
 
-<style>
-    ul + header {
-        margin: 0 !important;
+<style lang="postcss">
+    div {
+        position: relative;
+    }
+
+    ul {
+        &:last-of-type {
+            position: absolute;
+            display: block;
+        }
     }
 </style>
