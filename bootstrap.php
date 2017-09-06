@@ -30,28 +30,31 @@ use Core\Services\Contracts\Kernel;
 // init container and register services
 $app = new \Core\Services\App(__DIR__ . '/config/services.php');
 
-$app->mutable('mut', function($greet) {
-    return 'msg: ' . $greet;
-});
-echo $app->make('mut', ['Super']);
-echo $app->make('mut');
-echo $app->make('mut', ['Dup']);
-die;
+//$app->mutable('roshe', 'ROSHE');
+//echo $app->make('roshe'); die;
 
-class Test
-{
-    public function __invoke(\Core\Services\DB $db)
-    {
-        var_dump($db);
-    }
-}
-$app->bind('test', Test::class);
-var_dump(new ReflectionFunction($app->make('test'))); die;
+//$app->mutable('mut', function($greet) {
+//    return 'msg: ' . $greet;
+//});
+//echo $app->make('mut', ['Super']);
+//echo $app->make('mut');
+//echo $app->make('mut', ['Dup']);
+//die;
 
-$app->bind('test', function(\Core\Services\Contracts\DB $db) {
-    var_dump($db->select('*')->from('products')->fetch(\App\Models\Product::class));
-});
-$app->make('test'); //die;
+//class Test
+//{
+//    public function __invoke(\Core\Services\DB $db)
+//    {
+//        var_dump($db);
+//    }
+//}
+//$app->bind('test', Test::class);
+//var_dump(new ReflectionFunction($app->make('test'))); die;
+//
+//$app->bind('test', function(\Core\Services\Contracts\DB $db) {
+//    var_dump($db->select('*')->from('products')->fetch(\App\Models\Product::class));
+//});
+//$app->make('test'); //die;
 
 // launch app
 //$kernel = $box[KernelInterface::class];

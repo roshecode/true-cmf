@@ -100,32 +100,19 @@ class Container implements ContainerInterface
     {
         $concrete = $concrete ?: $abstract;
         $placeholder = &$this->bindings[$abstract];
+        $make = $this->proxy($concrete, $placeholder);
         $placeholder = [
             self::PROXY => $shared
                 ? $mutable
-                    ? $this->proxy($concrete, function($make) use (&$placeholder) {
-                        return function (&$params) use (&$make, &$placeholder) {
-                            $shared = &$placeholder[self::SHARE];
-
-                            return $shared && ! $params
-                                ? $shared
-                                : $shared = $make($placeholder, $params);
-                        };
-                    })
-//                    ? function (&$params) use (&$concrete, &$placeholder) {
-//                        $shared = &$placeholder[self::SHARE];
-//
-//                        return ($shared && !$params)
-//                            ? $shared
-//                            : ($shared = $this->proxyMake($concrete, $params, $placeholder));
-//                    }
-                    : function (&$params) use (&$abstract, &$concrete, &$placeholder) {
-                        return $placeholder[self::SHARE]
-                            ?: $placeholder[self::SHARE] = $this->proxyMake($concrete, $params, $placeholder);
+                    ? function (&$params) use (&$make, &$placeholder) {
+                        return ($shared = &$placeholder[self::SHARE]) && !$params
+                            ? $shared
+                            : $shared = $make($params);
                     }
-                : function (&$params) use (&$concrete, &$placeholder) {
-                    return $this->proxyMake($concrete, $params, $placeholder);
-                },
+                    : function (&$params) use (&$make, &$placeholder) {
+                        return $placeholder[self::SHARE] ?: $placeholder[self::SHARE] = $make($params);
+                    }
+                : $make,
             self::SHARE => false,
         ];
     }
@@ -185,23 +172,23 @@ class Container implements ContainerInterface
         return $this->bindings[$abstract][self::PROXY]($params);
     }
 
-    protected function proxy(&$concrete, Closure $proxy)
+    protected function proxy(&$concrete, &$placeholder)
     {
         if (is_string($concrete) && class_exists($concrete)) {
-            return $proxy(function(&$placeholder, &$params) use (&$concrete) {
+            return function(&$params) use (&$concrete, &$placeholder) {
                 return $this->create($concrete, $params, $placeholder[self::STACK]);
-            });
+            };
         }
 
         if (is_callable($concrete)) {
-            return $proxy(function(&$placeholder, &$params) use (&$concrete) {
+            return function(&$params) use (&$concrete, &$placeholder) {
                 return $this->invoke($concrete, $params, $placeholder[self::STACK]);
-            });
+            };
         }
 
-        return $proxy(function(&$placeholder, &$params) use (&$concrete) {
+        return function() use (&$concrete, &$placeholder) {
             return $placeholder[self::SHARE] = $concrete;
-        });
+        };
     }
 
     /**
