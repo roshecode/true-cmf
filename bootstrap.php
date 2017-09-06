@@ -31,7 +31,7 @@ use Core\Services\Contracts\Kernel;
 $app = new \Core\Services\App(__DIR__ . '/config/services.php');
 
 //$app->mutable('roshe', 'ROSHE');
-//echo $app->make('roshe'); die;
+//echo $app['roshe']; die;
 
 //$app->mutable('mut', function($greet) {
 //    return 'msg: ' . $greet;

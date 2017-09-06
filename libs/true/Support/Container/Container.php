@@ -9,6 +9,7 @@ use ReflectionClass;
 use ReflectionFunction;
 use ReflectionParameter;
 use SplFixedArray;
+use True\Standards\Container\AbstractContainer;
 use True\Standards\Container\AbstractFacade;
 use True\Standards\Container\ContainerInterface;
 use True\Standards\Container\BootableInterface;
@@ -18,20 +19,13 @@ use True\Standards\Container\ScopeEnum;
 
 //use T\Traits\Service;
 
-class Container implements ContainerInterface
+class Container extends AbstractContainer
 {
     const PROXY = 0;
     const SHARE = 1;
     const STACK = 2;
 
     private $config;
-
-    /**
-     * The container's bindings.
-     *
-     * @var array
-     */
-    public $bindings = [];
 
     public $resolved = [];
 
@@ -65,11 +59,6 @@ class Container implements ContainerInterface
 
             $this->init($config);
         }
-    }
-
-    public function getInstance()
-    {
-        return $this;
     }
 
     public function isBootable($instance)
@@ -160,7 +149,7 @@ class Container implements ContainerInterface
      * @param array  $params
      * @return mixed
      */
-    protected function bindAndMakeRecursion(string &$abstract, array &$params = [])
+    protected function bindAndMake(string &$abstract, array &$params = [])
     {
         if (! isset($this->bindings[$abstract])) {
             isset($this->resolved[$abstract])
@@ -177,6 +166,7 @@ class Container implements ContainerInterface
         if (is_string($concrete) && class_exists($concrete)) {
             return function(&$params) use (&$concrete, &$placeholder) {
                 return $this->create($concrete, $params, $placeholder[self::STACK]);
+                // TODO: add is_callable instance check
             };
         }
 
@@ -192,35 +182,13 @@ class Container implements ContainerInterface
     }
 
     /**
-     * Make closure result
-     *
-     * @param $concrete
-     * @param $params
-     * @param $placeholder
-     * @return mixed|object
-     */
-    protected function proxyMake(&$concrete, &$params, &$placeholder)
-    {
-        if (is_string($concrete) && class_exists($concrete)) {
-            return $this->create($concrete, $params, $placeholder[self::STACK]);
-            // TODO: add is_callable instance check
-        }
-
-        if (is_callable($concrete)) {
-            return $this->invoke($concrete, $params, $placeholder[self::STACK]);
-        }
-
-        return $placeholder[self::SHARE] = $concrete;
-    }
-
-    /**
      * @param string $abstract
      * @param array  $params
      * @return mixed
      */
     public function make(string $abstract, array $params = [])
     {
-        return $this->bindAndMakeRecursion($abstract, $params);
+        return $this->bindAndMake($abstract, $params);
     }
 
     /**
@@ -233,15 +201,9 @@ class Container implements ContainerInterface
     }
 
     /**
-     * Create new instance of concrete class
-     *
-     * @param string     &$concrete
-     * @param array      &$params
-     * @param array|null &$stack
-     * @return object
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    protected function create(
+    public function create(
         string &$concrete,
         array &$params,
         &$stack = null
@@ -257,15 +219,9 @@ class Container implements ContainerInterface
     }
 
     /**
-     * Invoke callable function
-     *
-     * @param callable   $callable
-     * @param array      &$params
-     * @param array|null &$stack
-     * @return object
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    protected function invoke(
+    public function invoke(
         callable $callable,
         array &$params,
         &$stack = null
@@ -286,7 +242,7 @@ class Container implements ContainerInterface
     public function call($callable, array $params)
     {
         if (is_array($callable)) {
-            $instance = $this->bindAndMakeRecursion($callable[0], $params);
+            $instance = $this->bindAndMake($callable[0], $params);
         }
     }
 
@@ -324,7 +280,7 @@ class Container implements ContainerInterface
             $item instanceof ReflectionClass
                 ? $building[] = $this->isShared($item->name)
                 ? $this->bindings[$item->name][self::SHARE]
-                : $this->bindAndMakeRecursion($item->name, $params)
+                : $this->bindAndMake($item->name, $params)
                 : empty($params) ?: $building[] = array_shift($params);
         }
 
@@ -375,7 +331,7 @@ class Container implements ContainerInterface
         ) use (&$bootServices) {
             $this->mutable($abstract, $concrete);
             if ($arguments) {
-                $bootService = $this->bindAndMakeRecursion($abstract, $arguments);
+                $bootService = $this->bindAndMake($abstract, $arguments);
                 if ($this->isBootable($bootService)) {
                     $bootServices[] = $bootService;
                 }
@@ -387,7 +343,7 @@ class Container implements ContainerInterface
             $arguments = []
         ) use (&$bootServices) {
             $this->singleton($abstract, $concrete);
-            $bootService = $this->bindAndMakeRecursion($abstract, $arguments);
+            $bootService = $this->bindAndMake($abstract, $arguments);
             if ($this->isBootable($bootService)) {
                 $bootServices[] = $bootService;
             }
@@ -402,70 +358,4 @@ class Container implements ContainerInterface
 //        $elapsed = (microtime(true) - $this->startTime) * 1000;
 //        echo "<br /><br /><hr />Container execution time : $elapsed ms";
 //    }
-
-    /**
-     * Whether a offset exists
-     *
-     * @link  http://php.net/manual/en/arrayaccess.offsetexists.php
-     * @param mixed $offset <p>
-     *                      An offset to check for.
-     *                      </p>
-     * @return boolean true on success or false on failure.
-     *                      </p>
-     *                      <p>
-     *                      The return value will be casted to boolean if non-boolean was returned.
-     * @since 5.0.0
-     */
-    public function offsetExists($offset)
-    {
-        return isset($this->bindings[$offset]);
-    }
-
-    /**
-     * Offset to retrieve
-     *
-     * @link  http://php.net/manual/en/arrayaccess.offsetget.php
-     * @param mixed $abstract <p>
-     *                        The offset to retrieve.
-     *                        </p>
-     * @return mixed Can return all value types.
-     * @since 5.0.0
-     */
-    public function offsetGet($abstract)
-    {
-        return $this->make($abstract);
-    }
-
-    /**
-     * Offset to set
-     *
-     * @link  http://php.net/manual/en/arrayaccess.offsetset.php
-     * @param mixed $abstract <p>
-     *                        The offset to assign the value to.
-     *                        </p>
-     * @param mixed $concrete <p>
-     *                        The value to set.
-     *                        </p>
-     * @return void
-     * @since 5.0.0
-     */
-    public function offsetSet($abstract, $concrete)
-    {
-        $this->singleton($abstract, $concrete);
-    }
-
-    /**
-     * Offset to unset
-     *
-     * @link  http://php.net/manual/en/arrayaccess.offsetunset.php
-     * @param mixed $offset <p>
-     *                      The offset to unset.
-     *                      </p>
-     * @return void
-     * @since 5.0.0
-     */
-    public function offsetUnset($offset)
-    {
-        // TODO: Implement offsetUnset() method.
-    }
 }

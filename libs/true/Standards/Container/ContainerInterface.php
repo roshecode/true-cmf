@@ -7,7 +7,7 @@ use Closure;
 /**
  * Representation of a container
  */
-interface ContainerInterface extends \ArrayAccess
+interface ContainerInterface
 {
     /**
      * Register an existing instance as shared in the container.
@@ -62,6 +62,28 @@ interface ContainerInterface extends \ArrayAccess
      * @return mixed
      */
     public function make(string $abstract, array $params = []);
+
+    /**
+     * Create new instance of concrete class
+     *
+     * @param string     &$concrete
+     * @param array      &$params
+     * @param array|null &$stack
+     * @return object
+     * @throws \Exception
+     */
+    public function create(string &$concrete, array &$params, &$stack = null);
+
+    /**
+     * Invoke callable function
+     *
+     * @param callable   $callable
+     * @param array      &$params
+     * @param array|null &$stack
+     * @return object
+     * @throws \Exception
+     */
+    public function invoke(callable $callable, array &$params, &$stack = null);
 
     /**
      * Determine if a given type is shared.
