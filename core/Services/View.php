@@ -1,31 +1,35 @@
 <?php
-namespace T\Services;
 
-use T\Interfaces\ViewInterface;
-use T\Traits\Servant;
+namespace Core\Services;
 
-class View implements ViewInterface
+class View implements Contracts\View
 {
-    use Servant;
-
     /**
      * @var \League\Plates\Engine
      */
     protected $engine;
 
 //    public function __construct(\League\Plates\Engine $engine, \League\Plates\Extension\Asset $asset) {
-    public function __construct() {
+    public function __construct()
+    {
 //        $engine->loadExtension($asset);
 //        $this->engine = $engine;
-        $this->engine = new \League\Plates\Engine(BASEDIR . '/resources/views/static');
+        $this->engine = new \League\Plates\Engine(BASEDIR . '/resources/templates');
         $this->engine->loadExtension(new \League\Plates\Extension\Asset(BASEDIR . '/public'));
     }
 
-    public function make($layout) {
+//    public function __boot(\League\Plates\Extension\Asset $asset)
+//    {
+//        $this->loadExtension($asset);
+//    }
+
+    public function make($layout)
+    {
         return $this->engine->make($layout);
     }
 
-    public function render($layout, array $data = []) {
+    public function render($layout, array $data = [])
+    {
         return $this->engine->render($layout, $data);
     }
 }

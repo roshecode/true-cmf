@@ -1,7 +1,7 @@
 <?php
 namespace App\Models;
 
-use T\Abstracts\Model;
+use Core\Abstracts\Model;
 
 /**
  * Class User

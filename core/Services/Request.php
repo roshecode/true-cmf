@@ -1,17 +1,13 @@
 <?php
 
-namespace T\Services;
+namespace Core\Services;
 
-use T\Interfaces\RequestInterface;
-use T\Traits\Servant;
 //use Symfony\Component\HttpFoundation\Request as BaseRequest;
 use Zend\Diactoros\Request as BaseRequest;
 use Zend\Diactoros\ServerRequestFactory;
 
-class Request extends BaseRequest implements RequestInterface
+class Request extends BaseRequest implements Contracts\Request
 {
-    use Servant;
-
 //    public function __boot()
 //    {
 //        static::enableHttpMethodParameterOverride();
@@ -31,7 +27,6 @@ class Request extends BaseRequest implements RequestInterface
     }
 
     public function getUriPath() {
-//        return strtok(static::getRequestUri(), '?');
         return static::getUri()->getPath();
     }
 }

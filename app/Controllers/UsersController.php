@@ -3,13 +3,13 @@
 namespace App\Controllers;
 
 use App\Models\User;
-use T\Facades\Box;
-use T\Services\Response;
+use Core\Services\Facades\App;
+use Core\Services\Response;
 
 class UsersController
 {
     public function all() {
-        $usersCursor = Box::make(User::class)->all();
+        $usersCursor = App::make(User::class)->all();
         $users = [];
         foreach ($usersCursor as $user) {
             $users[] = $user;
@@ -18,16 +18,16 @@ class UsersController
     }
 
     public function withSlug($slug) {
-        $user = Box::make(User::class)->first(['slug' => $slug]);
+        $user = App::make(User::class)->first(['slug' => $slug]);
         return $user ? $user : "There is no user with slug '$slug'";
     }
 
     public function post($slug) {
-        $users = Box::make(User::class);
+        $users = App::make(User::class);
         $user = $users->first(['slug' => $slug]);
         return $user ? $users->update(
             ['slug' => $slug],
-            ['$set' => Box::make(\Psr\Http\Message\ServerRequestInterface::class)->getParsedBody()]
+            ['$set' => App::make(\Psr\Http\Message\ServerRequestInterface::class)->getParsedBody()]
         ) : "There is no user with slug '$slug'";
     }
 }

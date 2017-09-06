@@ -2,8 +2,7 @@
 
 namespace App\Controllers;
 
-use T\Facades\Route;
-use T\Services\Response;
+use Core\Services\Facades\Route;
 
 Route::api(function () {
     Route::get('users', [UsersController::class => 'all']);
@@ -11,12 +10,6 @@ Route::api(function () {
     Route::get('users/:slug', [UsersController::class => 'withSlug']);
 
     Route::post('users/:slug', [UsersController::class => 'post']);
-});
 
-Route::delete('delete', function() {
-    return 'DELETE method';
-});
-
-Route::put('put', function() {
-    return 'PUT method';
+    Route::get('products', [ProductsController::class => 'get']);
 });

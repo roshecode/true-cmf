@@ -1,6 +1,6 @@
 <?php
 
-namespace T\Services;
+namespace Core\Services;
 
 use Symfony\Component\HttpFoundation\Response as BaseResponse;
 

@@ -58,16 +58,20 @@
 
     @custom-selector :--heading h1, h2, h3, h4, h5, h6;
 
-    @custom-selector :--section header, section, aside, footer;
+    @custom-selector :--region header, section, aside, footer;
 
     @custom-selector :--placeholder
         :placeholder-shown,
         [aria-placeholder];
 
     @custom-selector :--icon
-        i[class|=icon];
+        i[class^=icon];
 
     @custom-selector :--edge-children
         :first-child,
         :last-child;
+
+    @custom-selector :--hover
+        :hover,
+        .hover;
 }

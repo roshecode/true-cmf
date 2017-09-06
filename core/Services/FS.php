@@ -1,11 +1,7 @@
 <?php
 
-namespace T\Services;
+namespace Core\Services;
 
-use T\Interfaces\FSInterface;
-use T\Traits\Servant;
-
-class FS extends \Truecode\Filesystem\FS implements FSInterface
+class FS extends \True\Support\Filesystem\FS implements Contracts\FS
 {
-    use Servant;
 }

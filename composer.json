@@ -28,9 +28,9 @@
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
-            "T\\": "core/",
+            "Core\\": "core/",
             "App\\": "app/",
-            "Truecode\\": "libs/truecode/"
+            "True\\": "libs/true/"
         }
     }
 }

@@ -16,6 +16,24 @@ body, input, button, textarea, [contenteditable=true] {
     all: unset;
 }
 
+body {
+    & > svg {
+        display: block;
+    }
+}
+
+:--icon {
+    font-style: normal;
+}
+
+figure {
+    margin: 0;
+}
+
+a {
+    color: inherit;
+}
+
 p, ul, ol {
     @apply --unset-spacing;
 }

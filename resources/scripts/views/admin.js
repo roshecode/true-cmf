@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import store from '../store';
+import store from '../../store';
 import routes from '../../../app/Routes/front/admin';
 import { prepareViewsInRoutes } from '../utils';
 

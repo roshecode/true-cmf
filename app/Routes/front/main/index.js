@@ -19,5 +19,10 @@ export default [
         name: 'user',
         component: 'Users/User',
         props: true
+    },
+    {
+        path: '/products',
+        name: 'products',
+        component: 'Products'
     }
 ];

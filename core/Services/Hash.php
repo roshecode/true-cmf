@@ -1,14 +1,9 @@
 <?php
 
-namespace T\Services;
+namespace Core\Services;
 
-use T\Interfaces\HashInterface;
-use T\Traits\Servant;
-
-class Hash implements HashInterface
+class Hash implements Contracts\Hash
 {
-    use Servant;
-
     protected $options;
 
     public function __construct($options = ['cost' => 10])

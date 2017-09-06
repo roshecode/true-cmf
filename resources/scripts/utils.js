@@ -1,7 +1,7 @@
 // Convert
 
 function loadView(path) {
-    return typeof path === 'string' ? () => import(`../views/dynamic/${path}`) : path;
+    return typeof path === 'string' ? () => import(`../views/${path}`) : path;
 }
 
 export function prepareViewsInRoutes(items) {

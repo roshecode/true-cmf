@@ -1,11 +1,32 @@
 <?php
 
-namespace T\Abstracts;
+namespace Core\Abstracts;
 
-use T\Interfaces\DBInterface;
+use Core\Services\Contracts\DB;
 
 abstract class Model
 {
+    /**
+     * The name of the "created at" column.
+     *
+     * @var string
+     */
+    const CREATED_AT = 'created_at';
+
+    /**
+     * The name of the "updated at" column.
+     *
+     * @var string
+     */
+    const UPDATED_AT = 'updated_at';
+
+    /**
+     * The name of the "deleted at" column.
+     *
+     * @var string
+     */
+    const DELETED_AT = 'deleted_at';
+
     /**
      * Indicates if the model should be timestamped.
      *
@@ -19,9 +40,6 @@ abstract class Model
      * @var string
      */
     protected $dateFormat = 'U';
-
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
 
     /**
      * @var \MongoDB\Collection $data
@@ -38,9 +56,9 @@ abstract class Model
     /**
      * Model constructor.
      *
-     * @param DBInterface $db
+     * @param DB $db
      */
-    public function __construct(DBInterface $db)
+    public function __construct(DB $db)
     {
         $this->data = $db->{$this->collection};
     }
