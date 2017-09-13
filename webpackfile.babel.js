@@ -3,7 +3,7 @@
 import webpack from 'webpack';
 import path from 'path';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
-import StyleLintPlugin from 'stylelint-webpack-plugin';
+// import StyleLintPlugin from 'stylelint-webpack-plugin';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 
 let NODE_ENV = process.env.NODE_ENV || 'development';

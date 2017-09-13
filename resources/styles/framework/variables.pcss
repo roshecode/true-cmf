@@ -7,9 +7,9 @@
     --break__medium--large:  63em; // 992px
     --break__large--x-large: 75em; // 1200px
 
-    @custom-media --small       (width >= 34em) and (width < 48em);
-    @custom-media --medium      (width >= 48em) and (width < 62em);
-    @custom-media --large       (width >= 62em) and (width < 75em);
+    @custom-media --small       (34em <= width < 48em);
+    @custom-media --medium      (48em <= width < 62em);
+    @custom-media --large       (62em <= width < 75em);
 
     @custom-media --small-up    (width >= 34em);
     @custom-media --medium-up   (width >= 48em);
@@ -21,48 +21,84 @@
     @custom-media --medium-down (width < 62em);
     @custom-media --large-down  (width < 75em);
 
+    @custom-media --landscape (orientation: landscape);
 
-    @custom-selector :--input
-        input:not([type=submit]):not([type=button]),
+
+    /* Controls */
+
+    @custom-selector :--text-input
+        input:not(
+            [type=button],
+            [type=checkbox],
+            [type=color],
+            [type=file],
+            [type=hidden],
+            [type=image],
+            [type=radio],
+            [type=range],
+            [type=reset],
+            [type=submit]
+        ),
         textarea,
         [contenteditable=true],
-        [role=textbox],
-        .input;
+        [role=textbox];
 
     @custom-selector :--form-button
-        input[type=button],
-        input[type=submit],
+        input:matches(
+            [type=button],
+            [type=reset],
+            [type=submit]
+        ),
         button;
 
     @custom-selector :--button
-        input[type=button],
-        input[type=submit],
+        input:matches(
+            [type=button],
+            [type=submit]
+        ),
         button,
-        [role=button],
-        .button;
+        [role=button];
 
     @custom-selector :--submit
         input[type=submit],
         button[type=submit];
 
     @custom-selector :--control
-        input,
         button,
+        input,
+        select,
         textarea,
-        [contenteditable=true],
         [role=button],
+        [role=checkbox],
         [role=textbox],
-        .input,
-        .button,
-        .textbox;
-
-    @custom-selector :--heading h1, h2, h3, h4, h5, h6;
-
-    @custom-selector :--region header, section, aside, footer;
+        [contenteditable=true];
 
     @custom-selector :--placeholder
         :placeholder-shown,
         [aria-placeholder];
+
+    /* Control states */
+
+    @custom-selector :--hover
+        :hover,
+        [hovered];
+
+    @custom-selector :--focus
+        :focus,
+        [focused];
+
+    @custom-selector :--check
+        [aria-checked=true];
+
+    @custom-selector :--check-mix
+        [aria-checked=mixed];
+
+
+    /* Typography */
+
+    @custom-selector :--heading h1, h2, h3, h4, h5, h6;
+
+    @custom-selector :--region header, section, aside, footer;
 
     @custom-selector :--icon
         i[class^=icon];
@@ -70,8 +106,4 @@
     @custom-selector :--edge-children
         :first-child,
         :last-child;
-
-    @custom-selector :--hover
-        :hover,
-        .hover;
 }

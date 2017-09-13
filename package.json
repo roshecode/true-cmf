@@ -49,7 +49,10 @@
     "postcss-loader": "^2.0.6",
     "postcss-media-minmax": "^3.0.0",
     "postcss-nesting": "^4.1.0",
+    "postcss-pseudo-class-any-link": "^4.0.0",
     "postcss-scss": "^1.0.2",
+    "postcss-selector-matches": "^3.0.1",
+    "postcss-selector-not": "^3.0.1",
     "postcss-url": "^7.1.2",
     "posthtml-loader": "^0.11.0",
     "posthtml-postcss": "^0.2.5",
@@ -82,6 +85,6 @@
     "vuex-router-sync": "^4.3.1"
   },
   "scripts": {
-    "build": "./node_modules/webpack/bin/webpack.js"
+    "start": "node_modules/.bin/webpack --config webpackfile.babel.js"
   }
 }
