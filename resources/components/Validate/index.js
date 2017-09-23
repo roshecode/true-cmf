@@ -1,24 +1,5 @@
-import _ from 'lodash';
 import Vue from 'vue';
-
-function toFormDataName(path) {
-    let array = path.map(value => `[${value}]`);
-    array[0] = path[0];
-
-    return array.join('');
-}
-
-function traverse(object, callback, path = []) {
-    if (Object(object) === object && !Array.isArray(object)) {
-        for (let [key, value] of Object.entries(object)) {
-            let currentPath = path.slice();
-            currentPath.push(key);
-            traverse(value, callback, currentPath);
-        }
-    } else {
-        callback(object, path);
-    }
-}
+import { getByPath, traverse } from './utils';
 
 export default {
     name: 'Validate',
@@ -58,7 +39,7 @@ export default {
 
             checkValidity(data) {
                 for (let [key, validate] of Object.entries(validator.fields)) {
-                    validate.checkValidity(_.get(data, key));
+                    validate.checkValidity(getByPath(data, key.split('.')));
                 }
 
                 return !validator.error;
@@ -73,7 +54,7 @@ export default {
         };
 
         traverse(this.validations, (validations, path) => {
-            let key = toFormDataName(path);
+            const key = path.join('.');
             let validate = {
                 dirty: false,
                 error: false,
@@ -82,23 +63,24 @@ export default {
                 checkValidity: (item) => {
                     validate.dirty = validator.dirty = true;
                     let value = item instanceof Event ? item.target.value : item,
-                        error = validate.error = validator.error = false;
+                        error;
                     validator.fields[key].value = value;
                     validator.error = Object.values(validator.fields).some(validate => validate.error);
-                    if (Array.isArray(validations)) {
-                        for (let validation of validations) {
-                            error = !validation.validate(value, validator.fields);
-                            if (error) {
-                                validate.error = validator.error = error;
-                                validate.message = validation.message;
-                                break;
-                            }
-                        }
-                    } else {
-                        error = !validations.validate(value, validator.fields);
-                        validate.error = validator.error = error;
-                        validate.message = validations.message;
+
+                    if (!Array.isArray(validations)) {
+                        validations = [validations];
                     }
+
+                    for (let validation of validations) {
+                        error = !validation.validate(value, validator.fields);
+                        if (error) {
+                            validate.error = validator.error = true;
+                            validate.message = validation.message;
+                            this.$emit('update:v', validator);
+                            break;
+                        }
+                    }
+
                     return !error;
                 }
             };

@@ -11,15 +11,11 @@ new Vue({
     },
     store,
     router: new VueRouter({
-        routes: prepareViewsInRoutes(routes),
+        routes: prepareViewsInRoutes(routes, path => import(`../../views/${path}`)),
         linkActiveClass: 'active',
         mode: 'history',
-        scrollBehavior (to, from, savedPosition) {
-            if (savedPosition) {
-                return savedPosition
-            } else {
-                return { x: 0, y: 0 }
-            }
+        scrollBehavior(to, from, savedPosition) {
+            return savedPosition || { x: 0, y: 0 };
         }
     }),
     render: (h) => (<router-view />)

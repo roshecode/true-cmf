@@ -19,6 +19,8 @@ module.exports = {
         require('postcss-calc'),
         require('postcss-media-minmax'),
         require('postcss-custom-selectors'),
+        require('postcss-selector-not'),
+        require('postcss-selector-matches'),
         // require('postcss-smart-import')({ /* ...options */ }),
         // require('precss')({ /* ...options */ }),
         // require('autoprefixer'),
