@@ -20,30 +20,31 @@ interface ContainerInterface
     /**
      * Register a binding with the container.
      *
-     * @param string|array               $abstract // TODO: bind from array
+     * @param string                     $abstract // TODO: bind from array
      * @param string|Closure|Object|null $concrete
-     * @param bool                       $shared
-     * @param bool                       $mutable
-     *
      * @throws \Exception
      */
-    public function bind($abstract, $concrete, $shared, $mutable);
+    public function bind(string $abstract, $concrete);
 
     /**
      * Register a shared binding in the container.
      *
      * @param string|array $abstract
      * @param mixed        $concrete
+     * @param array|null   $arguments
+     * @return
      */
-    public function singleton($abstract, $concrete);
+    public function singleton(string $abstract, $concrete, array $arguments = []);
 
     /**
      * Register a mutable singleton in the container
      *
      * @param string|array $abstract
      * @param mixed        $concrete
+     * @param array|null   $arguments
+     * @return
      */
-    public function mutable($abstract, $concrete);
+    public function mutable(string $abstract, $concrete, array $arguments = []);
 
     /**
      * Register an alias for existing interface
@@ -51,17 +52,16 @@ interface ContainerInterface
      * @param string $alias
      * @param string $abstract
      */
-    public function alias(string $alias, $abstract);
+    public function alias(string $abstract, string $alias);
 
     /**
      * Wrap function under makeInstance
      *
      * @param string $abstract
      * @param array  $params
-     *
      * @return mixed
      */
-    public function make(string $abstract, array $params = []);
+    public function make(string $abstract, ?array $params = null);
 
     /**
      * Create new instance of concrete class
@@ -72,24 +72,23 @@ interface ContainerInterface
      * @return object
      * @throws \Exception
      */
-    public function create(string &$concrete, array &$params, &$stack = null);
+    public function create(string &$concrete, array &$params, ?array &$stack = null);
 
     /**
      * Invoke callable function
      *
-     * @param callable   $callable
+     * @param Closure    $callable
      * @param array      &$params
      * @param array|null &$stack
      * @return object
      * @throws \Exception
      */
-    public function invoke(callable $callable, array &$params, &$stack = null);
+    public function invoke(callable $callable, array &$params, ?array &$stack = null);
 
     /**
      * Determine if a given type is shared.
      *
      * @param string $abstract
-     *
      * @return bool
      */
     public function isShared(string $abstract) : bool;

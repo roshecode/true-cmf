@@ -4,26 +4,27 @@ namespace True\Support\Container;
 
 use Closure;
 use Exception;
-use ArrayAccess;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionParameter;
 use SplFixedArray;
-use True\Standards\Container\AbstractContainer;
-use True\Standards\Container\AbstractFacade;
-use True\Standards\Container\ContainerInterface;
-use True\Standards\Container\BootableInterface;
-use True\Standards\Container\ContainerAcessibleInterface;
-use True\Standards\Container\KeyEnum;
-use True\Standards\Container\ScopeEnum;
-
-//use T\Traits\Service;
+use True\Standards\Container\{
+    AbstractContainer,
+    AbstractFacade,
+    ContainerInterface,
+    BootableInterface,
+    KeyEnum,
+    ScopeEnum
+};
 
 class Container extends AbstractContainer
 {
     const PROXY = 0;
     const SHARE = 1;
     const STACK = 2;
+    const ARGS = 3;
+
+    protected $proxy;
 
     private $config;
 
@@ -40,86 +41,63 @@ class Container extends AbstractContainer
     public function __construct($config = null)
     {
         $this->startTime = microtime(true);
-        AbstractFacade::__registerContainer($this);
+
+        AbstractFacade::registerContainer($this);
         $this->instance(ContainerInterface::class, $this);
 
         if ($this->isBootable($this)) {
-            /**
-             * @var BootableInterface $this
-             */
+            /** @var BootableInterface $this */
             $this->__boot();
         }
 
         if ($config) {
             if (is_string($config)) {
                 if (file_exists($config)) {
-                    $config = include $config;
-                } else throw new Exception('Services configuration file not found');
+                    $config = include_once $config;
+                } else {
+                    throw new Exception('Services configuration file not found');
+                }
             }
 
             $this->init($config);
         }
     }
 
-    public function isBootable($instance)
+    public function bind(string $abstract, $concrete = null) // TODO: bind from array
     {
-        return $instance instanceof BootableInterface;
-    }
-
-    public function isContainerAccessible($instance)
-    {
-        return $instance instanceof ContainerAcessibleInterface;
-    }
-
-    protected function error()
-    {
-        throw new Exception('ContextualBindingException');
-    }
-
-    /**
-     * Register a binding with the container.
-     *
-     * @param string|array                $abstract // TODO: bind from array
-     * @param string|\Closure|Object|null $concrete
-     * @param bool                        $shared
-     * @param bool                        $mutable
-     * @throws \Exception
-     */
-    public function bind($abstract, $concrete = null, $shared = false, $mutable = false)
-    {
-        $concrete = $concrete ?: $abstract;
-        $placeholder = &$this->bindings[$abstract];
-        $make = $this->proxy($concrete, $placeholder);
-        $placeholder = [
-            self::PROXY => $shared
-                ? $mutable
-                    ? function (&$params) use (&$make, &$placeholder) {
-                        return ($shared = &$placeholder[self::SHARE]) && !$params
-                            ? $shared
-                            : $shared = $make($params);
-                    }
-                    : function (&$params) use (&$make, &$placeholder) {
-                        return $placeholder[self::SHARE] ?: $placeholder[self::SHARE] = $make($params);
-                    }
-                : $make,
+        $binding = &$this->bindings[$abstract];
+        $binding = [
+            self::PROXY => $this->getMakeClosure($binding, $abstract, $concrete),
             self::SHARE => false,
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function singleton($abstract, $concrete)
+    public function singleton(string $abstract, $concrete = null, ?array $arguments = null)
     {
-        $this->bind($abstract, $concrete, true);
+        $binding = &$this->bindings[$abstract];
+        $make = $this->getMakeClosure($binding, $abstract, $concrete);
+        $binding = [
+            self::PROXY => function (&$params) use (&$make, &$binding) {
+                return $binding[self::SHARE] ?: $binding[self::SHARE] = $make($params);
+            },
+            self::SHARE => false,
+        ];
+        $binding[self::ARGS] = $arguments;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function mutable($abstract, $concrete)
+    public function mutable(string $abstract, $concrete = null, ?array $arguments = null)
     {
-        $this->bind($abstract, $concrete, true, true);
+        $binding = &$this->bindings[$abstract];
+        $make = $this->getMakeClosure($binding, $abstract, $concrete);
+        $binding = [
+            self::PROXY => function (&$params) use (&$make, &$binding) {
+                return ($shared = &$binding[self::SHARE]) && ! $params
+                    ? $shared
+                    : $shared = $make($params);
+            },
+            self::SHARE => false,
+        ];
+        $binding[self::ARGS] = $arguments;
     }
 
     /**
@@ -128,16 +106,13 @@ class Container extends AbstractContainer
     public function instance(string $abstract, $instance)
     {
         $placeholder = &$this->bindings[$abstract];
-        $placeholder = new SplFixedArray(1);
-        $placeholder[self::PROXY] = function () use ($instance) {
-            return $instance;
-        };
+        $placeholder[self::PROXY] = $this->getInstanceClosure($placeholder, $instance);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function alias(string $alias, $abstract)
+    public function alias(string $abstract, string $alias)
     {
         $this->bindings[$alias] = &$this->bindings[$abstract];
     }
@@ -149,7 +124,7 @@ class Container extends AbstractContainer
      * @param array  $params
      * @return mixed
      */
-    protected function bindAndMake(string &$abstract, array &$params = [])
+    protected function bindAndMake(string &$abstract, ?array &$params)
     {
         if (! isset($this->bindings[$abstract])) {
             isset($this->resolved[$abstract])
@@ -158,27 +133,48 @@ class Container extends AbstractContainer
             $this->bind($abstract);
         }
 
-        return $this->bindings[$abstract][self::PROXY]($params);
+        // make an instance
+        $params = $params ?? $this->bindings[$abstract][self::ARGS] ?? [];
+        $instance = $this->bindings[$abstract][self::PROXY]($params);
+
+        return $instance;
     }
 
-    protected function proxy(&$concrete, &$placeholder)
+    protected function getInstanceClosure(&$placeholder, &$concrete)
     {
-        if (is_string($concrete) && class_exists($concrete)) {
-            return function(&$params) use (&$concrete, &$placeholder) {
-                return $this->create($concrete, $params, $placeholder[self::STACK]);
-                // TODO: add is_callable instance check
-            };
-        }
-
-        if (is_callable($concrete)) {
-            return function(&$params) use (&$concrete, &$placeholder) {
-                return $this->invoke($concrete, $params, $placeholder[self::STACK]);
-            };
-        }
-
-        return function() use (&$concrete, &$placeholder) {
+        return function () use (&$placeholder, &$concrete) {
             return $placeholder[self::SHARE] = $concrete;
         };
+    }
+
+    protected function getMakeClosure(&$binding, &$abstract, &$concrete)
+    {
+        $concrete = $concrete ?: $abstract;
+
+        // if $concrete is a string and represent an existed class
+        if (is_string($concrete) && class_exists($concrete)) {
+            return function (&$params) use (&$concrete, &$binding) {
+                $instance = $this->create($concrete, $params, $binding[self::STACK]);
+
+                if ($this->isBootable($instance)) {
+                    $instance->__boot(); // TODO: resolve DI
+                }
+
+                return $instance;
+                // TODO: add is_callable instance check
+                // TODO: add is_bootable instance check
+            };
+        }
+
+        // if $concrete is callable
+        if (is_callable($concrete)) {
+            return function (&$params) use (&$concrete, &$binding) {
+                return $this->invoke($concrete, $params, $binding[self::STACK]);
+            };
+        }
+
+        // if $concrete is an instance
+        return $this->getInstanceClosure($placeholder, $concrete);
     }
 
     /**
@@ -186,9 +182,14 @@ class Container extends AbstractContainer
      * @param array  $params
      * @return mixed
      */
-    public function make(string $abstract, array $params = [])
+    public function make(string $abstract, ?array $params = null)
     {
         return $this->bindAndMake($abstract, $params);
+    }
+
+    public function isBootable($instance) : bool
+    {
+        return $instance instanceof BootableInterface;
     }
 
     /**
@@ -206,16 +207,16 @@ class Container extends AbstractContainer
     public function create(
         string &$concrete,
         array &$params,
-        &$stack = null
+        ?array &$stack = null
     ) {
         $reflectionClass = new ReflectionClass($concrete);
         $constructor = $reflectionClass->getConstructor();
-        $instance = ($constructor && $reflectionParams = $constructor->getParameters())
-            ? $reflectionClass->newInstanceArgs($this->build($stack
-                ?: $stack = $this->getStack($reflectionParams), $params))
-            : new $concrete;
 
-        return $this->isContainerAccessible($instance) ? $instance->__registerContainer($this) : $instance;
+        return ($constructor && $reflectionParams = $constructor->getParameters())
+            ? $reflectionClass->newInstanceArgs(
+                $this->build($stack ?: $stack = $this->getStack($reflectionParams), $params)
+            )
+            : new $concrete;
     }
 
     /**
@@ -224,20 +225,20 @@ class Container extends AbstractContainer
     public function invoke(
         callable $callable,
         array &$params,
-        &$stack = null
+        ?array &$stack = null
     ) {
         $reflectionFunction = new ReflectionFunction($callable);
-        $instance = ($reflectionParams = $reflectionFunction->getParameters())
-            ? $reflectionFunction->invokeArgs($this->build($stack
-                ?: $stack = $this->getStack($reflectionParams), $params))
-            : call_user_func_array($callable, $params);
 
-        return $this->isContainerAccessible($instance) ? $instance->__registerContainer($this) : $instance;
+        return ($reflectionParams = $reflectionFunction->getParameters())
+            ? $reflectionFunction->invokeArgs(
+                $this->build($stack ?: $stack = $this->getStack($reflectionParams), $params)
+            )
+            : call_user_func_array($callable, $params);
     }
 
     /**
      * @param array|callable $callable
-     * @param array $params
+     * @param array          $params
      */
     public function call($callable, array $params)
     {
@@ -306,7 +307,7 @@ class Container extends AbstractContainer
                     if (isset($paramsOrConcrete[KeyEnum::Alias])) {
                         $this->alias($paramsOrConcrete[KeyEnum::Alias], $abstract);
                     }
-                    $method($abstract, $concrete, $paramsOrConcrete[KeyEnum::Arguments] ?? null);
+                    $method($abstract, $concrete, $paramsOrConcrete[KeyEnum::Arguments]);
                 } else {
                     $method($abstract, $paramsOrConcrete);
                 }
@@ -317,41 +318,18 @@ class Container extends AbstractContainer
     public function init(array $config)
     {
         $this->config = $config;
-        $bootServices = [];
         $this->packScope(ScopeEnum::Instantiated, function ($abstract, $concrete) {
             $this->instance($abstract, $concrete);
         });
         $this->packScope(ScopeEnum::Disposable, function ($abstract, $concrete) {
             $this->bind($abstract, $concrete);
         });
-        $this->packScope(ScopeEnum::Mutable, function (
-            $abstract,
-            $concrete,
-            $arguments = null
-        ) use (&$bootServices) {
-            $this->mutable($abstract, $concrete);
-            if ($arguments) {
-                $bootService = $this->bindAndMake($abstract, $arguments);
-                if ($this->isBootable($bootService)) {
-                    $bootServices[] = $bootService;
-                }
-            }
+        $this->packScope(ScopeEnum::Mutable, function ($abstract, $concrete, $params = []) {
+            $this->mutable($abstract, $concrete, $params);
         });
-        $this->packScope(ScopeEnum::Single, function (
-            $abstract,
-            $concrete,
-            $arguments = []
-        ) use (&$bootServices) {
-            $this->singleton($abstract, $concrete);
-            $bootService = $this->bindAndMake($abstract, $arguments);
-            if ($this->isBootable($bootService)) {
-                $bootServices[] = $bootService;
-            }
+        $this->packScope(ScopeEnum::Single, function ($abstract, $concrete, $params = []) {
+            $this->singleton($abstract, $concrete, $params);
         });
-        foreach ($bootServices as $service) {
-            $service->__boot();
-        }
-        unset($bootServices);
     }
 
 //    public function __destruct() {

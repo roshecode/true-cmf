@@ -30,7 +30,7 @@ abstract class AbstractFacade
      * @param  ContainerInterface &$container
      * @return void
      */
-    final public static function __registerContainer(ContainerInterface $container)
+    final public static function registerContainer(ContainerInterface $container)
     {
         static::$container = $container;
     }
@@ -41,10 +41,7 @@ abstract class AbstractFacade
      * @return string|object
      * @throws RuntimeException
      */
-    protected static function getFacadeAccessor()
-    {
-        throw new RuntimeException('getFacadeAccessor method must be overwritten');
-    }
+    protected abstract static function getFacadeAccessor();
 
     /**
      * Get the root object behind the facade.
@@ -101,12 +98,6 @@ abstract class AbstractFacade
     final public static function __callStatic(string $method, array $args)
     {
         $instance = static::getFacadeRoot();
-
-        if (is_string($instance)) {
-            echo '<pre>';
-            var_dump($instance);
-            echo '</pre><hr><br>'; die;
-        }
 
         if (! $instance) {
             throw new RuntimeException('A facade root has not been set.');

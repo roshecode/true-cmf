@@ -1,7 +1,7 @@
 <?php
 namespace Core\Services\Facades;
 
-use True\Standards\Container\AbstractFacade as Facade;
+use True\Standards\Container\{AbstractFacade as Facade, ContainerInterface};
 
 /**
  * Class App
@@ -12,10 +12,6 @@ use True\Standards\Container\AbstractFacade as Facade;
 class App extends Facade
 {
     protected static function getFacadeAccessor() {
-        return \Core\Services\Contracts\App::class;
-    }
-
-    public static function start() {
-        return 'START';
+        return ContainerInterface::class;
     }
 }

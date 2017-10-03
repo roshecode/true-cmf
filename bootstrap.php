@@ -1,5 +1,30 @@
 <?php
+
+//declare(strict_types=1);
+
+define('START_TIME', microtime(true));
 define('BASEDIR', __DIR__);
+
+ini_set('display_errors', true);
+ini_set('display_startup_errors', true);
+error_reporting(E_ALL);
+
+(new \Dotenv\Dotenv(__DIR__))->load();
+
+//$data = [
+//    'name' => 'Rosem',
+//    'login' => 'rosem'
+//];
+//
+//function genTest($name) {
+//    global $data;
+//    var_dump($data);
+//    $data['name'] = yield 'ROshe';
+//}
+//
+//genTest('Roshe');
+////var_dump($data);
+//die;
 
 //$arr = new \True\Support\Data\SoftArray([
 //    'user' => [
@@ -26,9 +51,16 @@ define('BASEDIR', __DIR__);
 //die;
 
 use Core\Services\Contracts\Kernel;
-
 // init container and register services
 $app = new \Core\Services\App(__DIR__ . '/config/services.php');
+require_once BASEDIR . '/app/Routes/back/web.php';
+require_once BASEDIR . '/app/Routes/back/api.php';
+//$route = $app->make(\Core\Services\Route::class);
+//$route->use('app/Routes/back' . $route->test('api/') ? 'api.php' : 'web.php');
+
+//\Core\Services\Facades\Route::get('/:name', function ($name) {
+//    echo $name;
+//});
 
 //$app->mutable('roshe', 'ROSHE');
 //echo $app['roshe']; die;
@@ -86,3 +118,6 @@ $kernel->terminate($request, $response);
 //
 //    // Handle extra errors etc here
 //});
+
+//echo '<hr />';
+//echo 'END TIME: ' . (microtime(true) - START_TIME) * 1000;

@@ -4,8 +4,6 @@ namespace Core\Services;
 
 //use T\Interfaces\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use True\Standards\Container\ContainerAcessibleInterface;
-use True\Standards\Container\ContainerAccessTrait;
 
 class Kernel implements Contracts\Kernel
 {
@@ -16,9 +14,13 @@ class Kernel implements Contracts\Kernel
         $this->route = $route;
     }
 
+    protected function createClass(string $class)
+    {
+        return new $class;
+    }
+
     /**
      * @param ServerRequestInterface $request
-     *
      * @return Response A Response instance
      */
     public function handle(
@@ -29,15 +31,20 @@ class Kernel implements Contracts\Kernel
     {
 //        $this->box->instance(\T\Interfaces\Request::class, $request);
         $make = $this->route->make($request->getMethod(), $request->getUri()->getPath());
-        $class = key($make[0]);
-        $content = is_array($make[0])
-            ? (new $class)->{current($make[0])}(...$make[1])
-            : call_user_func_array($make[0], $make[1]);
+        [$callable, $arguments] = $make;
 
+        if (is_array($callable)) {
+            [$class, $method] = [key($callable), current($callable)];
+            $content = (new $class)->$method(...$arguments);
+        } else {
+            $content = call_user_func_array($callable, $arguments);
+        }
 
-        return new Response(...(is_string($content)
-            ? [$content, Response::HTTP_OK, ['content-type' => 'text/html']]
-            : [json_encode($content), Response::HTTP_OK, ['content-type' => 'application/json']])
+        return new Response(...
+            (is_string($content)
+                ? [$content, Response::HTTP_OK, ['content-type' => 'text/html']]
+                : [json_encode($content), Response::HTTP_OK, ['content-type' => 'application/json']]
+            )
         );
     }
 

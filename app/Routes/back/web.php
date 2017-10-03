@@ -7,8 +7,6 @@ Route::get(':route:.*', function() {
     return View::render('default/main', ['title' => 'Home']);
 });
 
-include __DIR__ . '/api/api.php';
-
 Route::get('/admin', function() {
     return View::render('default/admin', ['title' => 'Admin']);
 });
