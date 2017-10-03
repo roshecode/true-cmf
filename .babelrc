@@ -1,5 +1,15 @@
 {
-  "presets": ["es2015"],
+  "presets": [
+    [
+      "env",
+      {
+        "targets": {
+          "chrome": "59",
+          "node": "current"
+        }
+      }
+    ]
+  ],
   "plugins": [
     "syntax-dynamic-import",
     "transform-async-generator-functions",
@@ -7,9 +17,12 @@
     "transform-class-properties",
     "transform-export-extensions",
     "transform-object-rest-spread",
-    ["transform-strict-mode", {
-      "strict": true
-    }],
+    [
+      "transform-strict-mode",
+      {
+        "strict": true
+      }
+    ],
     "transform-vue-jsx"
   ]
 }
