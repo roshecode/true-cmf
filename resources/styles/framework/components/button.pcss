@@ -3,20 +3,23 @@
 }
 
 :--form-button {
-    max-width: calc(100% - 3rem);
-    text-transform: uppercase;
     text-align: center;
-    padding: 0.5rem 1rem;
-    background: #0d8275;
+    padding: 0.8rem 1.2rem;
+    border-radius: .2rem;
+    //background: #096ba5;
+    //background: var(--color-success);
+    background: #5fa8d4;
+    border-bottom: 2px solid rgb(86, 150, 189);
     color: white;
     transition: background .2s;
+    text-transform: lowercase;
 
     &:hover {
         cursor: pointer;
-        background: color(#0d8275 lightness(+ 5%));
+        background: color(var(--color-success) lightness(+5%));
     }
 
     &:focus {
-        box-shadow: 0 0 0 1px #0eb1a2;;
+        box-shadow: 0 0 0 1px #064569;;
     }
 }

@@ -1,0 +1,27 @@
+:root {
+    /* Breakpoints */
+// dwarf tiny small medium large huge giant
+
+    --break__x-small--small: 36em; // 576px
+    --break__small--medium:  48em; // 768px
+    --break__medium--large:  63em; // 992px
+    --break__large--x-large: 75em; // 1200px
+
+    @custom-media --dwarf       (width < 21em);
+    @custom-media --tiny        (21em <= width < 34em);
+    @custom-media --small       (34em <= width < 48em);
+    @custom-media --medium      (48em <= width < 62em);
+    @custom-media --large       (62em <= width < 75em);
+    @custom-media --huge        (75em <= width < 88em);
+    @custom-media --giant       (width >= 88em);
+
+    @custom-media --small-up    (width >= 34em);
+    @custom-media --medium-up   (width >= 48em);
+    @custom-media --large-up    (width >= 62em);
+
+    @custom-media --small-down  (width < 48em);
+    @custom-media --medium-down (width < 62em);
+    @custom-media --large-down  (width < 75em);
+
+    @custom-media --landscape (orientation: landscape);
+}

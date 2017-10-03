@@ -1,25 +1,29 @@
-@import "framework/index.pcss";
-
-main {
-    width: 100%;
-}
+@import "framework/main.pcss";
 
 :root, body {
     height: 100%;
 }
 
+main {
+    width: 100%;
+}
+
+::selection {
+    background: #ffdb75;
+}
+
 :--region {
-    padding: .5rem;
+    //padding: .5rem;
 }
 
-label {
-    padding: .4rem .2rem;
-}
-
-form, :--control {
-    border-radius: .2rem;
-}
-
-:--control {
-    margin: .5rem;
+body {
+    //font-family: 'Abel', sans-serif;
+    //font-family: 'Hind Vadodara', sans-serif;
+    font-family: 'Libre Franklin', sans-serif;
+    font-size: 16px;
+    //overflow: hidden;
+    //background: #096ba5;
+    background: #e2e2e2;
+    color: #6b6b6b;
+    font-weight: 300;
 }

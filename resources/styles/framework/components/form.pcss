@@ -1,21 +1,31 @@
 form {
+    background: white;
+
     & > :--region {
-        padding: .5rem;
+        //padding: .5rem;
     }
 
     & > section {
         display: grid;
+        grid-gap: 1rem;
+        padding: 1rem;
 
         @media (--small-up) {
             grid-template-columns: minmax(auto, 8rem) 1fr;
         }
     }
+
+    & > footer {
+        & > :--form-button {
+            margin: .5rem;
+        }
+    }
 }
 
-@media (--x-small) {
+@media (--small-down) {
 
     label {
-        margin: .25rem .5rem;
+        margin-bottom: -.5rem;
         padding: .25rem;
 
         & + input {

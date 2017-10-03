@@ -3,27 +3,30 @@
 import webpack from 'webpack';
 import path from 'path';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import ProgressCallback from './progress-webpack-plugin';
 // import StyleLintPlugin from 'stylelint-webpack-plugin';
-import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 
 let NODE_ENV = process.env.NODE_ENV || 'development';
 
+// const extractCSS = new ExtractTextPlugin({filename: 'css/[name].css', allChunks: true});
 const extractCSS = new ExtractTextPlugin('css/[name].css');
 // const extractDocs = new ExtractTextPlugin('docs/docs.md');
 
+const pathResolve = value => path.resolve(__dirname, value);
+
 export default {
-    context: path.resolve(__dirname, './resources'),
+    context: pathResolve('./resources'),
 
     entry: {
         vendor: ['vue', 'vuex', 'vue-router', 'vue-resource', 'vue-touch'],
         app: './scripts/app',
+        style: './styles/style.pcss',
         main: ['./scripts/views/main.js', './styles/themes/default/main.pcss'],
         admin: ['./scripts/views/admin.js', './styles/themes/default/admin.pcss'],
-        style: './styles/style.pcss',
     },
 
     output: {
-        path: path.resolve(__dirname, './public'),
+        path: pathResolve('./public'),
         publicPath: '/',
         filename: 'js/[name].js',
         // library: '[name]' // add global variable
@@ -31,7 +34,7 @@ export default {
 
     resolve: {
         alias: {
-            styles: path.resolve(__dirname, 'resources/styles'),
+            styles: pathResolve('resources/styles'),
             'vue$': 'vue/dist/vue.common.js'
         },
         extensions: ['.html', '.js', '.vue', '.json', '.yml', '.png']
@@ -75,8 +78,9 @@ export default {
                                 {
                                     loader: 'sass-resources-loader',
                                     options: {
-                                        resources: path.resolve(__dirname,
-                                            'resources/styles/framework/variables.pcss')
+                                        resources: [
+                                            pathResolve('resources/styles/framework/general/**/*.pcss'),
+                                        ]
                                     }
                                 }
                             ]
@@ -182,9 +186,7 @@ export default {
             // minimize: true,
             debug: true
         }),
-        new ProgressBarPlugin({
-            complete: ':'
-        }),
+        new webpack.ProgressPlugin(ProgressCallback),
         extractCSS,
         // extractDocs
     ],
